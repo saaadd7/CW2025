@@ -183,7 +183,7 @@ public class GuiController implements Initializable {
         this.eventListener = eventListener;
     }
 
-    // === ADDED IMPLEMENTATION ===
+
     public void bindScore(IntegerProperty scoreProp) {
         // Displays "Score: <number>" and updates automatically as the property changes
         scoreLabel.textProperty().bind(Bindings.format("Score: %d", scoreProp));
