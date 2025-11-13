@@ -53,6 +53,7 @@ public class GuiController implements Initializable {
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
     @FXML private javafx.scene.control.Label scoreLabel;   // ← label to show score
+    @FXML private javafx.scene.control.Button pauseButton; // Pause button
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -200,13 +201,38 @@ public class GuiController implements Initializable {
         timeLine.stop();
         gameOverPanel.setVisible(false);
         eventListener.createNewGame();
-        gamePanel.requestFocus();
-        timeLine.play();
+
+        // reset pause/game-over state
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
+
+        // reset pause button text
+        if (pauseButton != null) {
+            pauseButton.setText("Pause");
+        }
+
+        gamePanel.requestFocus();
+        timeLine.play();
     }
 
     public void pauseGame(ActionEvent actionEvent) {
+        // don't pause if game is over
+        if (isGameOver.getValue() == Boolean.TRUE) {
+            return;
+        }
+
+        if (isPause.getValue() == Boolean.TRUE) {
+            // currently paused → resume
+            timeLine.play();
+            isPause.setValue(Boolean.FALSE);
+            pauseButton.setText("Pause");
+        } else {
+            // currently running → pause
+            timeLine.pause();
+            isPause.setValue(Boolean.TRUE);
+            pauseButton.setText("Resume");
+        }
+
         gamePanel.requestFocus();
     }
 }
