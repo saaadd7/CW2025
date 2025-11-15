@@ -33,7 +33,7 @@ public class GuiController implements Initializable {
     // Number of invisible rows above the visible grid
     private static final int HIDDEN_ROWS = 2;
 
-    // Vertical offset to align falling brick visually
+    // Vertical offset for positioning brick panel
     private static final int BRICK_Y_OFFSET = -42;
 
 
@@ -76,6 +76,7 @@ public class GuiController implements Initializable {
 
         gameOverPanel.setVisible(false);
 
+        // Layout reflection effect (unchanged)
         final Reflection reflection = new Reflection();
         reflection.setFraction(0.8);
         reflection.setTopOpacity(0.9);
@@ -120,9 +121,7 @@ public class GuiController implements Initializable {
                     keyEvent.consume();
                     return;
 
-                // =====================
-                // HARD DROP
-                // =====================
+                // ===== HARD DROP =====
                 case SPACE:
                     hardDrop(new MoveEvent(EventType.HARD_DROP, EventSource.USER));
                     keyEvent.consume();
@@ -130,7 +129,7 @@ public class GuiController implements Initializable {
             }
         }
 
-        // NEW GAME (regardless of pause)
+        // new game
         if (keyEvent.getCode() == KeyCode.N) {
             newGame(null);
         }
@@ -145,7 +144,7 @@ public class GuiController implements Initializable {
 
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
 
-        // ========== Refactored: replaced magic '2' with HIDDEN_ROWS ==========
+        // ========== VISIBLE BACKGROUND GRID ==========
         for (int row = HIDDEN_ROWS; row < boardMatrix.length; row++) {
             for (int col = 0; col < boardMatrix[row].length; col++) {
 
@@ -154,13 +153,13 @@ public class GuiController implements Initializable {
 
                 displayMatrix[row][col] = r;
 
-                // Add to UI (subtract hidden rows)
+                // subtract hidden rows when displaying
                 gamePanel.add(r, col, row - HIDDEN_ROWS);
             }
         }
 
 
-        // ========== Active Brick Matrix ==========
+        // ========== FALLING BRICK ==========
         rectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
 
         for (int row = 0; row < brick.getBrickData().length; row++) {
@@ -177,7 +176,6 @@ public class GuiController implements Initializable {
         updateBrickPanelPosition(brick);
 
 
-        // Timeline for gravity (unchanged)
         timeLine = new Timeline(new KeyFrame(Duration.millis(400),
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))));
         timeLine.setCycleCount(Timeline.INDEFINITE);
@@ -187,7 +185,7 @@ public class GuiController implements Initializable {
 
 
     // ======================
-    // HELPER TO UPDATE BRICK POSITION (refactored)
+    // BRICK PANEL POSITION UPDATE
     // ======================
     private void updateBrickPanelPosition(ViewData brick) {
         brickPanel.setLayoutX(
@@ -204,7 +202,7 @@ public class GuiController implements Initializable {
 
 
     // ======================
-    // BRICK COLORING
+    // COLORS FOR BLOCK TYPES
     // ======================
     private Paint getFillColor(int i) {
         switch (i) {
@@ -241,7 +239,7 @@ public class GuiController implements Initializable {
 
 
     // ======================
-    // REFRESH BACKGROUND GRID (refactored)
+    // REFRESH BACKGROUND GRID
     // ======================
     public void refreshGameBackground(int[][] board) {
 
@@ -262,26 +260,37 @@ public class GuiController implements Initializable {
 
 
 
+    // ============================================================
+    // @@ REFACTORED: DUPLICATE CODE REMOVED INTO ONE METHOD @@
+    // ============================================================
+    private void handleDropResult(DownData data) {
+
+        // show notification
+        if (data.getClearRow() != null && data.getClearRow().getLinesRemoved() > 0) {
+            NotificationPanel np =
+                    new NotificationPanel("+" + data.getClearRow().getScoreBonus());
+            groupNotification.getChildren().add(np);
+            np.showScore(groupNotification.getChildren());
+        }
+
+        // update falling brick
+        refreshBrick(data.getViewData());
+
+        // keep focus
+        gamePanel.requestFocus();
+    }
+
+
+
     // ======================
     // NORMAL DROP
     // ======================
     private void moveDown(MoveEvent event) {
 
         if (!isPause.getValue()) {
-
             DownData data = eventListener.onDownEvent(event);
-
-            if (data.getClearRow() != null && data.getClearRow().getLinesRemoved() > 0) {
-                NotificationPanel np =
-                        new NotificationPanel("+" + data.getClearRow().getScoreBonus());
-                groupNotification.getChildren().add(np);
-                np.showScore(groupNotification.getChildren());
-            }
-
-            refreshBrick(data.getViewData());
+            handleDropResult(data);      // @@ refactored here
         }
-
-        gamePanel.requestFocus();
     }
 
 
@@ -292,26 +301,15 @@ public class GuiController implements Initializable {
     private void hardDrop(MoveEvent event) {
 
         if (!isPause.getValue()) {
-
             DownData data = eventListener.onHardDropEvent(event);
-
-            if (data.getClearRow() != null && data.getClearRow().getLinesRemoved() > 0) {
-                NotificationPanel np =
-                        new NotificationPanel("+" + data.getClearRow().getScoreBonus());
-                groupNotification.getChildren().add(np);
-                np.showScore(groupNotification.getChildren());
-            }
-
-            refreshBrick(data.getViewData());
+            handleDropResult(data);      // @@ refactored here
         }
-
-        gamePanel.requestFocus();
     }
 
 
 
     // ======================
-    // LINK CONTROLLER <-> GAME LOGIC
+    // CONTROLLER LINKS
     // ======================
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
@@ -373,5 +371,4 @@ public class GuiController implements Initializable {
 
         gamePanel.requestFocus();
     }
-
 }
