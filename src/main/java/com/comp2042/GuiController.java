@@ -289,7 +289,7 @@ public class GuiController implements Initializable {
 
         if (!isPause.getValue()) {
             DownData data = eventListener.onDownEvent(event);
-            handleDropResult(data);      // @@ refactored here
+            handleDropResult(data);      // @ refactored here
         }
     }
 
@@ -302,7 +302,7 @@ public class GuiController implements Initializable {
 
         if (!isPause.getValue()) {
             DownData data = eventListener.onHardDropEvent(event);
-            handleDropResult(data);      // @@ refactored here
+            handleDropResult(data);      // @ refactored here
         }
     }
 
