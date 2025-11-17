@@ -26,7 +26,26 @@ public final class ViewData {
         return yPosition;
     }
 
+ // Ghost piece implementation
     public int[][] getNextBrickData() {
         return MatrixOperations.copy(nextBrickData);
     }
+    private int[][] ghostData;
+    private int ghostX;
+    private int ghostY;
+
+    public int[][] getGhostData() { return ghostData; }
+    public int getGhostX() { return ghostX; }
+    public int getGhostY() { return ghostY; }
+
+    public void setGhost(int[][] data, int x, int y) {
+        this.ghostData = data;
+        this.ghostX = x;
+        this.ghostY = y;
+    }
+
+
+
+
+
 }
