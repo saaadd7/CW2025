@@ -132,6 +132,9 @@ public class GuiController implements Initializable {
 
                 Rectangle r = new Rectangle(BRICK_SIZE, BRICK_SIZE);
                 r.setFill(Color.TRANSPARENT);
+                r.setStroke(Color.BLACK);
+                r.setStrokeWidth(1);
+
 
                 displayMatrix[row][col] = r;
 
@@ -146,6 +149,8 @@ public class GuiController implements Initializable {
 
                 Rectangle r = new Rectangle(BRICK_SIZE, BRICK_SIZE);
                 r.setFill(getFillColor(brick.getBrickData()[row][col]));
+
+
 
                 rectangles[row][col] = r;
                 brickPanel.add(r, col, row);
@@ -230,7 +235,7 @@ public class GuiController implements Initializable {
     private void drawGhost(ViewData view) {
         int[][] ghostData = view.getGhostData();
 
-        // If ghost not set yet, do nothing
+
         if (ghostData == null) {
             return;
         }
@@ -246,6 +251,9 @@ public class GuiController implements Initializable {
                 Rectangle ghost = new Rectangle(BRICK_SIZE, BRICK_SIZE);
                 ghost.setFill(getGhostColor(ghostData[row][col]));
                 ghost.getStyleClass().add("ghost");
+                ghost.setStroke(Color.BLACK);
+                ghost.setStrokeWidth(0.5);   // lighter outline for ghost
+
 
                 gamePanel.add(ghost, x + col, (y - HIDDEN_ROWS) + row);
             }
