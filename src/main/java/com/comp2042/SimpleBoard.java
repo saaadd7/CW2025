@@ -113,8 +113,8 @@ public class SimpleBoard implements Board {
         Brick brick = brickGenerator.getBrick();
         brickRotator.setBrick(brick);
 
-        // spawn position (x within [0, height-1], y within [0, width-1])
-        currentOffset = new Point(4, 10);
+        //
+        currentOffset = new Point(4, 2);
 
         return MatrixOperations.intersect(
                 currentGameMatrix,
