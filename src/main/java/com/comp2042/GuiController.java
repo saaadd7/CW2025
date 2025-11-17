@@ -208,7 +208,6 @@ public class GuiController implements Initializable {
         if (isPause.getValue()) return;
 
         clearGhost();
-
         drawGhost(brick);
         updateBrickPanelPosition(brick);
 
@@ -226,6 +225,12 @@ public class GuiController implements Initializable {
 
     private void drawGhost(ViewData view) {
         int[][] ghostData = view.getGhostData();
+
+        // If ghost not set yet, do nothing
+        if (ghostData == null) {
+            return;
+        }
+
         int x = view.getGhostX();
         int y = view.getGhostY();
 
@@ -243,7 +248,6 @@ public class GuiController implements Initializable {
         }
     }
 
-
     // =========================================
     // DROP HELPERS
     // =========================================
@@ -258,6 +262,7 @@ public class GuiController implements Initializable {
         refreshBrick(data.getViewData());
         gamePanel.requestFocus();
     }
+
 
 
     private void moveDown(MoveEvent event) {

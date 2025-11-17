@@ -31,9 +31,12 @@ public class SimpleBoard implements Board {
         Point newPos = new Point(currentOffset);
         newPos.translate(0, 1);
 
-        boolean conflict = MatrixOperations.intersect(boardCopy,
+        boolean conflict = MatrixOperations.intersect(
+                boardCopy,
                 brickRotator.getCurrentShape(),
-                newPos.x, newPos.y);
+                newPos.x,
+                newPos.y
+        );
 
         if (conflict) {
             return false;
@@ -49,9 +52,12 @@ public class SimpleBoard implements Board {
         Point newPos = new Point(currentOffset);
         newPos.translate(-1, 0);
 
-        boolean conflict = MatrixOperations.intersect(boardCopy,
+        boolean conflict = MatrixOperations.intersect(
+                boardCopy,
                 brickRotator.getCurrentShape(),
-                newPos.x, newPos.y);
+                newPos.x,
+                newPos.y
+        );
 
         if (conflict) {
             return false;
@@ -67,9 +73,12 @@ public class SimpleBoard implements Board {
         Point newPos = new Point(currentOffset);
         newPos.translate(1, 0);
 
-        boolean conflict = MatrixOperations.intersect(boardCopy,
+        boolean conflict = MatrixOperations.intersect(
+                boardCopy,
                 brickRotator.getCurrentShape(),
-                newPos.x, newPos.y);
+                newPos.x,
+                newPos.y
+        );
 
         if (conflict) {
             return false;
@@ -84,9 +93,12 @@ public class SimpleBoard implements Board {
         int[][] boardCopy = MatrixOperations.copy(currentGameMatrix);
         NextShapeInfo nextShape = brickRotator.getNextShape();
 
-        boolean conflict = MatrixOperations.intersect(boardCopy,
+        boolean conflict = MatrixOperations.intersect(
+                boardCopy,
                 nextShape.getShape(),
-                currentOffset.x, currentOffset.y);
+                currentOffset.x,
+                currentOffset.y
+        );
 
         if (conflict) {
             return false;
@@ -101,7 +113,7 @@ public class SimpleBoard implements Board {
         Brick brick = brickGenerator.getBrick();
         brickRotator.setBrick(brick);
 
-        // spawn position
+        // spawn position (x within [0, height-1], y within [0, width-1])
         currentOffset = new Point(4, 10);
 
         return MatrixOperations.intersect(
@@ -118,7 +130,7 @@ public class SimpleBoard implements Board {
     }
 
     // ======================================================
-    //  Ghost Piece logic
+    //  ViewData + Ghost Piece
     // ======================================================
     @Override
     public ViewData getViewData() {
@@ -127,21 +139,19 @@ public class SimpleBoard implements Board {
         int brickX = currentOffset.x;
         int brickY = currentOffset.y;
 
-        ViewData view = new ViewData(
-                brickMatrix,
-                brickX,
-                brickY,
-                brickGenerator.getNextBrick().getShapeMatrix().get(0)  // next shape preview
-        );
+        // Next piece preview
+        int[][] nextShape = brickGenerator.getNextBrick()
+                .getShapeMatrix()
+                .get(0);
 
-        // === Calculate ghost Y ===
+        ViewData view = new ViewData(brickMatrix, brickX, brickY, nextShape);
+
+        // --- GHOST PIECE CALCULATION ---
         int ghostY = calculateGhostY(brickMatrix, brickX, brickY);
         view.setGhost(brickMatrix, brickX, ghostY);
 
         return view;
     }
-
-
 
     @Override
     public void mergeBrickToBackground() {
@@ -172,38 +182,49 @@ public class SimpleBoard implements Board {
         createNewBrick();
     }
 
-
     // ======================================================
     //                  GHOST PIECE HELPERS
     // ======================================================
-    private int calculateGhostY(int[][] brickShape, int startX, int startY) {
+    private int calculateGhostY(int[][] shape, int startX, int startY) {
         int ghostY = startY;
 
-        while (canBrickMoveDown(brickShape, startX, ghostY)) {
+        while (canBrickMoveDown(shape, startX, ghostY)) {
             ghostY++;
         }
 
         return ghostY;
     }
 
+    /**
+     * Checks whether a brick with given shape at (x, y) can move 1 row down
+     * without going out of bounds or colliding with the background.
+     */
     private boolean canBrickMoveDown(int[][] shape, int x, int y) {
 
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[row].length; col++) {
 
-                if (shape[row][col] == 0)
+                if (shape[row][col] == 0) {
                     continue;
+                }
 
                 int newY = y + row + 1;
                 int newX = x + col;
 
-                // bottom boundary
-                if (newY >= height)
+                // ⬇ bottom boundary (rows) → use width
+                if (newY >= width) {
                     return false;
+                }
 
-                // collision with background
-                if (currentGameMatrix[newY][newX] != 0)
+                // ⬅➡ horizontal boundary (cols) → use height
+                if (newX < 0 || newX >= height) {
                     return false;
+                }
+
+                // collision with existing blocks
+                if (currentGameMatrix[newY][newX] != 0) {
+                    return false;
+                }
             }
         }
 
