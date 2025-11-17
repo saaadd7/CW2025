@@ -66,6 +66,10 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
         gamePanel.setOnKeyPressed(this::handleKeyPress);
 
+        pauseButton.setFocusTraversable(false); // so that it doesnt accidently pause when hard drop is being done
+        pauseButton.setMnemonicParsing(false);
+
+
         gameOverPanel.setVisible(false);
 
         final Reflection reflection = new Reflection();
