@@ -17,6 +17,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
@@ -153,6 +154,7 @@ public class GuiController implements Initializable {
                 r.setFill(Color.TRANSPARENT);
                 r.setStroke(Color.BLACK);
                 r.setStrokeWidth(1);
+                r.setStrokeType(StrokeType.INSIDE);
 
 
                 displayMatrix[row][col] = r;
@@ -167,17 +169,26 @@ public class GuiController implements Initializable {
             for (int col = 0; col < brick.getBrickData()[row].length; col++) {
 
                 Rectangle r = new Rectangle(BRICK_SIZE, BRICK_SIZE);
-                r.setFill(getFillColor(brick.getBrickData()[row][col]));
-                r.setStroke(Color.BLACK);
+
+                int value = brick.getBrickData()[row][col];
+                if (value == 0) {
+                    // empty cell: invisible, no outline
+                    r.setFill(Color.TRANSPARENT);
+                    r.setStroke(Color.TRANSPARENT);
+                } else {
+                    // part of the tetromino
+                    r.setFill(getFillColor(value));
+                    r.setStroke(Color.BLACK);
+                }
+
                 r.setStrokeWidth(0.25);
-
-
-
+                r.setStrokeType(StrokeType.INSIDE);
 
                 rectangles[row][col] = r;
                 brickPanel.add(r, col, row);
             }
         }
+
 
         updateBrickPanelPosition(brick);
 
@@ -229,8 +240,9 @@ public class GuiController implements Initializable {
             for (int col = 0; col < NEXT_GRID_SIZE; col++) {
                 Rectangle r = new Rectangle(BRICK_SIZE, BRICK_SIZE);
                 r.setFill(Color.TRANSPARENT);
-               // r.setStroke(Color.BLACK);
-               // r.setStrokeWidth(0.5);
+                r.setStroke(Color.TRANSPARENT);
+                r.setStrokeWidth(0.5);
+                r.setStrokeType(StrokeType.INSIDE);
 
                 nextCells[row][col] = r;
                 nextGrid.add(r, col, row); // (col, row) in GridPane
@@ -288,13 +300,27 @@ public class GuiController implements Initializable {
 
         for (int row = 0; row < brick.getBrickData().length; row++) {
             for (int col = 0; col < brick.getBrickData()[row].length; col++) {
-                rectangles[row][col].setFill(getFillColor(brick.getBrickData()[row][col]));
+                int value = brick.getBrickData()[row][col];
+
+                if (value == 0) {
+                    // empty: no fill, no outline
+                    rectangles[row][col].setFill(Color.TRANSPARENT);
+                    rectangles[row][col].setStroke(Color.TRANSPARENT);
+                } else {
+                    // block: fill + black outline
+                    rectangles[row][col].setFill(getFillColor(value));
+                    rectangles[row][col].setStroke(Color.BLACK);
+                }
+
+                // keep geometry consistent
+                rectangles[row][col].setStrokeWidth(0.25);
+                rectangles[row][col].setStrokeType(StrokeType.INSIDE);
             }
         }
     }
 
 
-    private void clearGhost() {
+        private void clearGhost() {
         gamePanel.getChildren().removeIf(node -> node.getStyleClass().contains("ghost"));
     }
 
@@ -318,6 +344,9 @@ public class GuiController implements Initializable {
                 ghost.setFill(getGhostColor(ghostData[row][col]));
                 ghost.getStyleClass().add("ghost");
                 ghost.setStroke(Color.BLACK);
+                ghost.setStrokeWidth(0.25);
+                ghost.setStrokeType(StrokeType.INSIDE);
+
 
 
 
@@ -342,16 +371,27 @@ public class GuiController implements Initializable {
         for (int row = 0; row < NEXT_GRID_SIZE; row++) {
             for (int col = 0; col < NEXT_GRID_SIZE; col++) {
                 int value = 0;
-                // safety if nextData is smaller than 4x4
                 if (row < nextData.length && col < nextData[row].length) {
                     value = nextData[row][col];
                 }
-                nextCells[row][col].setFill(getFillColor(value));
+
+                if (value == 0) {
+                    // empty cell: completely invisible (no fill, no outline)
+                    nextCells[row][col].setFill(Color.TRANSPARENT);
+                    nextCells[row][col].setStroke(Color.TRANSPARENT);
+                } else {
+                    // part of the piece
+                    nextCells[row][col].setFill(getFillColor(value));
+                    nextCells[row][col].setStroke(Color.BLACK);
+                }
+                // geometry stays the same
+                nextCells[row][col].setStrokeWidth(0.5);
+                nextCells[row][col].setStrokeType(StrokeType.INSIDE);
             }
         }
     }
 
-    private void clearNextGrid() {
+        private void clearNextGrid() {
         for (int row = 0; row < NEXT_GRID_SIZE; row++) {
             for (int col = 0; col < NEXT_GRID_SIZE; col++) {
                 if (nextCells[row][col] != null) {
