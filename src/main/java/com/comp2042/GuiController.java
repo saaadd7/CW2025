@@ -42,7 +42,10 @@ public class GuiController implements Initializable {
     @FXML private GameOverPanel gameOverPanel;
     @FXML private javafx.scene.control.Label scoreLabel;
     @FXML private javafx.scene.control.Button pauseButton;
-    @FXML private GridPane nextGrid; // to show the next piece
+    // to show the next 3 pieces
+    @FXML private GridPane nextGrid1;
+    @FXML private GridPane nextGrid2;
+    @FXML private GridPane nextGrid3;
 
     // =========================================
     // STATE
@@ -58,9 +61,11 @@ public class GuiController implements Initializable {
 
 
     private static final int NEXT_GRID_SIZE = 4;
-    private static final int TILE_SIZE = 20;
 
-    private Rectangle[][] nextCells = new Rectangle[NEXT_GRID_SIZE][NEXT_GRID_SIZE];
+    private Rectangle[][] nextCells1 = new Rectangle[NEXT_GRID_SIZE][NEXT_GRID_SIZE];
+    private Rectangle[][] nextCells2 = new Rectangle[NEXT_GRID_SIZE][NEXT_GRID_SIZE];
+    private Rectangle[][] nextCells3 = new Rectangle[NEXT_GRID_SIZE][NEXT_GRID_SIZE];
+
 
 
     // =========================================
@@ -80,7 +85,10 @@ public class GuiController implements Initializable {
         brickPanel.setHgap(0);
         brickPanel.setVgap(0);
 
-        initNextGrid();
+        initNextGrid(nextGrid1, nextCells1);
+        initNextGrid(nextGrid2, nextCells2);
+        initNextGrid(nextGrid3, nextCells3);
+
 
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
@@ -197,7 +205,7 @@ public class GuiController implements Initializable {
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
 
-        refreshNextBrick(brick);
+        refreshNextBricks(brick);
 
     }
 
@@ -225,27 +233,69 @@ public class GuiController implements Initializable {
     // =========================================
 // NEXT PIECE GRID INITIALISATION
 // =========================================
-    private void initNextGrid() {
-        if (nextGrid == null) {
+    // =========================================
+// NEXT PIECE GRIDS INITIALISATION
+// =========================================
+    private void initNextGrid(GridPane grid, Rectangle[][] cells) {
+        if (grid == null) {
             return; // safety if FXML not wired yet
         }
 
-        nextGrid.setHgap(0);
-        nextGrid.setVgap(0);
-        nextGrid.getChildren().clear();
-        nextGrid.setPrefWidth(BRICK_SIZE * NEXT_GRID_SIZE);
-        nextGrid.setPrefHeight(BRICK_SIZE * NEXT_GRID_SIZE);
+        grid.setHgap(0);
+        grid.setVgap(0);
+        grid.getChildren().clear();
+        grid.setPrefWidth(BRICK_SIZE * NEXT_GRID_SIZE);
+        grid.setPrefHeight(BRICK_SIZE * NEXT_GRID_SIZE);
 
         for (int row = 0; row < NEXT_GRID_SIZE; row++) {
             for (int col = 0; col < NEXT_GRID_SIZE; col++) {
                 Rectangle r = new Rectangle(BRICK_SIZE, BRICK_SIZE);
                 r.setFill(Color.TRANSPARENT);
+
+                // start fully invisible so empty cells don’t show grid lines
                 r.setStroke(Color.TRANSPARENT);
                 r.setStrokeWidth(0.5);
                 r.setStrokeType(StrokeType.INSIDE);
 
-                nextCells[row][col] = r;
-                nextGrid.add(r, col, row); // (col, row) in GridPane
+                cells[row][col] = r;
+                grid.add(r, col, row);
+            }
+        }
+    }
+    private void clearNextGrid(Rectangle[][] cells) {
+        for (int row = 0; row < NEXT_GRID_SIZE; row++) {
+            for (int col = 0; col < NEXT_GRID_SIZE; col++) {
+                if (cells[row][col] != null) {
+                    cells[row][col].setFill(Color.TRANSPARENT);
+                    cells[row][col].setStroke(Color.TRANSPARENT);
+                }
+            }
+        }
+    }
+
+    private void drawNextPiece(int[][] data, Rectangle[][] cells) {
+        clearNextGrid(cells);
+        if (data == null) return;
+
+        for (int row = 0; row < NEXT_GRID_SIZE; row++) {
+            for (int col = 0; col < NEXT_GRID_SIZE; col++) {
+                int value = 0;
+                if (row < data.length && col < data[row].length) {
+                    value = data[row][col];
+                }
+
+                if (value == 0) {
+                    // empty: invisible
+                    cells[row][col].setFill(Color.TRANSPARENT);
+                    cells[row][col].setStroke(Color.TRANSPARENT);
+                } else {
+                    // part of the piece
+                    cells[row][col].setFill(getFillColor(value));
+                    cells[row][col].setStroke(Color.BLACK);
+                }
+
+                cells[row][col].setStrokeWidth(0.5);
+                cells[row][col].setStrokeType(StrokeType.INSIDE);
             }
         }
     }
@@ -355,51 +405,22 @@ public class GuiController implements Initializable {
         }
     }
 
-    // =========================================
-// NEXT PIECE PREVIEW
+
+
+// NEXT PIECES PREVIEW (3 boxes)
 // =========================================
-    private void refreshNextBrick(ViewData viewData) {
-        if (nextGrid == null) return;
+    private void refreshNextBricks(ViewData viewData) {
+        // For now, use the same data for all three.
+        // Later you can change this to next1/next2/next3 from a queue.
+        int[][] next1 = viewData.getNextBrickData();
+        int[][] next2 = viewData.getNextBrickData();
+        int[][] next3 = viewData.getNextBrickData();
 
-        int[][] nextData = viewData.getNextBrickData(); // uses ViewData's next piece
-
-        if (nextData == null) {
-            clearNextGrid();
-            return;
-        }
-
-        for (int row = 0; row < NEXT_GRID_SIZE; row++) {
-            for (int col = 0; col < NEXT_GRID_SIZE; col++) {
-                int value = 0;
-                if (row < nextData.length && col < nextData[row].length) {
-                    value = nextData[row][col];
-                }
-
-                if (value == 0) {
-                    // empty cell: completely invisible (no fill, no outline)
-                    nextCells[row][col].setFill(Color.TRANSPARENT);
-                    nextCells[row][col].setStroke(Color.TRANSPARENT);
-                } else {
-                    // part of the piece
-                    nextCells[row][col].setFill(getFillColor(value));
-                    nextCells[row][col].setStroke(Color.BLACK);
-                }
-                // geometry stays the same
-                nextCells[row][col].setStrokeWidth(0.5);
-                nextCells[row][col].setStrokeType(StrokeType.INSIDE);
-            }
-        }
+        drawNextPiece(next1, nextCells1);
+        drawNextPiece(next2, nextCells2);
+        drawNextPiece(next3, nextCells3);
     }
 
-        private void clearNextGrid() {
-        for (int row = 0; row < NEXT_GRID_SIZE; row++) {
-            for (int col = 0; col < NEXT_GRID_SIZE; col++) {
-                if (nextCells[row][col] != null) {
-                    nextCells[row][col].setFill(Color.TRANSPARENT);
-                }
-            }
-        }
-    }
 
 
     // =========================================
@@ -414,7 +435,7 @@ public class GuiController implements Initializable {
         }
 
         refreshBrick(data.getViewData());
-        refreshNextBrick(data.getViewData());
+        refreshNextBricks(data.getViewData());
         gamePanel.requestFocus();
     }
 
