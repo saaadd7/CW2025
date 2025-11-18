@@ -41,6 +41,7 @@ public class GuiController implements Initializable {
     @FXML private GameOverPanel gameOverPanel;
     @FXML private javafx.scene.control.Label scoreLabel;
     @FXML private javafx.scene.control.Button pauseButton;
+    @FXML private GridPane nextGrid; // to show the next piece
 
     // =========================================
     // STATE
@@ -55,12 +56,30 @@ public class GuiController implements Initializable {
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
 
+    private static final int NEXT_GRID_SIZE = 4;
+    private static final int TILE_SIZE = 20;
+
+    private Rectangle[][] nextCells = new Rectangle[NEXT_GRID_SIZE][NEXT_GRID_SIZE];
+
+
     // =========================================
     // INITIALIZATION
     // =========================================
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
+
+
+
+
+
+        // make sure there are NO gaps; grid lines come from strokes
+        gamePanel.setHgap(0);
+        gamePanel.setVgap(0);
+        brickPanel.setHgap(0);
+        brickPanel.setVgap(0);
+
+        initNextGrid();
 
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
@@ -149,6 +168,9 @@ public class GuiController implements Initializable {
 
                 Rectangle r = new Rectangle(BRICK_SIZE, BRICK_SIZE);
                 r.setFill(getFillColor(brick.getBrickData()[row][col]));
+                r.setStroke(Color.BLACK);
+                r.setStrokeWidth(0.25);
+
 
 
 
@@ -163,6 +185,9 @@ public class GuiController implements Initializable {
                 e -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))));
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
+
+        refreshNextBrick(brick);
+
     }
 
 
@@ -170,9 +195,50 @@ public class GuiController implements Initializable {
     // UPDATE FALLING BRICK POSITION
     // =========================================
     private void updateBrickPanelPosition(ViewData brick) {
-        brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * BRICK_SIZE);
-        brickPanel.setLayoutY(gamePanel.getLayoutY() + BRICK_Y_OFFSET + brick.getyPosition() * BRICK_SIZE);
+
+        brickPanel.setLayoutX(
+                gamePanel.getLayoutX()
+                        + brick.getxPosition() * brickPanel.getVgap()
+                        + brick.getxPosition() * BRICK_SIZE
+        );
+
+        brickPanel.setLayoutY(
+                BRICK_Y_OFFSET
+                        + gamePanel.getLayoutY()
+                        + brick.getyPosition() * brickPanel.getHgap()
+                        + brick.getyPosition() * BRICK_SIZE
+        );
     }
+
+
+    // =========================================
+// NEXT PIECE GRID INITIALISATION
+// =========================================
+    private void initNextGrid() {
+        if (nextGrid == null) {
+            return; // safety if FXML not wired yet
+        }
+
+        nextGrid.setHgap(0);
+        nextGrid.setVgap(0);
+        nextGrid.getChildren().clear();
+        nextGrid.setPrefWidth(BRICK_SIZE * NEXT_GRID_SIZE);
+        nextGrid.setPrefHeight(BRICK_SIZE * NEXT_GRID_SIZE);
+
+        for (int row = 0; row < NEXT_GRID_SIZE; row++) {
+            for (int col = 0; col < NEXT_GRID_SIZE; col++) {
+                Rectangle r = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                r.setFill(Color.TRANSPARENT);
+               // r.setStroke(Color.BLACK);
+               // r.setStrokeWidth(0.5);
+
+                nextCells[row][col] = r;
+                nextGrid.add(r, col, row); // (col, row) in GridPane
+            }
+        }
+    }
+
+
 
 
     // =========================================
@@ -252,13 +318,49 @@ public class GuiController implements Initializable {
                 ghost.setFill(getGhostColor(ghostData[row][col]));
                 ghost.getStyleClass().add("ghost");
                 ghost.setStroke(Color.BLACK);
-                ghost.setStrokeWidth(0.5);   // lighter outline for ghost
+
 
 
                 gamePanel.add(ghost, x + col, (y - HIDDEN_ROWS) + row);
             }
         }
     }
+
+    // =========================================
+// NEXT PIECE PREVIEW
+// =========================================
+    private void refreshNextBrick(ViewData viewData) {
+        if (nextGrid == null) return;
+
+        int[][] nextData = viewData.getNextBrickData(); // uses ViewData's next piece
+
+        if (nextData == null) {
+            clearNextGrid();
+            return;
+        }
+
+        for (int row = 0; row < NEXT_GRID_SIZE; row++) {
+            for (int col = 0; col < NEXT_GRID_SIZE; col++) {
+                int value = 0;
+                // safety if nextData is smaller than 4x4
+                if (row < nextData.length && col < nextData[row].length) {
+                    value = nextData[row][col];
+                }
+                nextCells[row][col].setFill(getFillColor(value));
+            }
+        }
+    }
+
+    private void clearNextGrid() {
+        for (int row = 0; row < NEXT_GRID_SIZE; row++) {
+            for (int col = 0; col < NEXT_GRID_SIZE; col++) {
+                if (nextCells[row][col] != null) {
+                    nextCells[row][col].setFill(Color.TRANSPARENT);
+                }
+            }
+        }
+    }
+
 
     // =========================================
     // DROP HELPERS
@@ -272,6 +374,7 @@ public class GuiController implements Initializable {
         }
 
         refreshBrick(data.getViewData());
+        refreshNextBrick(data.getViewData());
         gamePanel.requestFocus();
     }
 
