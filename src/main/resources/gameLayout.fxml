@@ -31,48 +31,6 @@
                    -fx-background-radius: 10;
                "/>
 
-        <VBox spacing="5" alignment="TOP_CENTER">
-            <Label text="NEXT PIECES"
-                   style="-fx-text-fill: white;
-                  -fx-font-size: 18px;
-                  -fx-font-weight: bold;" />
-
-            <VBox spacing="6">
-
-                <!-- Next 1 -->
-                <StackPane style="-fx-border-color: white;
-                          -fx-border-width: 2;
-                          -fx-border-radius: 4;
-                          -fx-padding: 4;">
-                    <GridPane fx:id="nextGrid1"
-                              hgap="0" vgap="0"
-                              prefWidth="80" prefHeight="80" />
-                </StackPane>
-
-                <!-- Next 2 -->
-                <StackPane style="-fx-border-color: white;
-                          -fx-border-width: 2;
-                          -fx-border-radius: 4;
-                          -fx-padding: 4;">
-                    <GridPane fx:id="nextGrid2"
-                              hgap="0" vgap="0"
-                              prefWidth="80" prefHeight="80" />
-                </StackPane>
-
-                <!-- Next 3 -->
-                <StackPane style="-fx-border-color: white;
-                          -fx-border-width: 2;
-                          -fx-border-radius: 4;
-                          -fx-padding: 4;">
-                    <GridPane fx:id="nextGrid3"
-                              hgap="0" vgap="0"
-                              prefWidth="80" prefHeight="80" />
-                </StackPane>
-
-            </VBox>
-        </VBox>
-
-
         <HBox spacing="20" alignment="CENTER">
             <Button fx:id="pauseButton"
                     text="Pause"
@@ -85,12 +43,53 @@
         </HBox>
     </VBox>
 
+    <VBox layoutX="260" layoutY="200" spacing="5">
+        <Label text="NEXT 3 PIECES"
+               style="-fx-text-fill: white;
+                  -fx-font-size: 18px;
+                  -fx-font-weight: bold;" />
+
+        <HBox spacing="6">
+
+            <!-- Next 1 -->
+            <StackPane style="-fx-border-color: white;
+                          -fx-border-width: 2;
+                          -fx-border-radius: 4;
+                          -fx-padding: 2;">
+                <GridPane fx:id="nextGrid1"
+                          hgap="0" vgap="0"
+                          prefWidth="50" prefHeight="50" />
+            </StackPane>
+
+            <!-- Next 2 -->
+            <StackPane style="-fx-border-color: white;
+                          -fx-border-width: 2;
+                          -fx-border-radius: 4;
+                          -fx-padding: 2;">
+                <GridPane fx:id="nextGrid2"
+                          hgap="0" vgap="0"
+                          prefWidth="50" prefHeight="50" />
+            </StackPane>
+
+            <!-- Next 3 -->
+            <StackPane style="-fx-border-color: white;
+                          -fx-border-width: 2;
+                          -fx-border-radius: 4;
+                          -fx-padding: 4;">
+                <GridPane fx:id="nextGrid3"
+                          hgap="0" vgap="0"
+                          prefWidth="60" prefHeight="60" />
+            </StackPane>
+
+        </HBox>
+    </VBox>
+
     <Group fx:id="groupNotification" layoutX="14" layoutY="203">
         <VBox alignment="CENTER">
             <GameOverPanel fx:id="gameOverPanel"/>
         </VBox>
     </Group>
-    
+
     <stylesheets>
         <URL value="@window_style.css"/>
     </stylesheets>

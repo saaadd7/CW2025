@@ -20,6 +20,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import java.util.List;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -30,6 +31,7 @@ public class GuiController implements Initializable {
     // CONSTANTS (Refactoring)
     // =========================================
     private static final int BRICK_SIZE = 20;
+    private static final int PREVIEW_BRICK_SIZE = 12;
     private static final int HIDDEN_ROWS = 2;
     private static final int BRICK_Y_OFFSET = -42;
 
@@ -43,9 +45,12 @@ public class GuiController implements Initializable {
     @FXML private javafx.scene.control.Label scoreLabel;
     @FXML private javafx.scene.control.Button pauseButton;
     // to show the next 3 pieces
-    @FXML private GridPane nextGrid1;
-    @FXML private GridPane nextGrid2;
-    @FXML private GridPane nextGrid3;
+    @FXML
+    private GridPane nextGrid1;
+    @FXML
+    private GridPane nextGrid2;
+    @FXML
+    private GridPane nextGrid3;
 
     // =========================================
     // STATE
@@ -60,7 +65,7 @@ public class GuiController implements Initializable {
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
 
-    private static final int NEXT_GRID_SIZE = 4;
+    private static final int NEXT_GRID_SIZE = 2;
 
     private Rectangle[][] nextCells1 = new Rectangle[NEXT_GRID_SIZE][NEXT_GRID_SIZE];
     private Rectangle[][] nextCells2 = new Rectangle[NEXT_GRID_SIZE][NEXT_GRID_SIZE];
@@ -182,7 +187,7 @@ public class GuiController implements Initializable {
                 if (value == 0) {
                     // empty cell: invisible, no outline
                     r.setFill(Color.TRANSPARENT);
-                    r.setStroke(Color.TRANSPARENT);
+                    r.setStroke(Color.BLACK);
                 } else {
                     // part of the tetromino
                     r.setFill(getFillColor(value));
@@ -205,7 +210,7 @@ public class GuiController implements Initializable {
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
 
-        refreshNextBricks(brick);
+        updatePreviews(brick);
 
     }
 
@@ -244,8 +249,8 @@ public class GuiController implements Initializable {
         grid.setHgap(0);
         grid.setVgap(0);
         grid.getChildren().clear();
-        grid.setPrefWidth(BRICK_SIZE * NEXT_GRID_SIZE);
-        grid.setPrefHeight(BRICK_SIZE * NEXT_GRID_SIZE);
+        grid.setPrefWidth(NEXT_GRID_SIZE);
+        grid.setPrefHeight(NEXT_GRID_SIZE);
 
         for (int row = 0; row < NEXT_GRID_SIZE; row++) {
             for (int col = 0; col < NEXT_GRID_SIZE; col++) {
@@ -253,8 +258,8 @@ public class GuiController implements Initializable {
                 r.setFill(Color.TRANSPARENT);
 
                 // start fully invisible so empty cells don’t show grid lines
-                r.setStroke(Color.TRANSPARENT);
-                r.setStrokeWidth(0.5);
+                r.setStroke(Color.BLACK);
+                r.setStrokeWidth(1);
                 r.setStrokeType(StrokeType.INSIDE);
 
                 cells[row][col] = r;
@@ -292,12 +297,13 @@ public class GuiController implements Initializable {
                     // part of the piece
                     cells[row][col].setFill(getFillColor(value));
                     cells[row][col].setStroke(Color.BLACK);
-                }
+
 
                 cells[row][col].setStrokeWidth(0.5);
                 cells[row][col].setStrokeType(StrokeType.INSIDE);
             }
         }
+    }
     }
 
 
@@ -370,7 +376,7 @@ public class GuiController implements Initializable {
     }
 
 
-        private void clearGhost() {
+    private void clearGhost() {
         gamePanel.getChildren().removeIf(node -> node.getStyleClass().contains("ghost"));
     }
 
@@ -407,18 +413,29 @@ public class GuiController implements Initializable {
 
 
 
-// NEXT PIECES PREVIEW (3 boxes)
+    // NEXT PIECES PREVIEW (3 boxes)
 // =========================================
-    private void refreshNextBricks(ViewData viewData) {
-        // For now, use the same data for all three.
-        // Later you can change this to next1/next2/next3 from a queue.
-        int[][] next1 = viewData.getNextBrickData();
-        int[][] next2 = viewData.getNextBrickData();
-        int[][] next3 = viewData.getNextBrickData();
+    private void updatePreviews(ViewData brick) {
+        drawPreview(nextGrid1, brick.getNextBrickData1());
+        drawPreview(nextGrid2, brick.getNextBrickData2());
+        drawPreview(nextGrid3, brick.getNextBrickData3());
+    }
 
-        drawNextPiece(next1, nextCells1);
-        drawNextPiece(next2, nextCells2);
-        drawNextPiece(next3, nextCells3);
+    private void drawPreview(GridPane panel, int[][] data) {
+        if (panel == null || data == null) return;
+        panel.getChildren().clear();
+        // Center the preview roughly within a 4x4 grid area
+        int rows = data.length;
+        int cols = rows > 0 ? data[0].length : 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                Rectangle r = new Rectangle(PREVIEW_BRICK_SIZE, PREVIEW_BRICK_SIZE);
+                r.setFill(getFillColor(data[i][j]));
+                r.setArcHeight(6);
+                r.setArcWidth(6);
+                panel.add(r, j, i);
+            }
+        }
     }
 
 
@@ -435,7 +452,7 @@ public class GuiController implements Initializable {
         }
 
         refreshBrick(data.getViewData());
-        refreshNextBricks(data.getViewData());
+        updatePreviews(data.getViewData());
         gamePanel.requestFocus();
     }
 
