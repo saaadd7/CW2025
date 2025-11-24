@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.comp2042.ui.MainMenuController"
+            prefWidth="600" prefHeight="800">
+
+    <!-- Background Image -->
+    <ImageView fitWidth="600" fitHeight="800" preserveRatio="false">
+        <image>
+            <Image url="@../images/IMG_1032.JPG"/>
+        </image>
+    </ImageView>
+
+    <!-- Heading -->
+    <Label text="Welcome to Tetris"
+           layoutX="150"
+           layoutY="120"
+           prefWidth="300"
+           prefHeight="60"
+           alignment="CENTER"
+           style="-fx-background-color: black;
+                  -fx-text-fill: red;
+                  -fx-font-size: 32px;
+                  -fx-font-weight: bold;"/>
+
+    <!-- Start Button -->
+    <Button fx:id="startButton"
+            text="Start Game"
+            layoutX="230"
+            layoutY="600"
+            prefWidth="140"
+            prefHeight="40"/>
+
+    <!-- Settings Button -->
+    <Button fx:id="settingsButton"
+            text="Settings"
+            layoutX="230"
+            layoutY="650"
+            prefWidth="140"
+            prefHeight="40"/>
+</AnchorPane>

@@ -4,7 +4,8 @@ import com.comp2042.logic.bricks.Brick;
 import com.comp2042.logic.bricks.BrickGenerator;
 import com.comp2042.logic.bricks.RandomBrickGenerator;
 
-import java.awt.*;
+import java.awt.Point;
+import java.util.List;
 
 public class SimpleBoard implements Board {
 
@@ -139,12 +140,27 @@ public class SimpleBoard implements Board {
         int brickX = currentOffset.x;
         int brickY = currentOffset.y;
 
-        // Next piece preview
-        int[][] nextShape = brickGenerator.getNextBrick()
-                .getShapeMatrix()
-                .get(0);
+        // Get the next 3 bricks for preview
+        List<Brick> nextBricks = ((RandomBrickGenerator) brickGenerator).getNextBricks(3);
 
-        ViewData view = new ViewData(brickMatrix, brickX, brickY, nextShape);
+        // Get the shape matrices for each of the next bricks
+        int[][] nextShape1 = null;
+        int[][] nextShape2 = null;
+        int[][] nextShape3 = null;
+
+        if (nextBricks.size() > 0) {
+            nextShape1 = nextBricks.get(0).getShapeMatrix().get(0);
+        }
+
+        if (nextBricks.size() > 1) {
+            nextShape2 = nextBricks.get(1).getShapeMatrix().get(0);
+        }
+
+        if (nextBricks.size() > 2) {
+            nextShape3 = nextBricks.get(2).getShapeMatrix().get(0);
+        }
+
+        ViewData view = new ViewData(brickMatrix, brickX, brickY, nextShape1, nextShape2, nextShape3);
 
         // --- GHOST PIECE CALCULATION ---
         int ghostY = calculateGhostY(brickMatrix, brickX, brickY);

@@ -34,7 +34,7 @@ public class GameController implements InputEventListener {
         } else {
             //  DO NOT award +1 for user soft drops anymore.
             // This makes scoring dependent only on line clears (classic behavior).
-            }
+        }
 
         return new DownData(clearRow, board.getViewData());
     }
