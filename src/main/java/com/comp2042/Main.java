@@ -1,6 +1,10 @@
 package com.comp2042;
 
 import com.comp2042.ui.MainMenuController;
+import com.comp2042.sounds.SoundManager;
+import com.comp2042.GuiController;
+import com.comp2042.GameController;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,9 +16,18 @@ public class Main extends Application {
     public static final String MAIN_MENU_FXML = "/fxml/mainMenu.fxml";
     public static final String GAME_LAYOUT_FXML = "/gameLayout.fxml"; // your real path
 
+    // NEW: Declare the SoundManager instance at the class level
+    private SoundManager soundManager;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("TetrisJFX");
+
+        // NEW: Initialize the SoundManager before any FXML is loaded
+        // This is where the SoundManager constructor (with the corrected paths) is called.
+        // It should only be initialized once.
+        soundManager = new SoundManager();
+
         showMainMenu(primaryStage);
     }
 
@@ -26,6 +39,9 @@ public class Main extends Application {
         controller.setStage(stage);
         controller.setMainApp(this);
 
+        // CRUCIAL NEW LINE: Pass the single SoundManager instance to the controller
+        controller.setSoundManager(soundManager);
+
         stage.setScene(new Scene(root, 600, 800));
         stage.show();
     }
@@ -34,11 +50,13 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(GAME_LAYOUT_FXML));
         Parent gameRoot = loader.load();
 
-        // get the GUI controller from the FXML
+        // Assuming GuiController and GameController are properly defined
+
+        // 1. Get the controller instance and cast it to the correct type
         GuiController gui = loader.getController();
 
-        // VERY IMPORTANT: creates board, pieces, scores, timeline, controls
-        GameController game = new GameController(gui);
+        // 2. CORRECTED LINE 60: Pass the instance variable 'soundManager'
+        GameController game = new GameController(gui, soundManager);
 
         stage.setScene(new Scene(gameRoot, 600, 800));
         stage.show();
@@ -47,10 +65,7 @@ public class Main extends Application {
         gameRoot.requestFocus();
     }
 
-
-    public void openSettings(Stage stage) {
-        System.out.println("Settings screen coming soon!");
-    }
+    // REMOVED: public void openSettings(Stage stage) - This functionality is now handled by MainMenuController
 
     public static void main(String[] args) {
         launch(args);

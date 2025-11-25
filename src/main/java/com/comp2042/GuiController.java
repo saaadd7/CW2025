@@ -73,6 +73,10 @@ public class GuiController implements Initializable {
 
 
 
+
+
+
+
     // =========================================
     // INITIALIZATION
     // =========================================
@@ -299,11 +303,11 @@ public class GuiController implements Initializable {
                     cells[row][col].setStroke(Color.BLACK);
 
 
-                cells[row][col].setStrokeWidth(0.5);
-                cells[row][col].setStrokeType(StrokeType.INSIDE);
+                    cells[row][col].setStrokeWidth(0.5);
+                    cells[row][col].setStrokeType(StrokeType.INSIDE);
+                }
             }
         }
-    }
     }
 
 
