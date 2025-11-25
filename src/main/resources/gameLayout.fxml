@@ -38,23 +38,23 @@
                "/>
     </VBox>
 
-    <VBox layoutX="450" layoutY="300" spacing="15" alignment="CENTER" style="-fx-padding: 20 0 10 0;">
-        <VBox layoutY="200" spacing="5">
+    <VBox layoutX="450" layoutY="300" spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 20 0 10 0;">
+        <VBox layoutY="200" spacing="5" alignment="CENTER"> <!-- Center the VBox itself -->
             <Label text="NEXT 3 PIECES"
                    style="-fx-text-fill: white;
-                          -fx-font-size: 18px;
-                          -fx-font-weight: bold;" />
-            <VBox spacing="6" alignment="CENTER">
-                <StackPane style="-fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 4; -fx-padding: 4;">
-                    <GridPane fx:id="nextGrid1" hgap="0" vgap="0" prefWidth="10" prefHeight="10" />
+                      -fx-font-size: 18px;
+                      -fx-font-weight: bold;" />
+            <VBox spacing="6" alignment="CENTER"> <!-- Ensure alignment of the GridPanes -->
+                <StackPane style="-fx-border-color: yellow; -fx-border-width: 4; -fx-border-radius: 4; -fx-padding: 4;">
+                    <GridPane fx:id="nextGrid1" hgap="0" vgap="0" prefWidth="10" prefHeight="10" alignment="CENTER"/>
                 </StackPane>
 
-                <StackPane style="-fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 4; -fx-padding: 4;">
-                    <GridPane fx:id="nextGrid2" hgap="0" vgap="0" prefWidth="20" prefHeight="20" />
+                <StackPane style="-fx-border-color: yellow; -fx-border-width: 4; -fx-border-radius: 4; -fx-padding: 4;">
+                    <GridPane fx:id="nextGrid2" hgap="0" vgap="0" prefWidth="20" prefHeight="20" alignment="CENTER"/>
                 </StackPane>
 
-                <StackPane style="-fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 4; -fx-padding: 4;">
-                    <GridPane fx:id="nextGrid3" hgap="0" vgap="0" prefWidth="30" prefHeight="30" />
+                <StackPane style="-fx-border-color: yellow; -fx-border-width: 4; -fx-border-radius: 4; -fx-padding: 4;">
+                    <GridPane fx:id="nextGrid3" hgap="0" vgap="0" prefWidth="30" prefHeight="30" alignment="CENTER"/>
                 </StackPane>
             </VBox>
         </VBox>

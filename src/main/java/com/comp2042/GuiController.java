@@ -35,7 +35,8 @@ public class GuiController implements Initializable {
     private static final int PREVIEW_BRICK_SIZE = 12;
     private static final int HIDDEN_ROWS = 2;
     private static final int BRICK_Y_OFFSET = 180;
-    private static final int X_FINE_TUNE_OFFSET = 10;
+    private static final int X_FINE_TUNE_OFFSET = 12;
+    private static final int PREVIEW_PIXEL_OFFSET = 6;
 
 
     private double gridXBase = 0;
@@ -444,23 +445,32 @@ public class GuiController implements Initializable {
         drawPreview(nextGrid2, brick.getNextBrickData2());
         drawPreview(nextGrid3, brick.getNextBrickData3());
     }
-
     private void drawPreview(GridPane panel, int[][] data) {
         if (panel == null || data == null) return;
         panel.getChildren().clear();
-        // Center the preview roughly within a 4x4 grid area
+
+
         int rows = data.length;
         int cols = rows > 0 ? data[0].length : 0;
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
+
                 Rectangle r = new Rectangle(PREVIEW_BRICK_SIZE, PREVIEW_BRICK_SIZE);
                 r.setFill(getFillColor(data[i][j]));
                 r.setArcHeight(6);
                 r.setArcWidth(6);
-                panel.add(r, j, i);
+
+                // Apply the pixel offset to shift the block right and down by 6 pixels
+                r.setTranslateX(PREVIEW_PIXEL_OFFSET); // Shift right by 6 pixels
+                r.setTranslateY(PREVIEW_PIXEL_OFFSET); // Shift down by 6 pixels
+
+                // Add the block starting at (0, 0) of the grid, but the translate shifts the pixels
+                panel.add(r, j, i); // <--- CHANGE: Only use j and i as grid indices
             }
         }
     }
+
 
 
 
