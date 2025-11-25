@@ -9,7 +9,8 @@
 <AnchorPane xmlns="http://javafx.com/javafx/21.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.comp2042.ui.MainMenuController"
-            prefWidth="600" prefHeight="800">
+        prefWidth="600" prefHeight="800">
+
 
     <!-- Background Image -->
     <ImageView fitWidth="600" fitHeight="800" preserveRatio="false">
@@ -36,7 +37,10 @@
             layoutX="230"
             layoutY="600"
             prefWidth="140"
-            prefHeight="40"/>
+            prefHeight="40"
+            onAction="#startGame"/>
+
+
 
     <!-- Settings Button -->
     <Button fx:id="settingsButton"
@@ -45,4 +49,6 @@
             layoutY="650"
             prefWidth="140"
             prefHeight="40"/>
+
+
 </AnchorPane>

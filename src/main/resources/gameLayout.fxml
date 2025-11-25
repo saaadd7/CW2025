@@ -40,10 +40,16 @@
             <Button text="Restart"
                     prefWidth="80"
                     onAction="#newGame"/>
+
+
+
+
+
+
         </HBox>
     </VBox>
 
-    <VBox layoutX="260" layoutY="200" spacing="5">
+    <VBox layoutX="270" layoutY="200" spacing="5">
         <Label text="NEXT 3 PIECES"
                style="-fx-text-fill: white;
                   -fx-font-size: 18px;
@@ -59,6 +65,7 @@
                 <GridPane fx:id="nextGrid1"
                           hgap="0" vgap="0"
                           prefWidth="50" prefHeight="50" />
+
             </StackPane>
 
             <!-- Next 2 -->
@@ -79,6 +86,8 @@
                 <GridPane fx:id="nextGrid3"
                           hgap="0" vgap="0"
                           prefWidth="60" prefHeight="60" />
+
+
             </StackPane>
 
         </HBox>

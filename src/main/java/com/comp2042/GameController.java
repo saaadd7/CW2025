@@ -1,18 +1,26 @@
 package com.comp2042;
 
+import com.comp2042.sounds.SoundManager;
+
 public class GameController implements InputEventListener {
 
     private Board board = new SimpleBoard(25, 10);
 
     private final GuiController viewGuiController;
 
-    public GameController(GuiController c) {
-        viewGuiController = c;
+
+    // 1. Add a final field for the SoundManager
+    private final SoundManager soundManager;
+
+    // 2. Implement the two-argument constructor
+    public GameController(GuiController c, SoundManager soundManager) {
+        this.viewGuiController = c;
+        this.soundManager = soundManager; // Store the new argument!
+
         board.createNewBrick();
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
-
     }
 
     @Override
@@ -20,10 +28,21 @@ public class GameController implements InputEventListener {
         boolean canMove = board.moveBrickDown();
         ClearRow clearRow = null;
         if (!canMove) {
+
+            // 1. ADD THUD SOUND HERE (Piece Locked)
+            if (soundManager != null) {
+                soundManager.playThudSound();
+            }
+
             board.mergeBrickToBackground();
             clearRow = board.clearRows();
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
+
+                // 2. ADD SWOOSH SOUND HERE (Line Cleared)
+                if (soundManager != null) {
+                    soundManager.playSwooshSound();
+                }
             }
             if (board.createNewBrick()) {
                 viewGuiController.gameOver();
@@ -77,6 +96,11 @@ public class GameController implements InputEventListener {
             }
         } while (canMove);
 
+        // 🔊 1. Play THUD sound when the brick locks
+        if (soundManager != null) {
+            soundManager.playThudSound();
+        }
+
         // Brick has locked – merge into background
         board.mergeBrickToBackground();
 
@@ -84,6 +108,11 @@ public class GameController implements InputEventListener {
         clearRow = board.clearRows();
         if (clearRow.getLinesRemoved() > 0) {
             board.getScore().add(clearRow.getScoreBonus());
+
+            // 🔊 2. Play SWOOSH sound if lines were cleared
+            if (soundManager != null) {
+                soundManager.playSwooshSound();
+            }
         }
 
         // Hard-drop bonus: I didnt add it because it was not in the original game
@@ -100,5 +129,6 @@ public class GameController implements InputEventListener {
 
         return new DownData(clearRow, board.getViewData());
     }
+
 
 }
