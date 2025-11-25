@@ -34,7 +34,11 @@ public class GuiController implements Initializable {
     private static final int BRICK_SIZE = 20;
     private static final int PREVIEW_BRICK_SIZE = 12;
     private static final int HIDDEN_ROWS = 2;
-    private static final int BRICK_Y_OFFSET = -42;
+    private static final int BRICK_Y_OFFSET = 180;
+    private static final int X_FINE_TUNE_OFFSET = 10;
+
+
+    private double gridXBase = 0;
 
     // =========================================
     // FXML COMPONENTS
@@ -217,6 +221,11 @@ public class GuiController implements Initializable {
                 brickPanel.add(r, col, row);
             }
         }
+        gridXBase = gamePanel.getLayoutX();
+        if (gridXBase < 1.0) {
+            // 180 is the screen X coordinate where the first column (X=0) of the grid should start.
+            gridXBase = 180.0;
+        }
 
 
         updateBrickPanelPosition(brick);
@@ -233,20 +242,19 @@ public class GuiController implements Initializable {
 
     // =========================================
     // UPDATE FALLING BRICK POSITION
-    // =========================================
     private void updateBrickPanelPosition(ViewData brick) {
 
+        // X: Use the corrected gridXBase + logical X position * size
         brickPanel.setLayoutX(
-                gamePanel.getLayoutX()
-                        + brick.getxPosition() * brickPanel.getVgap()
-                        + brick.getxPosition() * BRICK_SIZE
+                gridXBase
+                        + brick.getxPosition() * BRICK_SIZE+ X_FINE_TUNE_OFFSET
         );
 
+        // Y: This is the correct logical Y calculation (already fixed)
         brickPanel.setLayoutY(
-                BRICK_Y_OFFSET
-                        + gamePanel.getLayoutY()
-                        + brick.getyPosition() * brickPanel.getHgap()
-                        + brick.getyPosition() * BRICK_SIZE
+                gamePanel.getLayoutY()
+                        + (brick.getyPosition() - HIDDEN_ROWS) * BRICK_SIZE
+                        + BRICK_Y_OFFSET
         );
     }
 

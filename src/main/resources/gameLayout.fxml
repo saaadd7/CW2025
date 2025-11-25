@@ -2,9 +2,8 @@
 <?import com.comp2042.GameOverPanel?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.Group?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.Group?>
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
 
@@ -13,17 +12,15 @@
       xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       style="-fx-background-color: #333333;">
 
-    <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="40" layoutY="30">
+    <BorderPane fx:id="gameBoard" styleClass="gameBoard" layoutX="180" layoutY="180">
         <center>
             <GridPane fx:id="gamePanel" hgap="1" vgap="1"/>
         </center>
     </BorderPane>
 
-    <GridPane fx:id="brickPanel" vgap="1" hgap="1" layoutX="40" layoutY="30"/>
+    <GridPane fx:id="brickPanel" vgap="1" hgap="1" layoutX="180" layoutY="180"/>
 
-
-    <VBox layoutX="260" layoutY="70" spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10;">
-
+    <VBox alignment="CENTER" layoutX="-10" layoutY="80" prefWidth="600" style="-fx-padding: 20 0 0 0;">
         <Label fx:id="scoreLabel"
                text="Score: 0"
                prefWidth="200"
@@ -39,45 +36,39 @@
                    -fx-border-radius: 10;
                    -fx-background-radius: 10;
                "/>
+    </VBox>
 
-        <HBox spacing="20" alignment="CENTER">
-            <Button fx:id="pauseButton"
-                    text="Pause"
-                    prefWidth="80"
-                    onAction="#pauseGame"/>
-
-            <Button text="Restart"
-                    prefWidth="80"
-                    onAction="#newGame"/>
-
-            <Button text="Main Menu"
-                    onAction="#backToMainMenu"
-                    prefWidth="100"/>
-        </HBox>
-
+    <VBox layoutX="450" layoutY="300" spacing="15" alignment="CENTER" style="-fx-padding: 20 0 10 0;">
         <VBox layoutY="200" spacing="5">
             <Label text="NEXT 3 PIECES"
                    style="-fx-text-fill: white;
-                      -fx-font-size: 18px;
-                      -fx-font-weight: bold;" />
-
-            <HBox spacing="6" alignment="CENTER">
-                <StackPane style="-fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 4; -fx-padding: 2;">
-                    <GridPane fx:id="nextGrid1" hgap="0" vgap="0" prefWidth="50" prefHeight="50" />
-                </StackPane>
-
-                <StackPane style="-fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 4; -fx-padding: 2;">
-                    <GridPane fx:id="nextGrid2" hgap="0" vgap="0" prefWidth="50" prefHeight="50" />
+                          -fx-font-size: 18px;
+                          -fx-font-weight: bold;" />
+            <VBox spacing="6" alignment="CENTER">
+                <StackPane style="-fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 4; -fx-padding: 4;">
+                    <GridPane fx:id="nextGrid1" hgap="0" vgap="0" prefWidth="10" prefHeight="10" />
                 </StackPane>
 
                 <StackPane style="-fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 4; -fx-padding: 4;">
-                    <GridPane fx:id="nextGrid3" hgap="0" vgap="0" prefWidth="60" prefHeight="60" />
+                    <GridPane fx:id="nextGrid2" hgap="0" vgap="0" prefWidth="20" prefHeight="20" />
                 </StackPane>
-            </HBox>
-        </VBox>
 
+                <StackPane style="-fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 4; -fx-padding: 4;">
+                    <GridPane fx:id="nextGrid3" hgap="0" vgap="0" prefWidth="30" prefHeight="30" />
+                </StackPane>
+            </VBox>
+        </VBox>
     </VBox>
-    <Group fx:id="groupNotification" layoutX="14" layoutY="203">
+
+    <VBox alignment="CENTER" layoutX="0" layoutY="680" prefWidth="600" style="-fx-padding: 20 0 20 0;">
+        <HBox spacing="20" alignment="CENTER">
+            <Button fx:id="pauseButton" text="Pause" prefWidth="80" onAction="#pauseGame"/>
+            <Button text="Restart" prefWidth="80" onAction="#newGame"/>
+            <Button text="Main Menu" prefWidth="100" onAction="#backToMainMenu"/>
+        </HBox>
+    </VBox>
+
+    <Group fx:id="groupNotification" layoutX="0" layoutY="203">
         <VBox alignment="CENTER">
             <GameOverPanel fx:id="gameOverPanel"/>
         </VBox>
