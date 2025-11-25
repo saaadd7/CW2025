@@ -20,7 +20,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-import java.util.List;
 import javafx.scene.Parent;
 
 import java.net.URL;

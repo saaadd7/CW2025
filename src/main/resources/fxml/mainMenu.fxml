@@ -8,7 +8,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/21.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.comp2042.ui.MainMenuController"
+            fx:controller="com.comp2042.MainScreenui.MainMenuController"
         prefWidth="600" prefHeight="800">
 
 

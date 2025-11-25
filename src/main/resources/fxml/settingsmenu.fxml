@@ -5,7 +5,7 @@
 <?import javafx.scene.control.Label?>
 
 <VBox alignment="CENTER" spacing="10.0" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.comp2042.ui.SettingsController">
+      fx:controller="com.comp2042.MainScreenui.SettingsController">
     <Label text="Game Settings" style="-fx-font-size: 20pt; -fx-text-fill: red;"/>
 
     <Button fx:id="soundToggleButton" text="Toggle Sounds" onAction="#toggleSounds"/>
