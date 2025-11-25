@@ -24,8 +24,6 @@ public class Main extends Application {
         primaryStage.setTitle("TetrisJFX");
 
         // NEW: Initialize the SoundManager before any FXML is loaded
-        // This is where the SoundManager constructor (with the corrected paths) is called.
-        // It should only be initialized once.
         soundManager = new SoundManager();
 
         showMainMenu(primaryStage);
@@ -55,8 +53,9 @@ public class Main extends Application {
         // 1. Get the controller instance and cast it to the correct type
         GuiController gui = loader.getController();
 
-        // 2. CORRECTED LINE 60: Pass the instance variable 'soundManager'
-        GameController game = new GameController(gui, soundManager);
+
+        // FIX: The application instance is 'this', not 'mainApp'
+        GameController game = new GameController(gui, soundManager, this);
 
         stage.setScene(new Scene(gameRoot, 600, 800));
         stage.show();

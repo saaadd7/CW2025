@@ -21,6 +21,7 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import java.util.List;
+import javafx.scene.Parent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -51,6 +52,17 @@ public class GuiController implements Initializable {
     private GridPane nextGrid2;
     @FXML
     private GridPane nextGrid3;
+
+    @FXML
+    private Parent viewRoot;
+
+    @FXML
+    private void backToMainMenu() {
+        // This calls the method we added in Step 2 on the listener (GameController)
+        if (eventListener != null) {
+            eventListener.onBackToMenuEvent();
+        }
+    }
 
     // =========================================
     // STATE
@@ -521,5 +533,9 @@ public class GuiController implements Initializable {
 
         isPause.setValue(!isPause.getValue());
         gamePanel.requestFocus();
+    }
+
+    public Parent getViewRoot() {
+        return viewRoot; // This must not be null!
     }
 }

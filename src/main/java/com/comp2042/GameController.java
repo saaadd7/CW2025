@@ -1,6 +1,7 @@
 package com.comp2042;
 
 import com.comp2042.sounds.SoundManager;
+import javafx.stage.Stage;
 
 public class GameController implements InputEventListener {
 
@@ -11,11 +12,13 @@ public class GameController implements InputEventListener {
 
     // 1. Add a final field for the SoundManager
     private final SoundManager soundManager;
+    private final Main mainApp;
 
     // 2. Implement the two-argument constructor
-    public GameController(GuiController c, SoundManager soundManager) {
+    public GameController(GuiController c, SoundManager soundManager, Main mainApp) {
         this.viewGuiController = c;
-        this.soundManager = soundManager; // Store the new argument!
+        this.soundManager = soundManager;
+        this.mainApp = mainApp; // Store the Main app reference!
 
         board.createNewBrick();
         viewGuiController.setEventListener(this);
@@ -82,6 +85,7 @@ public class GameController implements InputEventListener {
         board.newGame();
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
     }
+
     @Override
     public DownData onHardDropEvent(MoveEvent event) {
         int dropDistance = 0;
@@ -116,7 +120,8 @@ public class GameController implements InputEventListener {
         }
 
         // Hard-drop bonus: I didnt add it because it was not in the original game
-        if (dropDistance > 0) {;
+        if (dropDistance > 0) {
+            ;
         }
 
         // Spawn a new brick or end game
@@ -128,6 +133,31 @@ public class GameController implements InputEventListener {
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
 
         return new DownData(clearRow, board.getViewData());
+    }
+
+    // GameController.java (New method implementation)
+
+    @Override
+    public void onBackToMenuEvent() {
+        // 1. CRITICAL: Stop the game loop/timeline
+        // If your game loop is driven by a JavaFX Timeline, you MUST stop it here.
+        // Replace 'viewGuiController.stopGameLoop()' with the actual method call
+        // that halts your game's timer/thread.
+        // viewGuiController.stopGameLoop();
+
+        if (mainApp != null) {
+            try {
+                // 2. Access the current Stage/Window
+                // This gets the window the game scene is currently displayed on.
+                Stage currentStage = (Stage) viewGuiController.getViewRoot().getScene().getWindow();
+
+                // 3. Switch the scene back to the main menu
+                mainApp.showMainMenu(currentStage);
+            } catch (Exception e) {
+                System.err.println("Failed to switch back to Main Menu.");
+                e.printStackTrace();
+            }
+        }
     }
 
 
