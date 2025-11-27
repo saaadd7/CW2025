@@ -9,31 +9,30 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.scene.layout.VBox; // Import VBox for the settings pane
+import javafx.scene.layout.VBox;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.event.ActionEvent; // Added for explicit event handling
+import javafx.scene.layout.AnchorPane;// Added for the helpOverlay (if using FXML approach)
 
 public class MainMenuController {
 
+    // --- FXML ELEMENTS ---
     @FXML private Button startButton;
     @FXML private Button settingsButton;
-    // @FXML private Button soundToggleButton; // REMOVED - This button is now in settingsMenu.fxml
+    @FXML private Button helpButton;
+    @FXML private AnchorPane helpOverlay;// The Help button added in FXML
 
+    // If you decide to use the FXML overlay method, you must include this:
+    // @FXML private AnchorPane helpOverlay;
+
+
+    // --- CLASS MEMBERS ---
     private Stage stage;     // we store stage to switch scenes
     private Main mainApp;    // reference to Main to call show/load functions
     private SoundManager soundManager; // Reference to the shared SoundManager instance
 
-    // 1. New Method to receive the SoundManager instance from Main.java
-    public void setSoundManager(SoundManager soundManager) {
-        this.soundManager = soundManager;
-    }
-
-    @FXML
-    public void startGame() {
-        try {
-            mainApp.loadGame(stage); // This will switch the scene to the game screen
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
+    // --- INITIALIZATION AND SETTERS ---
 
     // Set the stage (from Main class)
     public void setStage(Stage stage) {
@@ -45,26 +44,35 @@ public class MainMenuController {
         this.mainApp = app;
     }
 
+    // New Method to receive the SoundManager instance from Main.java
+    public void setSoundManager(SoundManager soundManager) {
+        this.soundManager = soundManager;
+    }
+
     // Initialize the controller
     @FXML
     public void initialize() {
-        // NOTE: SoundManager initialization has been moved to Main.java
-
-        // Start Game Button
-        startButton.setOnAction(e -> {
-            try {
-                mainApp.loadGame(stage); // Calls the loadGame() method in Main to switch scenes
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
+        // Start Game Button action set up in the FXML now uses the startGame() method directly
+        // startButton.setOnAction(e -> { ... }); // Removed duplicate action setup
 
         // Settings Button - NEW LOGIC to open the settings window
         settingsButton.setOnAction(e -> openSettings());
 
-        // OLD LOGIC REMOVED: soundToggleButton.setOnAction(e -> toggleSounds());
-        // OLD LOGIC REMOVED: updateSoundButtonText();
+        // Help Button action is set up in the FXML now uses handleHelpButton()
     }
+
+    // --- GAME ACTIONS ---
+
+    @FXML
+    public void startGame() {
+        try {
+            mainApp.loadGame(stage); // This will switch the scene to the game screen
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    // --- SETTINGS WINDOW ---
 
     // NEW METHOD to open the settings window
     private void openSettings() {
@@ -98,9 +106,47 @@ public class MainMenuController {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Failed to load settings menu.");
+            // You might want to show an Alert here instead of just printing
         }
     }
 
-    // OLD LOGIC REMOVED: @FXML private void toggleSounds() {...}
-    // OLD LOGIC REMOVED: private void updateSoundButtonText() {...}
+    // --- HELP BUTTON FUNCTIONALITY ---
+
+    // Method called when the FXML Help button is pressed
+    @FXML
+    public void handleHelpButton(ActionEvent event) {
+        showHelpDialog();
+        // If you used the FXML overlay approach: helpOverlay.setVisible(true);
+    }
+
+    // Method to show the help dialog with control instructions
+    private void showHelpDialog() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Game Controls");
+        alert.setHeaderText("Game Controls");
+
+        // Final, simplified control list
+        alert.setContentText(
+                "Game Controls:\n\n" +
+                        "- ← (Left Arrow): Move piece left\n" +
+                        "- → (Right Arrow): Move piece right\n" +
+                        "- ↑ (Up Arrow) / X: Rotate piece Clockwise ONLY\n" +
+                        "- ↓ (Down Arrow): Soft Drop (Speed up)\n" +
+                        "- Space: Hard Drop (Instantly place)\n"
+
+        );
+
+        // Show and wait for the user to close the dialog
+        alert.showAndWait();
+    }
+
+
+    @FXML
+    private void handleCloseHelp(ActionEvent event) {
+        if (helpOverlay != null) {
+            helpOverlay.setVisible(false);
+            // Re-enable the main menu buttons if you disabled them in handleHelpButton
+        }
+    }
+
 }
