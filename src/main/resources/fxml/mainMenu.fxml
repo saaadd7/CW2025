@@ -45,4 +45,7 @@
             layoutY="650"
             prefWidth="140"
             prefHeight="40"/>
+
+    <Button fx:id="helpButton" text="Help" onAction="#handleHelpButton" />
+
 </AnchorPane>
