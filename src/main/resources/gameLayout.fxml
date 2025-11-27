@@ -68,11 +68,17 @@
         </HBox>
     </VBox>
 
-    <Group fx:id="groupNotification" layoutX="0" layoutY="203">
-        <VBox alignment="CENTER">
-            <GameOverPanel fx:id="gameOverPanel"/>
-        </VBox>
-    </Group>
+    <StackPane fx:id="groupNotification"
+               alignment="CENTER"
+               layoutX="-7"
+               layoutY="-50"
+               pickOnBounds="false"
+               mouseTransparent="true"
+               prefWidth="600"
+               prefHeight="900">
+
+        <GameOverPanel fx:id="gameOverPanel"/>
+    </StackPane>
 
     <stylesheets>
         <URL value="@window_style.css"/>

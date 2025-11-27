@@ -22,6 +22,8 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 import java.util.List;
 import javafx.scene.Parent;
+import javafx.scene.layout.StackPane;
+
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -45,7 +47,8 @@ public class GuiController implements Initializable {
     // FXML COMPONENTS
     // =========================================
     @FXML private GridPane gamePanel;
-    @FXML private Group groupNotification;
+    @FXML private StackPane groupNotification;
+  // @FXML private Group groupNotification;
     @FXML private GridPane brickPanel;
     @FXML private GameOverPanel gameOverPanel;
     @FXML private javafx.scene.control.Label scoreLabel;
