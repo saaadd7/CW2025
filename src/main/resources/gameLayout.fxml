@@ -1,95 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import com.comp2042.GameOverPanel?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.Group?>
-<?import javafx.scene.text.Text?>
 <?import java.net.URL?>
 
-<Pane fx:id="viewRoot"
-      fx:controller="com.comp2042.GuiController"
-      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      style="-fx-background-color: #333333;">
+<StackPane fx:id="viewRoot"
+           fx:controller="com.comp2042.GuiController"
+           xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           style="-fx-background-color: linear-gradient(to bottom, #1a1a2e 0%, #16213e 100%);">
 
-    <BorderPane fx:id="gameBoard" styleClass="gameBoard" layoutX="180" layoutY="180">
-        <center>
-            <GridPane fx:id="gamePanel" hgap="1" vgap="1"/>
-        </center>
-    </BorderPane>
+    <HBox alignment="CENTER" spacing="30">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
 
-    <GridPane fx:id="brickPanel" vgap="1" hgap="1" layoutX="180" layoutY="180"/>
+        
+        <VBox spacing="20" alignment="CENTER" minWidth="180">
+            <Label text="LEVEL" styleClass="section-title"/>
+            <Label fx:id="levelLabel" text="1" prefWidth="140" prefHeight="80" alignment="CENTER" styleClass="level-display"/>
 
-    <VBox alignment="CENTER" layoutX="-10" layoutY="30" prefWidth="600" style="-fx-padding: 20 0 0 0;">
-        <Label fx:id="scoreLabel"
-               text="Score: 0"
-               prefWidth="200"
-               prefHeight="60"
-               alignment="CENTER"
-               style="
-               -fx-background-color: black;
-               -fx-text-fill: yellow;
-               -fx-font-family: 'digital';
-               -fx-font-size: 28px;
-               -fx-border-color: white;
-               -fx-border-width: 2;
-               -fx-border-radius: 10;
-               -fx-background-radius: 10;
-           "/>
+            <VBox spacing="8" alignment="CENTER" style="-fx-padding: 20 0 0 0;">
+                <Label text="CONTROLS" styleClass="controls-title"/>
+                <Label text="← → Move" styleClass="control-text"/>
+                <Label text="↑ Rotate" styleClass="control-text"/>
+                <Label text="↓ Soft Drop" styleClass="control-text"/>
+                <Label text="SPACE Hard Drop" styleClass="control-text"/>
+            </VBox>
+        </VBox>
 
-        <Label fx:id="levelLabel"
-               text="Level: 1"
-               prefWidth="200"
-               prefHeight="60"
-               alignment="CENTER"
-               style="
-               -fx-background-color: black;
-               -fx-text-fill: cyan;
-               -fx-font-family: 'digital';
-               -fx-font-size: 28px;
-               -fx-border-color: white;
-               -fx-border-width: 2;
-               -fx-border-radius: 10;
-               -fx-background-radius: 10;
-               -fx-padding: 10 0 0 0;
-           "/>
-    </VBox>
+        
+        <VBox spacing="15" alignment="CENTER">
 
-    <VBox layoutX="450" layoutY="300" spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 20 0 10 0;">
-        <VBox layoutY="200" spacing="5" alignment="CENTER"> <!-- Center the VBox itself -->
-            <Label text="NEXT PIECE"
-                   style="-fx-text-fill: white;
-                      -fx-font-size: 18px;
-                      -fx-font-weight: bold;" />
-            <VBox spacing="6" alignment="CENTER"> <!-- Ensure alignment of the GridPanes -->
-                <StackPane style="-fx-border-color: yellow; -fx-border-width: 4; -fx-border-radius: 4; -fx-padding: 4;">
-                    <GridPane fx:id="nextGrid" hgap="0" vgap="0" prefWidth="10" prefHeight="10" alignment="CENTER"/>
+            <StackPane styleClass="score-container" alignment="CENTER">
+                <Label fx:id="scoreLabel" text="0" styleClass="score-display"/>
+            </StackPane>
+
+            <StackPane fx:id="gameContainer">
+                <BorderPane fx:id="gameBoard" styleClass="gameBoard" prefWidth="212" maxWidth="212" prefHeight="412">
+                    <center>
+                                <StackPane style="-fx-padding: 0; -fx-background-color: transparent;">
+                                    <GridPane fx:id="gamePanel" hgap="0" vgap="0" alignment="CENTER"
+                                              prefWidth="200" maxWidth="200" prefHeight="400" maxHeight="400"
+                                              style="-fx-padding: 0;"/>
+                                </StackPane>
+                            </center>                </BorderPane>
+                <StackPane fx:id="groupNotification" visible="false">
+                    <GameOverPanel fx:id="gameOverPanel"/>
+                </StackPane>
+            </StackPane>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button fx:id="pauseButton" text="PAUSE" minWidth="100" prefHeight="45"
+                        onAction="#pauseGame" styleClass="game-button"/>
+                <Button text="RESTART" minWidth="100" prefHeight="45"
+                        onAction="#newGame" styleClass="game-button"/>
+                <Button text="MENU" minWidth="100" prefHeight="45"
+                        onAction="#backToMainMenu" styleClass="game-button"/>
+            </HBox>
+        </VBox>
+
+        
+        <VBox spacing="10" alignment="CENTER" minWidth="180">
+            <VBox alignment="TOP_CENTER" spacing="10" styleClass="next-piece-container" prefWidth="150" prefHeight="150">
+                <padding>
+                    <Insets top="10"/>
+                </padding>
+                <Label text="NEXT" styleClass="section-title"/>
+                <StackPane alignment="CENTER">
+                    <GridPane fx:id="nextGrid" alignment="CENTER" hgap="1" vgap="1"/>
                 </StackPane>
             </VBox>
         </VBox>
-    </VBox>
 
-    <VBox alignment="CENTER" layoutX="0" layoutY="680" prefWidth="600" style="-fx-padding: 20 0 20 0;">
-        <HBox spacing="20" alignment="CENTER">
-            <Button fx:id="pauseButton" text="Pause" prefWidth="80" onAction="#pauseGame"/>
-            <Button text="Restart" prefWidth="80" onAction="#newGame"/>
-            <Button text="Main Menu" prefWidth="100" onAction="#backToMainMenu"/>
-        </HBox>
-    </VBox>
-
-    <StackPane fx:id="groupNotification"
-               alignment="CENTER"
-               layoutX="-7"
-               layoutY="-50"
-               pickOnBounds="false"
-               mouseTransparent="true"
-               prefWidth="600"
-               prefHeight="900">
-
-        <GameOverPanel fx:id="gameOverPanel"/>
-    </StackPane>
+    </HBox>
 
     <stylesheets>
         <URL value="@window_style.css"/>
     </stylesheets>
-</Pane>
+</StackPane>

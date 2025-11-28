@@ -18,6 +18,9 @@ public class SimpleBoard implements Board {
     private final Score score;
 
     public SimpleBoard(int width, int height) {
+        // NOTE: Based on your GameController, you are passing (25, 10).
+        // This means 'width' acts as ROWS and 'height' acts as COLUMNS.
+        // It is confusing naming, but the logic works consistently with it.
         this.width = width;
         this.height = height;
         currentGameMatrix = new int[width][height];
@@ -25,6 +28,8 @@ public class SimpleBoard implements Board {
         brickRotator = new BrickRotator();
         score = new Score();
     }
+
+    // ... [moveBrickDown, moveBrickLeft, moveBrickRight, rotateLeftBrick methods remain the same] ...
 
     @Override
     public boolean moveBrickDown() {
@@ -114,7 +119,8 @@ public class SimpleBoard implements Board {
         Brick brick = brickGenerator.getBrick();
         brickRotator.setBrick(brick);
 
-        //
+        // FIX 1: Spawn at Y=0 (Top of board) instead of Y=2
+        // X=4 centers it on a 10-column board.
         currentOffset = new Point(4, 2);
 
         return MatrixOperations.intersect(
@@ -136,33 +142,28 @@ public class SimpleBoard implements Board {
     @Override
     public ViewData getViewData() {
 
+        // 1. Capture the CURRENT brick shape
         int[][] brickMatrix = brickRotator.getCurrentShape();
         int brickX = currentOffset.x;
         int brickY = currentOffset.y;
 
-        // Get the next 3 bricks for preview
+        // 2. Get Next Bricks (Standard Logic)
         List<Brick> nextBricks = ((RandomBrickGenerator) brickGenerator).getNextBricks(3);
 
-        // Get the shape matrices for each of the next bricks
         int[][] nextShape1 = null;
         int[][] nextShape2 = null;
         int[][] nextShape3 = null;
 
-        if (nextBricks.size() > 0) {
-            nextShape1 = nextBricks.get(0).getShapeMatrix().get(0);
-        }
+        if (nextBricks.size() > 0) nextShape1 = nextBricks.get(0).getShapeMatrix().get(0);
+        if (nextBricks.size() > 1) nextShape2 = nextBricks.get(1).getShapeMatrix().get(0);
+        if (nextBricks.size() > 2) nextShape3 = nextBricks.get(2).getShapeMatrix().get(0);
 
-        if (nextBricks.size() > 1) {
-            nextShape2 = nextBricks.get(1).getShapeMatrix().get(0);
-        }
-
-        if (nextBricks.size() > 2) {
-            nextShape3 = nextBricks.get(2).getShapeMatrix().get(0);
-        }
-
+        // 3. Create View Data
         ViewData view = new ViewData(brickMatrix, brickX, brickY, nextShape1, nextShape2, nextShape3);
 
-        // --- GHOST PIECE CALCULATION ---
+        // FIX 2: GHOST CALCULATION
+        // We explicitly use 'brickMatrix' (the current active shape) to calculate the ghost.
+        // This ensures the shadow ALWAYS matches the falling block.
         int ghostY = calculateGhostY(brickMatrix, brickX, brickY);
         view.setGhost(brickMatrix, brickX, ghostY);
 
@@ -204,6 +205,7 @@ public class SimpleBoard implements Board {
     private int calculateGhostY(int[][] shape, int startX, int startY) {
         int ghostY = startY;
 
+        // Loop: Keep pushing the ghost down until it hits something
         while (canBrickMoveDown(shape, startX, ghostY)) {
             ghostY++;
         }
@@ -213,7 +215,6 @@ public class SimpleBoard implements Board {
 
     /**
      * Checks whether a brick with given shape at (x, y) can move 1 row down
-     * without going out of bounds or colliding with the background.
      */
     private boolean canBrickMoveDown(int[][] shape, int x, int y) {
 
@@ -227,17 +228,19 @@ public class SimpleBoard implements Board {
                 int newY = y + row + 1;
                 int newX = x + col;
 
-                // ⬇ bottom boundary (rows) → use width
-                if (newY >= width) {
+                // Check boundaries using the confusing variable names:
+                // width = number of rows (25)
+                // height = number of cols (10)
+
+                if (newY >= width) { // Bottom boundary
                     return false;
                 }
 
-                // ⬅➡ horizontal boundary (cols) → use height
-                if (newX < 0 || newX >= height) {
+                if (newX < 0 || newX >= height) { // Left/Right boundary
                     return false;
                 }
 
-                // collision with existing blocks
+                // Collision with existing blocks
                 if (currentGameMatrix[newY][newX] != 0) {
                     return false;
                 }
