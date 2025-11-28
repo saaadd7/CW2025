@@ -154,6 +154,7 @@
 .gameOverStyle {
     -fx-font-family: 'digital', 'Arial', sans-serif;
     -fx-font-size: 56px;
+    -fx-text-fill: white;
     -fx-background-color: rgba(44, 62, 80, 0.95);
     -fx-padding: 30px 50px;
     -fx-background-radius: 15px;

@@ -68,7 +68,7 @@
                 <padding>
                     <Insets top="10"/>
                 </padding>
-                <Label text="NEXT" styleClass="section-title"/>
+                <Label text="NEXT PIECE" styleClass="section-title"/>
                 <StackPane alignment="CENTER">
                     <GridPane fx:id="nextGrid" alignment="CENTER" hgap="1" vgap="1"/>
                 </StackPane>
