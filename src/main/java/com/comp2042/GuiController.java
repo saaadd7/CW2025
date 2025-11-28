@@ -55,11 +55,8 @@ public class GuiController implements Initializable {
     @FXML private javafx.scene.control.Button pauseButton;
     // to show the next 3 pieces
     @FXML
-    private GridPane nextGrid1;
-    @FXML
-    private GridPane nextGrid2;
-    @FXML
-    private GridPane nextGrid3;
+    private GridPane nextGrid;
+
 
     @FXML
     private Parent viewRoot;
@@ -87,9 +84,7 @@ public class GuiController implements Initializable {
 
     private static final int NEXT_GRID_SIZE = 2;
 
-    private Rectangle[][] nextCells1 = new Rectangle[NEXT_GRID_SIZE][NEXT_GRID_SIZE];
-    private Rectangle[][] nextCells2 = new Rectangle[NEXT_GRID_SIZE][NEXT_GRID_SIZE];
-    private Rectangle[][] nextCells3 = new Rectangle[NEXT_GRID_SIZE][NEXT_GRID_SIZE];
+    private Rectangle[][] nextCells = new Rectangle[NEXT_GRID_SIZE][NEXT_GRID_SIZE];
 
 
 
@@ -114,9 +109,8 @@ public class GuiController implements Initializable {
         brickPanel.setHgap(0);
         brickPanel.setVgap(0);
 
-        initNextGrid(nextGrid1, nextCells1);
-        initNextGrid(nextGrid2, nextCells2);
-        initNextGrid(nextGrid3, nextCells3);
+        initNextGrid(nextGrid, nextCells);
+
 
 
         gamePanel.setFocusTraversable(true);
@@ -444,9 +438,8 @@ public class GuiController implements Initializable {
     // NEXT PIECES PREVIEW (3 boxes)
 // =========================================
     private void updatePreviews(ViewData brick) {
-        drawPreview(nextGrid1, brick.getNextBrickData1());
-        drawPreview(nextGrid2, brick.getNextBrickData2());
-        drawPreview(nextGrid3, brick.getNextBrickData3());
+        drawPreview(nextGrid, brick.getNextBrickData1());
+
     }
     private void drawPreview(GridPane panel, int[][] data) {
         if (panel == null || data == null) return;
