@@ -15,4 +15,6 @@ public interface InputEventListener {
     void onBackToMenuEvent();
 
     void createNewGame();
+
+   // void onLevelUp(int newLevel);
 }

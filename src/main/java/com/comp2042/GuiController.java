@@ -39,6 +39,9 @@ public class GuiController implements Initializable {
     private static final int BRICK_Y_OFFSET = 180;
     private static final int X_FINE_TUNE_OFFSET = 12;
     private static final int PREVIEW_PIXEL_OFFSET = 6;
+    private int level = 1;
+    private int totalLinesCleared = 0;
+    private static final int LINES_PER_LEVEL = 5;
 
 
     private double gridXBase = 0;
@@ -48,12 +51,14 @@ public class GuiController implements Initializable {
     // =========================================
     @FXML private GridPane gamePanel;
     @FXML private StackPane groupNotification;
-  // @FXML private Group groupNotification;
+    // @FXML private Group groupNotification;
     @FXML private GridPane brickPanel;
     @FXML private GameOverPanel gameOverPanel;
     @FXML private javafx.scene.control.Label scoreLabel;
     @FXML private javafx.scene.control.Button pauseButton;
-    // to show the next 3 pieces
+    @FXML private javafx.scene.control.Label levelLabel;
+
+    // to show the next piece
     @FXML
     private GridPane nextGrid;
 
@@ -476,6 +481,22 @@ public class GuiController implements Initializable {
     private void handleDropResult(DownData data) {
 
         if (data.getClearRow() != null && data.getClearRow().getLinesRemoved() > 0) {
+            int linesRemoved = data.getClearRow().getLinesRemoved();
+            totalLinesCleared += linesRemoved;
+
+            // Check if we should level up
+            int newLevel = (totalLinesCleared / LINES_PER_LEVEL) + 1;
+            if (newLevel > level) {
+                level = newLevel;
+                levelLabel.setText("Level: " + level);
+                updateGameSpeed(); // Speed up the game!
+
+                // Optional: Show level up notification
+                NotificationPanel levelUp = new NotificationPanel("LEVEL " + level + "!");
+                groupNotification.getChildren().add(levelUp);
+                levelUp.showScore(groupNotification.getChildren());
+            }
+
             NotificationPanel np = new NotificationPanel("+" + data.getClearRow().getScoreBonus());
             groupNotification.getChildren().add(np);
             np.showScore(groupNotification.getChildren());
@@ -529,8 +550,14 @@ public class GuiController implements Initializable {
         isPause.setValue(false);
         isGameOver.setValue(false);
         pauseButton.setText("Pause");
+
+        // Reset level system
+        level = 1;
+        totalLinesCleared = 0;
+        levelLabel.setText("Level: 1");
+
         gamePanel.requestFocus();
-        timeLine.play();
+        updateGameSpeed(); // Start with level 1 speed
     }
 
 
@@ -551,5 +578,22 @@ public class GuiController implements Initializable {
 
     public Parent getViewRoot() {
         return viewRoot; // This must not be null!
+    }
+
+    private int getDropSpeedForLevel() {
+        // Start at 400ms, decrease by 40ms per level
+        int baseSpeed = 400;
+        int speedDecrease = 40;
+        int minSpeed = 100;
+
+        return Math.max(minSpeed, baseSpeed - (level - 1) * speedDecrease);
+    }
+
+    private void updateGameSpeed() {
+        timeLine.stop();
+        timeLine = new Timeline(new KeyFrame(Duration.millis(getDropSpeedForLevel()),
+                e -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))));
+        timeLine.setCycleCount(Timeline.INDEFINITE);
+        timeLine.play();
     }
 }

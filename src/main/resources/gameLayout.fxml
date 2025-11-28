@@ -20,22 +20,39 @@
 
     <GridPane fx:id="brickPanel" vgap="1" hgap="1" layoutX="180" layoutY="180"/>
 
-    <VBox alignment="CENTER" layoutX="-10" layoutY="80" prefWidth="600" style="-fx-padding: 20 0 0 0;">
+    <VBox alignment="CENTER" layoutX="-10" layoutY="30" prefWidth="600" style="-fx-padding: 20 0 0 0;">
         <Label fx:id="scoreLabel"
                text="Score: 0"
                prefWidth="200"
                prefHeight="60"
                alignment="CENTER"
                style="
-                   -fx-background-color: black;
-                   -fx-text-fill: yellow;
-                   -fx-font-family: 'digital';
-                   -fx-font-size: 28px;
-                   -fx-border-color: white;
-                   -fx-border-width: 2;
-                   -fx-border-radius: 10;
-                   -fx-background-radius: 10;
-               "/>
+               -fx-background-color: black;
+               -fx-text-fill: yellow;
+               -fx-font-family: 'digital';
+               -fx-font-size: 28px;
+               -fx-border-color: white;
+               -fx-border-width: 2;
+               -fx-border-radius: 10;
+               -fx-background-radius: 10;
+           "/>
+
+        <Label fx:id="levelLabel"
+               text="Level: 1"
+               prefWidth="200"
+               prefHeight="60"
+               alignment="CENTER"
+               style="
+               -fx-background-color: black;
+               -fx-text-fill: cyan;
+               -fx-font-family: 'digital';
+               -fx-font-size: 28px;
+               -fx-border-color: white;
+               -fx-border-width: 2;
+               -fx-border-radius: 10;
+               -fx-background-radius: 10;
+               -fx-padding: 10 0 0 0;
+           "/>
     </VBox>
 
     <VBox layoutX="450" layoutY="300" spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 20 0 10 0;">
