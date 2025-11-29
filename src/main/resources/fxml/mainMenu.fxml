@@ -1,94 +1,234 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.GaussianBlur?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/21.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.comp2042.ui.MainMenuController"
-            prefWidth="600" prefHeight="800">
+<StackPane xmlns="http://javafx.com/javafx/21.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.comp2042.ui.MainMenuController"
+           fx:id="rootPane"
+           prefWidth="600" prefHeight="800">
 
-    <ImageView fitWidth="600" fitHeight="800" preserveRatio="false">
+    <!-- Background Image - Will expand to fill window -->
+    <ImageView fx:id="backgroundImage" preserveRatio="false"
+               StackPane.alignment="CENTER">
         <image>
             <Image url="@../images/IMG_1032.JPG"/>
         </image>
+        <effect>
+            <GaussianBlur radius="5"/>
+        </effect>
     </ImageView>
 
-    <Label text="Welcome to Tetris"
-           layoutX="150"
-           layoutY="120"
-           prefWidth="300"
-           prefHeight="60"
-           alignment="CENTER"
-           style="-fx-background-color: black;
-                  -fx-text-fill: red;
-                  -fx-font-size: 32px;
-                  -fx-font-weight: bold;"/>
+    <!-- Dynamic Dark Overlay with Vignette Effect -->
+    <AnchorPane style="-fx-background-color:
+                       radial-gradient(center 50% 50%, radius 100%,
+                       rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.75));"/>
 
-    <Button fx:id="startButton"
-            text="Start Game"
-            layoutX="230"
-            layoutY="600"
-            prefWidth="140"
-            prefHeight="40"
-            onAction="#startGame"/>
+    <!-- Main Content Container -->
+    <VBox alignment="CENTER" spacing="60" style="-fx-padding: 60 40 60 40;">
 
-    <Button fx:id="settingsButton"
-            text="Settings"
-            layoutX="230"
-            layoutY="650"
-            prefWidth="140"
-            prefHeight="40"/>
+        <!-- Title Section with Enhanced Effects -->
+        <VBox alignment="CENTER" spacing="12">
+            <!-- Main Title with Background and Strong Glow -->
+            <Label text="TETRIS"
+                   style="-fx-text-fill: #ff3333;
+                          -fx-font-size: 88px;
+                          -fx-font-weight: bold;
+                          -fx-font-family: 'Impact', 'Arial Black', sans-serif;
+                          -fx-background-color: rgba(0, 0, 0, 0.75);
+                          -fx-background-radius: 15px;
+                          -fx-padding: 15 40 15 40;
+                          -fx-border-color: #ff3333;
+                          -fx-border-width: 3px;
+                          -fx-border-radius: 15px;
+                          -fx-effect: dropshadow(gaussian, rgba(255, 51, 51, 1.0), 40, 0.9, 0, 0),
+                                     dropshadow(gaussian, rgba(255, 51, 51, 0.8), 80, 0.7, 0, 0),
+                                     dropshadow(gaussian, rgba(0, 0, 0, 0.9), 20, 0.8, 0, 8);"/>
 
-    <Button fx:id="helpButton"
-            text="Help"
-            onAction="#handleHelpButton"
-            layoutX="230"
-            layoutY="700"
-            prefWidth="140"
-            prefHeight="40"/>
+        </VBox>
 
+        <!-- Flexible Spacer -->
+        <VBox VBox.vgrow="ALWAYS"/>
+
+        <!-- Menu Buttons Container -->
+        <VBox alignment="CENTER" spacing="20" style="-fx-padding: 0 40 0 40;">
+
+            <!-- Start Game Button - Green/Success Color -->
+            <Button fx:id="startButton"
+                    text="START GAME"
+                    onAction="#startGame"
+                    prefWidth="320"
+                    prefHeight="65"
+                    style="-fx-background-color: linear-gradient(to bottom, #27ae60 0%, #229954 50%, #1e8449 100%);
+                           -fx-background-radius: 12px;
+                           -fx-text-fill: white;
+                           -fx-font-family: 'Arial Black', 'Arial', sans-serif;
+                           -fx-font-size: 24px;
+                           -fx-font-weight: bold;
+                           -fx-cursor: hand;
+                           -fx-border-color: #1e8449;
+                           -fx-border-width: 3px;
+                           -fx-border-radius: 12px;
+                           -fx-effect: dropshadow(gaussian, rgba(39, 174, 96, 0.6), 15, 0.5, 0, 5),
+                                      innershadow(gaussian, rgba(255, 255, 255, 0.3), 5, 0.3, 0, 1);"/>
+
+            <!-- Settings Button - Orange/Warning Color -->
+            <Button fx:id="settingsButton"
+                    text="SETTINGS"
+                    prefWidth="320"
+                    prefHeight="60"
+                    style="-fx-background-color: linear-gradient(to bottom, #f39c12 0%, #e67e22 50%, #d68910 100%);
+                           -fx-background-radius: 12px;
+                           -fx-text-fill: white;
+                           -fx-font-family: 'Arial Black', 'Arial', sans-serif;
+                           -fx-font-size: 22px;
+                           -fx-font-weight: bold;
+                           -fx-cursor: hand;
+                           -fx-border-color: #ca6f1e;
+                           -fx-border-width: 3px;
+                           -fx-border-radius: 12px;
+                           -fx-effect: dropshadow(gaussian, rgba(243, 156, 18, 0.5), 15, 0.5, 0, 5),
+                                      innershadow(gaussian, rgba(255, 255, 255, 0.3), 5, 0.3, 0, 1);"/>
+
+            <!-- Help Button - Purple/Info Color -->
+            <Button fx:id="helpButton"
+                    text="HELP"
+                    onAction="#handleHelpButton"
+                    prefWidth="320"
+                    prefHeight="60"
+                    style="-fx-background-color: linear-gradient(to bottom, #8e44ad 0%, #7d3c98 50%, #6c3483 100%);
+                           -fx-background-radius: 12px;
+                           -fx-text-fill: white;
+                           -fx-font-family: 'Arial Black', 'Arial', sans-serif;
+                           -fx-font-size: 22px;
+                           -fx-font-weight: bold;
+                           -fx-cursor: hand;
+                           -fx-border-color: #5b2c6f;
+                           -fx-border-width: 3px;
+                           -fx-border-radius: 12px;
+                           -fx-effect: dropshadow(gaussian, rgba(142, 68, 173, 0.5), 15, 0.5, 0, 5),
+                                      innershadow(gaussian, rgba(255, 255, 255, 0.3), 5, 0.3, 0, 1);"/>
+        </VBox>
+
+        <!-- Bottom Spacer -->
+        <VBox prefHeight="30"/>
+
+    </VBox>
+
+    <!-- Help Overlay (Hidden by default) -->
     <AnchorPane fx:id="helpOverlay"
-                AnchorPane.topAnchor="0"
-                AnchorPane.bottomAnchor="0"
-                AnchorPane.leftAnchor="0"
-                AnchorPane.rightAnchor="0"
-                style="-fx-background-color: rgba(0, 0, 0, 0.8);"
+                style="-fx-background-color: rgba(0, 0, 0, 0.88);"
                 visible="false">
 
+        <!-- Help Content Card -->
         <VBox alignment="TOP_CENTER"
-              layoutX="100"
-              layoutY="100"
-              prefWidth="400"
-              prefHeight="600"
-              spacing="15"
-              style="-fx-background-color: #333333; -fx-border-color: red; -fx-border-width: 3; -fx-padding: 20;">
+              layoutX="75"
+              layoutY="80"
+              prefWidth="450"
+              prefHeight="640"
+              spacing="22"
+              style="-fx-background-color: linear-gradient(to bottom, #2c3e50 0%, #1c2833 100%);
+                     -fx-background-radius: 18px;
+                     -fx-border-color: #8e44ad;
+                     -fx-border-width: 4px;
+                     -fx-border-radius: 18px;
+                     -fx-padding: 40 35 40 35;
+                     -fx-effect: dropshadow(gaussian, rgba(142, 68, 173, 0.6), 25, 0.6, 0, 10),
+                                dropshadow(gaussian, rgba(0, 0, 0, 0.8), 40, 0.5, 0, 15);">
 
+            <!-- Help Title -->
             <Label text="GAME CONTROLS"
-                   style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;">
+                   style="-fx-text-fill: #8e44ad;
+                          -fx-font-size: 36px;
+                          -fx-font-weight: bold;
+                          -fx-font-family: 'Impact', 'Arial Black', sans-serif;
+                          -fx-effect: dropshadow(gaussian, rgba(142, 68, 173, 0.8), 10, 0.5, 0, 3);">
                 <VBox.margin>
                     <Insets bottom="10"/>
                 </VBox.margin>
             </Label>
 
-            <Label text="Move Left: Left Arrow ( ← )" style="-fx-text-fill: white; -fx-font-size: 18px;"/>
-            <Label text="Move Right: Right Arrow ( → )" style="-fx-text-fill: white; -fx-font-size: 18px;"/>
-            <Label text="Rotate Clockwise: Up Arrow ( ↑ ) or X" style="-fx-text-fill: white; -fx-font-size: 18px;"/>
-            <Label text="Soft Drop (Speed up): Down Arrow ( ↓ )" style="-fx-text-fill: white; -fx-font-size: 18px;"/>
-            <Label text="Hard Drop (Place instantly): Spacebar" style="-fx-text-fill: white; -fx-font-size: 18px;"/>
-
-
-            <Button text="Close"
-                    onAction="#handleCloseHelp"
-                    prefWidth="100"
-                    prefHeight="30">
+            <!-- Decorative Separator -->
+            <AnchorPane prefHeight="3" prefWidth="380"
+                        style="-fx-background-color: linear-gradient(to right,
+                               transparent, #8e44ad, transparent);
+                               -fx-effect: dropshadow(gaussian, rgba(142, 68, 173, 0.5), 5, 0.5, 0, 0);">
                 <VBox.margin>
-                    <Insets top="30"/>
+                    <Insets bottom="15"/>
+                </VBox.margin>
+            </AnchorPane>
+
+            <!-- Control Instructions with Icon-like Styling -->
+            <VBox spacing="18" alignment="CENTER_LEFT" style="-fx-padding: 0 25 0 25;">
+
+                <Label text="◄  Move Left"
+                       style="-fx-text-fill: #3498db; -fx-font-size: 22px;
+                              -fx-font-weight: bold;
+                              -fx-font-family: 'Arial', sans-serif;"/>
+
+                <Label text="►  Move Right"
+                       style="-fx-text-fill: #3498db; -fx-font-size: 22px;
+                              -fx-font-weight: bold;
+                              -fx-font-family: 'Arial', sans-serif;"/>
+
+                <Label text="▲ / X  Rotate Clockwise"
+                       style="-fx-text-fill: #9b59b6; -fx-font-size: 22px;
+                              -fx-font-weight: bold;
+                              -fx-font-family: 'Arial', sans-serif;"/>
+
+                <Label text="▼  Soft Drop (Speed Up)"
+                       style="-fx-text-fill: #f39c12; -fx-font-size: 22px;
+                              -fx-font-weight: bold;
+                              -fx-font-family: 'Arial', sans-serif;"/>
+
+                <!-- Highlighted Space Bar -->
+                <VBox spacing="5" style="-fx-background-color: rgba(39, 174, 96, 0.2);
+                                         -fx-background-radius: 8px;
+                                         -fx-padding: 12 15 12 15;
+                                         -fx-border-color: #27ae60;
+                                         -fx-border-width: 2px;
+                                         -fx-border-radius: 8px;">
+                    <Label text="SPACEBAR"
+                           style="-fx-text-fill: #27ae60; -fx-font-size: 24px;
+                                  -fx-font-weight: bold;
+                                  -fx-font-family: 'Arial Black', sans-serif;"/>
+                    <Label text="Hard Drop (Instant Place)"
+                           style="-fx-text-fill: #ecf0f1; -fx-font-size: 16px;
+                                  -fx-font-style: italic;"/>
+                </VBox>
+            </VBox>
+
+            <!-- Spacer -->
+            <VBox VBox.vgrow="ALWAYS"/>
+
+            <!-- Close Button -->
+            <Button text="CLOSE"
+                    onAction="#handleCloseHelp"
+                    prefWidth="220"
+                    prefHeight="55"
+                    style="-fx-background-color: linear-gradient(to bottom, #e74c3c 0%, #c0392b 100%);
+                           -fx-background-radius: 12px;
+                           -fx-text-fill: white;
+                           -fx-font-family: 'Arial Black', 'Arial', sans-serif;
+                           -fx-font-size: 20px;
+                           -fx-font-weight: bold;
+                           -fx-cursor: hand;
+                           -fx-border-color: #a93226;
+                           -fx-border-width: 3px;
+                           -fx-border-radius: 12px;
+                           -fx-effect: dropshadow(gaussian, rgba(231, 76, 60, 0.5), 12, 0.5, 0, 4),
+                                      innershadow(gaussian, rgba(255, 255, 255, 0.2), 5, 0.3, 0, 1);">
+                <VBox.margin>
+                    <Insets top="15"/>
                 </VBox.margin>
             </Button>
 
@@ -96,4 +236,4 @@
 
     </AnchorPane>
 
-</AnchorPane>
+</StackPane>

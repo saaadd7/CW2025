@@ -36,17 +36,26 @@ public class SettingsController {
      */
     private void updateSoundButtonText() {
         if (soundManager != null) {
-            String status = soundManager.isSoundsEnabled() ? "On" : "Off";
+            boolean enabled = soundManager.isSoundsEnabled();
+            String status = enabled ? "On" : "Off";
             soundToggleButton.setText("Sounds: " + status);
-        } else {
-            soundToggleButton.setText("Sounds: N/A");
+
+            // Change button color based on state
+            if (enabled) {
+                soundToggleButton.setStyle("-fx-background-color: linear-gradient(to bottom, #27ae60 0%, #229954 50%, #1e8449 100%);" +
+                        " -fx-background-radius: 10px; -fx-text-fill: white; -fx-font-family: 'Arial Black', 'Arial', sans-serif;" +
+                        " -fx-font-size: 20px; -fx-font-weight: bold; -fx-cursor: hand; -fx-border-color: #1e8449;" +
+                        " -fx-border-width: 3px; -fx-border-radius: 10px;" +
+                        " -fx-effect: dropshadow(gaussian, rgba(39, 174, 96, 0.5), 12, 0.5, 0, 4), innershadow(gaussian, rgba(255, 255, 255, 0.3), 5, 0.3, 0, 1);");
+            } else {
+                soundToggleButton.setStyle("-fx-background-color: linear-gradient(to bottom, #95a5a6 0%, #7f8c8d 50%, #5d6d7e 100%);" +
+                        " -fx-background-radius: 10px; -fx-text-fill: white; -fx-font-family: 'Arial Black', 'Arial', sans-serif;" +
+                        " -fx-font-size: 20px; -fx-font-weight: bold; -fx-cursor: hand; -fx-border-color: #5d6d7e;" +
+                        " -fx-border-width: 3px; -fx-border-radius: 10px;" +
+                        " -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 12, 0.5, 0, 4), innershadow(gaussian, rgba(255, 255, 255, 0.2), 5, 0.3, 0, 1);");
+            }
         }
     }
-
-    /**
-     * FXML method called when the soundToggleButton is clicked.
-     * Toggles the sound state and updates the button text.
-     */
     @FXML
     private void toggleSounds() {
         if (soundManager != null) {

@@ -1,14 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.effect.DropShadow?>
 
-<VBox alignment="CENTER" spacing="10.0" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.comp2042.ui.SettingsController">
-    <Label text="Game Settings" style="-fx-font-size: 20pt; -fx-text-fill: red;"/>
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.comp2042.ui.SettingsController"
+           style="-fx-background-color: linear-gradient(to bottom, #1a1a1a 0%, #2c3e50 100%);"
+           prefWidth="500" prefHeight="600">
 
-    <Button fx:id="soundToggleButton" text="Toggle Sounds" onAction="#toggleSounds"/>
+    <!-- Main Settings Container -->
+    <VBox alignment="CENTER" spacing="35" style="-fx-padding: 50 40 50 40;">
 
-    <Button text="Back to Main Menu" onAction="#closeSettings"/>
-</VBox>
+        <!-- Settings Title -->
+        <VBox alignment="CENTER" spacing="10">
+            <Label text="SETTINGS"
+                   style="-fx-text-fill: #f39c12;
+                          -fx-font-size: 56px;
+                          -fx-font-weight: bold;
+                          -fx-font-family: 'Impact', 'Arial Black', sans-serif;
+                          -fx-background-color: rgba(0, 0, 0, 0.6);
+                          -fx-background-radius: 12px;
+                          -fx-padding: 15 35 15 35;
+                          -fx-border-color: #f39c12;
+                          -fx-border-width: 3px;
+                          -fx-border-radius: 12px;
+                          -fx-effect: dropshadow(gaussian, rgba(243, 156, 18, 0.8), 30, 0.7, 0, 0),
+                                     dropshadow(gaussian, rgba(0, 0, 0, 0.8), 15, 0.6, 0, 6);"/>
+
+            <Label text="Configure your game experience"
+                   style="-fx-text-fill: rgba(236, 240, 241, 0.8);
+                          -fx-font-size: 14px;
+                          -fx-font-style: italic;"/>
+        </VBox>
+
+        <!-- Spacer -->
+        <VBox VBox.vgrow="ALWAYS"/>
+
+        <!-- Settings Options Container -->
+        <VBox alignment="CENTER" spacing="25" style="-fx-padding: 20;">
+
+            <!-- Audio Section -->
+            <VBox alignment="CENTER" spacing="15"
+                  style="-fx-background-color: rgba(52, 73, 94, 0.7);
+                         -fx-background-radius: 12px;
+                         -fx-padding: 25 30 25 30;
+                         -fx-border-color: rgba(149, 165, 166, 0.4);
+                         -fx-border-width: 2px;
+                         -fx-border-radius: 12px;">
+
+                <Label text="🔊 AUDIO"
+                       style="-fx-text-fill: #ecf0f1;
+                              -fx-font-size: 20px;
+                              -fx-font-weight: bold;
+                              -fx-font-family: 'Arial', sans-serif;"/>
+
+                <!-- Sound Toggle Button -->
+                <Button fx:id="soundToggleButton"
+                        text="Sounds: On"
+                        onAction="#toggleSounds"
+                        maxWidth="Infinity"
+                        minWidth="250"
+                        prefHeight="55"
+                        style="-fx-background-color: linear-gradient(to bottom, #27ae60 0%, #229954 50%, #1e8449 100%);
+                               -fx-background-radius: 10px;
+                               -fx-text-fill: white;
+                               -fx-font-family: 'Arial Black', 'Arial', sans-serif;
+                               -fx-font-size: 20px;
+                               -fx-font-weight: bold;
+                               -fx-cursor: hand;
+                               -fx-border-color: #1e8449;
+                               -fx-border-width: 3px;
+                               -fx-border-radius: 10px;
+                               -fx-effect: dropshadow(gaussian, rgba(39, 174, 96, 0.5), 12, 0.5, 0, 4),
+                                          innershadow(gaussian, rgba(255, 255, 255, 0.3), 5, 0.3, 0, 1);"/>
+            </VBox>
+
+        </VBox>
+
+        <!-- Spacer -->
+        <VBox VBox.vgrow="ALWAYS"/>
+
+        <!-- Back Button -->
+        <Button text="BACK TO MENU"
+                onAction="#closeSettings"
+                maxWidth="Infinity"
+                minWidth="250"
+                prefHeight="60"
+                style="-fx-background-color: linear-gradient(to bottom, #e74c3c 0%, #c0392b 100%);
+                       -fx-background-radius: 12px;
+                       -fx-text-fill: white;
+                       -fx-font-family: 'Arial Black', 'Arial', sans-serif;
+                       -fx-font-size: 22px;
+                       -fx-font-weight: bold;
+                       -fx-cursor: hand;
+                       -fx-border-color: #a93226;
+                       -fx-border-width: 3px;
+                       -fx-border-radius: 12px;
+                       -fx-effect: dropshadow(gaussian, rgba(231, 76, 60, 0.5), 15, 0.5, 0, 5),
+                                  innershadow(gaussian, rgba(255, 255, 255, 0.3), 5, 0.3, 0, 1);">
+            <VBox.margin>
+                <Insets top="10" left="40" right="40"/>
+            </VBox.margin>
+        </Button>
+
+    </VBox>
+
+</StackPane>
