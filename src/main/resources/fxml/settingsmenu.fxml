@@ -32,10 +32,6 @@
                           -fx-effect: dropshadow(gaussian, rgba(243, 156, 18, 0.8), 30, 0.7, 0, 0),
                                      dropshadow(gaussian, rgba(0, 0, 0, 0.8), 15, 0.6, 0, 6);"/>
 
-            <Label text="Configure your game experience"
-                   style="-fx-text-fill: rgba(236, 240, 241, 0.8);
-                          -fx-font-size: 14px;
-                          -fx-font-style: italic;"/>
         </VBox>
 
         <!-- Spacer -->

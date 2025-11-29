@@ -40,7 +40,7 @@ public class Main extends Application {
         // CRUCIAL NEW LINE: Pass the single SoundManager instance to the controller
         controller.setSoundManager(soundManager);
 
-        stage.setScene(new Scene(root, 600, 800));
+        stage.setScene(new Scene(root, 800, 800));
         stage.show();
     }
 
@@ -57,7 +57,7 @@ public class Main extends Application {
         // FIX: The application instance is 'this', not 'mainApp'
         GameController game = new GameController(gui, soundManager, this);
 
-        stage.setScene(new Scene(gameRoot, 600, 800));
+        stage.setScene(new Scene(gameRoot, 800, 800));
         stage.show();
 
         // keyboard focus
