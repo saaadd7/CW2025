@@ -11,6 +11,9 @@ public class SettingsController {
     @FXML
     private Button soundToggleButton;
 
+    @FXML
+    private Button backgroundMusicToggleButton;
+
     private SoundManager soundManager;
     private Stage settingsStage; // Reference to the window this controller manages
 
@@ -21,6 +24,7 @@ public class SettingsController {
     public void setSoundManager(SoundManager soundManager) {
         this.soundManager = soundManager;
         updateSoundButtonText(); // Set initial text
+        updateBackgroundMusicButtonText();
     }
 
     /**
@@ -56,6 +60,30 @@ public class SettingsController {
             }
         }
     }
+
+    private void updateBackgroundMusicButtonText() {
+        if (soundManager != null) {
+            boolean enabled = soundManager.isBackgroundMusicEnabled();
+            String status = enabled ? "On" : "Off";
+            backgroundMusicToggleButton.setText("Music: " + status);
+
+            // Change button color based on state
+            if (enabled) {
+                backgroundMusicToggleButton.setStyle("-fx-background-color: linear-gradient(to bottom, #27ae60 0%, #229954 50%, #1e8449 100%);" +
+                        " -fx-background-radius: 10px; -fx-text-fill: white; -fx-font-family: 'Arial Black', 'Arial', sans-serif;" +
+                        " -fx-font-size: 20px; -fx-font-weight: bold; -fx-cursor: hand; -fx-border-color: #1e8449;" +
+                        " -fx-border-width: 3px; -fx-border-radius: 10px;" +
+                        " -fx-effect: dropshadow(gaussian, rgba(39, 174, 96, 0.5), 12, 0.5, 0, 4), innershadow(gaussian, rgba(255, 255, 255, 0.3), 5, 0.3, 0, 1);");
+            } else {
+                backgroundMusicToggleButton.setStyle("-fx-background-color: linear-gradient(to bottom, #95a5a6 0%, #7f8c8d 50%, #5d6d7e 100%);" +
+                        " -fx-background-radius: 10px; -fx-text-fill: white; -fx-font-family: 'Arial Black', 'Arial', sans-serif;" +
+                        " -fx-font-size: 20px; -fx-font-weight: bold; -fx-cursor: hand; -fx-border-color: #5d6d7e;" +
+                        " -fx-border-width: 3px; -fx-border-radius: 10px;" +
+                        " -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 12, 0.5, 0, 4), innershadow(gaussian, rgba(255, 255, 255, 0.2), 5, 0.3, 0, 1);");
+            }
+        }
+    }
+
     @FXML
     private void toggleSounds() {
         if (soundManager != null) {
@@ -63,6 +91,15 @@ public class SettingsController {
             updateSoundButtonText(); // Update the button text after toggling
         }
     }
+
+    @FXML
+    private void toggleBackgroundMusic() {
+        if (soundManager != null) {
+            soundManager.toggleBackgroundMusic();
+            updateBackgroundMusicButtonText(); // Update the button text after toggling
+        }
+    }
+
 
     /**
      * FXML method called when the 'Back to Main Menu' button is clicked.

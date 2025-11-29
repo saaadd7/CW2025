@@ -25,6 +25,7 @@ public class Main extends Application {
 
         // NEW: Initialize the SoundManager before any FXML is loaded
         soundManager = new SoundManager();
+        soundManager.playBackgroundMusic();
 
         showMainMenu(primaryStage);
     }

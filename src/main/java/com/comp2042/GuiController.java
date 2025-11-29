@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -26,12 +27,17 @@ import java.util.List;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 import javafx.geometry.Pos;
+import com.comp2042.sounds.SoundManager;
+import javafx.scene.input.MouseEvent;
 
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class GuiController implements Initializable {
+
+
+    private SoundManager soundManager;
 
     // =========================================
     // CONSTANTS (Refactoring)
@@ -60,6 +66,9 @@ public class GuiController implements Initializable {
     @FXML private javafx.scene.control.Label scoreLabel;
     @FXML private javafx.scene.control.Button pauseButton;
     @FXML private javafx.scene.control.Label levelLabel;
+    @FXML private Button startButton;
+    @FXML private Button settingsButton;
+    @FXML private Button helpButton;
 
     // to show the next piece
     @FXML
@@ -68,6 +77,20 @@ public class GuiController implements Initializable {
 
     @FXML
     private Parent viewRoot;
+
+    @FXML
+    public void onSettingsClicked(ActionEvent e) {
+        soundManager.playClickSound(); // Play sound
+        System.out.println("Settings Button Clicked");
+        // TODO: Add logic to switch to settings screen
+    }
+
+    @FXML
+    public void onHelpClicked(ActionEvent e) {
+        soundManager.playClickSound(); // Play sound
+        System.out.println("Help Button Clicked");
+        // TODO: Add logic to show help
+    }
 
     @FXML
     private void backToMainMenu() {
@@ -105,7 +128,20 @@ public class GuiController implements Initializable {
     // =========================================
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        soundManager = new SoundManager();
+        Button[] allButtons = {startButton, settingsButton, helpButton, pauseButton};
+
+        for (Button btn : allButtons) {
+            if (btn != null) {
+                // This plays the sound whenever the mouse is clicked on the button
+                btn.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+                    soundManager.playClickSound();
+                });
+            }
+        }
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
+
+
 
         // Remove gaps to ensure tight grid
         gamePanel.setHgap(0);
@@ -475,6 +511,10 @@ public class GuiController implements Initializable {
     }
 
     public void newGame(ActionEvent e) {
+        soundManager.playClickSound();
+        if (e == null) {
+            soundManager.playClickSound();
+        }
         timeLine.stop();
         gameOverPanel.setVisible(false);
         eventListener.createNewGame();
@@ -493,6 +533,7 @@ public class GuiController implements Initializable {
 
 
     public void pauseGame(ActionEvent e) {
+        soundManager.playClickSound();
         if (isGameOver.getValue()) return;
 
         if (isPause.getValue()) {
