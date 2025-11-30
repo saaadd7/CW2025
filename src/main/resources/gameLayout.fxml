@@ -46,8 +46,14 @@
                                               prefWidth="200" maxWidth="200" prefHeight="400" maxHeight="400"
                                               style="-fx-padding: 0;"/>
                                 </StackPane>
-                            </center>                </BorderPane>
-                <StackPane fx:id="groupNotification" visible="false">
+                            </center>
+                </BorderPane>
+
+                <Pane fx:id="particlePane" mouseTransparent="true"
+                      prefWidth="200" prefHeight="400"
+                      style="-fx-background-color: transparent;"/>
+
+                <StackPane fx:id="groupNotification" visible="true" mouseTransparent="true">
                     <GameOverPanel fx:id="gameOverPanel"/>
                 </StackPane>
             </StackPane>

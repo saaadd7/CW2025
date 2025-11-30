@@ -1,13 +1,15 @@
 package com.comp2042;
 
 import com.comp2042.sounds.SoundManager;
+import com.comp2042.ui.GameBoardRenderer; // Import GameBoardRenderer
 import javafx.stage.Stage;
 
 public class GameController implements InputEventListener {
 
     private Board board = new SimpleBoard(22, 10);
 
-    private final GuiController viewGuiController;
+    private final GuiController viewGuiController; // Keep this reference for now for gameOver and viewRoot
+    private final GameBoardRenderer gameBoardRenderer; // Add GameBoardRenderer field
 
 
     // 1. Add a final field for the SoundManager
@@ -15,8 +17,9 @@ public class GameController implements InputEventListener {
     private final Main mainApp;
 
     // 2. Implement the two-argument constructor
-    public GameController(GuiController c, SoundManager soundManager, Main mainApp) {
+    public GameController(GuiController c, GameBoardRenderer gameBoardRenderer, SoundManager soundManager, Main mainApp) { // Add GameBoardRenderer to constructor
         this.viewGuiController = c;
+        this.gameBoardRenderer = gameBoardRenderer; // Initialize GameBoardRenderer
         this.soundManager = soundManager;
         this.mainApp = mainApp; // Store the Main app reference!
 
@@ -51,7 +54,7 @@ public class GameController implements InputEventListener {
                 viewGuiController.gameOver();
             }
 
-            viewGuiController.refreshGameBackground(board.getBoardMatrix());
+            gameBoardRenderer.refreshGameBackground(board.getBoardMatrix()); // Use gameBoardRenderer
 
         } else {
             //  DO NOT award +1 for user soft drops anymore.
@@ -84,7 +87,7 @@ public class GameController implements InputEventListener {
     public void createNewGame() {
 
         board.newGame();
-        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
     }
 
     @Override
@@ -131,7 +134,7 @@ public class GameController implements InputEventListener {
         }
 
         // Redraw background with the locked piece
-        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        gameBoardRenderer.refreshGameBackground(board.getBoardMatrix()); // Use gameBoardRenderer
 
         return new DownData(clearRow, board.getViewData());
     }

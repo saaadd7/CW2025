@@ -119,8 +119,7 @@ public class SimpleBoard implements Board {
         Brick brick = brickGenerator.getBrick();
         brickRotator.setBrick(brick);
 
-        // FIX 1: Spawn at Y=0 (Top of board) instead of Y=2
-        // X=4 centers it on a 10-column board.
+
         currentOffset = new Point(4, 2);
 
         return MatrixOperations.intersect(

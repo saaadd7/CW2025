@@ -54,16 +54,17 @@ public class Main extends Application {
         // 1. Get the controller instance and cast it to the correct type
         GuiController gui = loader.getController();
 
-
-        // FIX: The application instance is 'this', not 'mainApp'
-        GameController game = new GameController(gui, soundManager, this);
+        // Pass the GameBoardRenderer from gui to GameController
+        GameController game = new GameController(gui, gui.getGameBoardRenderer(), soundManager, this);
 
         stage.setScene(new Scene(gameRoot, 800, 800));
         stage.show();
 
-        // keyboard focus
-        gameRoot.requestFocus();
+
     }
+
+
+
 
     // REMOVED: public void openSettings(Stage stage) - This functionality is now handled by MainMenuController
 
