@@ -83,7 +83,7 @@ public class GameInfoPanelController {
     }
 
     public void setLevel(int level) {
-        levelLabel.setText("Level: " + level);
+        levelLabel.setText(String.valueOf(level));
     }
     
     private Color getFillColor(int i) {

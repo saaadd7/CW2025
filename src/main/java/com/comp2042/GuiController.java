@@ -19,6 +19,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.layout.Pane;
+import com.comp2042.ui.ParticleEffect;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -35,6 +37,9 @@ public class GuiController implements Initializable {
     private InputHandler inputHandler;
 
     // FXML Components
+
+    @FXML private Pane particlePane;
+    private ParticleEffect particleEffect;
     @FXML private GridPane gamePanel;
     @FXML private StackPane groupNotification;
     @FXML private GameOverPanel gameOverPanel;
@@ -47,10 +52,15 @@ public class GuiController implements Initializable {
     @FXML private GridPane nextGrid;
     @FXML private Parent viewRoot;
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         soundManager = new SoundManager();
         Button[] allButtons = {startButton, settingsButton, helpButton, pauseButton};
+
+        if (particlePane != null) {
+            particleEffect = new ParticleEffect(particlePane);
+        }
 
         for (Button btn : allButtons) {
             if (btn != null) {
@@ -66,6 +76,8 @@ public class GuiController implements Initializable {
         gameInfoPanelController = new GameInfoPanelController(scoreLabel, levelLabel, nextGrid);
         gameFlowController = new GameFlowController(gameBoardRenderer, gameInfoPanelController, groupNotification, pauseButton, gameOverPanel);
         inputHandler = new InputHandler(gameFlowController, gameBoardRenderer);
+        particleEffect = new ParticleEffect(gamePanel); // Use gamePanel as container
+        gameFlowController.setParticleEffect(particleEffect);
 
         // Game Panel UI setup
         gamePanel.setHgap(0);

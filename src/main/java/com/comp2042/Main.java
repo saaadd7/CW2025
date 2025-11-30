@@ -63,6 +63,9 @@ public class Main extends Application {
 
     }
 
+
+
+
     // REMOVED: public void openSettings(Stage stage) - This functionality is now handled by MainMenuController
 
     public static void main(String[] args) {

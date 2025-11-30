@@ -8,6 +8,9 @@ import com.comp2042.MoveEvent;
 import com.comp2042.NotificationPanel;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.animation.FadeTransition;
+import javafx.animation.TranslateTransition;
+import javafx.animation.ParallelTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Button;
@@ -18,13 +21,19 @@ import javafx.util.Duration;
 public class GameFlowController {
 
     private Timeline timeLine;
-    // CRITICAL FIX: Must initialize to false explicitly
+    private boolean gameStarted = false;
     private final BooleanProperty isPause = new SimpleBooleanProperty(false);
     private final BooleanProperty isGameOver = new SimpleBooleanProperty(false);
 
     private InputEventListener eventListener;
+    private ParticleEffect particleEffect; // NEW: Particle effect system
+
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
+    }
+
+    public void setParticleEffect(ParticleEffect particleEffect) {
+        this.particleEffect = particleEffect;
     }
     private final GameBoardRenderer gameBoardRenderer;
     private final GameInfoPanelController gameInfoPanelController;
@@ -45,8 +54,6 @@ public class GameFlowController {
         this.pauseButton = pauseButton;
         this.gameOverPanel = gameOverPanel;
     }
-
-    private boolean gameStarted = false;  // NEW: Track if game has actually started
 
     public void start() {
         System.out.println("GameFlowController.start() called");
@@ -89,20 +96,31 @@ public class GameFlowController {
             int linesRemoved = data.getClearRow().getLinesRemoved();
             totalLinesCleared += linesRemoved;
 
-            NotificationPanel np = new NotificationPanel("+" + data.getClearRow().getScoreBonus());
-            groupNotification.getChildren().add(np);
-            np.showScore(groupNotification.getChildren());
+            // Show score notification for each line cleared
+            NotificationPanel scoreNotification = new NotificationPanel("+" + data.getClearRow().getScoreBonus());
+            groupNotification.getChildren().add(scoreNotification);
+            scoreNotification.showScore(groupNotification.getChildren());
 
+            // Trigger particle effect!
+            if (particleEffect != null && data.getClearRow().getClearedRows() != null) {
+                particleEffect.createLineClearExplosion(
+                        data.getClearRow().getClearedRows(),
+                        linesRemoved
+                );
+            }
+
+            // Check if level should increase
             int newLevel = (totalLinesCleared / LINES_PER_LEVEL) + 1;
             if (newLevel > level) {
                 level = newLevel;
                 gameInfoPanelController.setLevel(level);
                 updateGameSpeed();
 
+                // Show level up notification with a slight delay
                 Timeline levelUpDelay = new Timeline(new KeyFrame(Duration.millis(500), e -> {
-                    NotificationPanel levelUp = new NotificationPanel("LEVEL " + level + "!");
-                    groupNotification.getChildren().add(levelUp);
-                    levelUp.showScore(groupNotification.getChildren());
+                    NotificationPanel levelUpNotification = new NotificationPanel("LEVEL " + level + "!");
+                    groupNotification.getChildren().add(levelUpNotification);
+                    levelUpNotification.showScore(groupNotification.getChildren());
                 }));
                 levelUpDelay.play();
             }
@@ -116,7 +134,61 @@ public class GameFlowController {
         if (timeLine != null) {
             timeLine.stop();
         }
-        gameOverPanel.setVisible(true);
+
+        // Show dramatic Game Over notification
+        NotificationPanel gameOverNotification = new NotificationPanel("GAME OVER");
+        groupNotification.getChildren().add(gameOverNotification);
+
+        // Dramatic animation: scale up, fade in, and pulse effect
+        gameOverNotification.setOpacity(0);
+        gameOverNotification.setScaleX(0.5);
+        gameOverNotification.setScaleY(0.5);
+
+        // Fade and scale animation
+        FadeTransition ft = new FadeTransition(Duration.millis(600), gameOverNotification);
+        ft.setFromValue(0);
+        ft.setToValue(1);
+
+        // Scale up animation
+        Timeline scaleTimeline = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 0.5),
+                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 0.5)
+                ),
+                new KeyFrame(Duration.millis(600),
+                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.1),
+                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.1)
+                ),
+                new KeyFrame(Duration.millis(800),
+                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.0),
+                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.0)
+                )
+        );
+
+        // Combine animations
+        ParallelTransition entrance = new ParallelTransition(ft);
+        entrance.play();
+        scaleTimeline.play();
+
+        // Add a subtle pulse effect that repeats
+        Timeline pulse = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.0),
+                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.0)
+                ),
+                new KeyFrame(Duration.millis(1000),
+                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.05),
+                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.05)
+                ),
+                new KeyFrame(Duration.millis(2000),
+                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.0),
+                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.0)
+                )
+        );
+        pulse.setCycleCount(Timeline.INDEFINITE);
+        pulse.setDelay(Duration.millis(800));
+        pulse.play();
+
         isGameOver.setValue(true);
     }
 
@@ -127,6 +199,9 @@ public class GameFlowController {
         if (timeLine != null) {
             timeLine.stop();
         }
+
+        // Clear any existing notifications
+        groupNotification.getChildren().clear();
 
         gameOverPanel.setVisible(false);
         eventListener.createNewGame();
