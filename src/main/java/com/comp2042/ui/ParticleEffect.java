@@ -1,10 +1,11 @@
 package com.comp2042.ui;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.TranslateTransition;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -15,167 +16,99 @@ public class ParticleEffect {
 
     private final Pane container;
     private final Random random = new Random();
+    private static final double CELL_SIZE = 20.0; // Size of each Tetris block
 
     public ParticleEffect(Pane container) {
         this.container = container;
     }
 
     /**
-     * Creates a DRAMATIC particle explosion effect for cleared lines
+     * Creates a smooth horizontal block disintegration effect for cleared lines
      * @param clearedRows List of row indices that were cleared
-     * @param numLines Number of lines cleared (affects particle intensity)
+     * @param numLines Number of lines cleared
      */
     public void createLineClearExplosion(List<Integer> clearedRows, int numLines) {
         if (clearedRows == null || clearedRows.isEmpty()) {
             return;
         }
 
-        // MUCH MORE PARTICLES for dramatic effect
-        int particleCount = 100 * numLines;
-        List<Particle> particles = new ArrayList<>();
-
         double containerWidth = container.getWidth();
-        double containerHeight = container.getHeight();
+        int blocksPerRow = (int)(containerWidth / CELL_SIZE);
 
-        System.out.println("Container size: " + containerWidth + "x" + containerHeight);
-        System.out.println("Cleared rows: " + clearedRows);
+        System.out.println("Creating horizontal disintegration for rows: " + clearedRows);
 
-        // For each cleared row, create a burst of particles
+        // For each cleared row, create blocks that slide out horizontally
         for (Integer rowIndex : clearedRows) {
-            // Convert row index to Y position
-            // Assuming rows go from top (0) to bottom (max)
-            // Each cell is approximately containerHeight / 20 pixels (20 rows visible)
-            double rowY = (rowIndex - 2) * (containerHeight / 20.0); // -2 because top 2 rows are hidden
+            // Convert row index to Y position (accounting for hidden top rows)
+            double rowY = (rowIndex - 2) * CELL_SIZE;
 
-            System.out.println("Creating particles at row " + rowIndex + " -> Y: " + rowY);
+            System.out.println("Row " + rowIndex + " at Y position: " + rowY);
 
-            int particlesPerRow = particleCount / clearedRows.size();
+            // Create blocks for each column in this row
+            for (int col = 0; col < blocksPerRow; col++) {
+                double blockX = col * CELL_SIZE;
 
-            for (int i = 0; i < particlesPerRow; i++) {
-                // Spread particles across the entire width
-                double startX = random.nextDouble() * containerWidth;
-                Particle particle = createParticle(startX, rowY, numLines);
-                particles.add(particle);
-                container.getChildren().add(particle.circle);
+                // Create the block rectangle
+                Rectangle block = new Rectangle(blockX, rowY, CELL_SIZE - 1, CELL_SIZE - 1);
+
+                // Color based on number of lines cleared
+                Color blockColor = getColorForIntensity(numLines);
+                block.setFill(blockColor);
+                block.setStroke(Color.BLACK);
+                block.setStrokeWidth(1);
+
+                container.getChildren().add(block);
+
+                // Animate blocks sliding out horizontally
+                // Left half slides left, right half slides right
+                boolean slideLeft = col < blocksPerRow / 2;
+                animateHorizontalSlide(block, slideLeft, col * 20); // 20ms delay per block
             }
         }
+    }
 
-        // Animate particles
-        Timeline animation = new Timeline(new KeyFrame(Duration.millis(16), e -> {
-            particles.removeIf(particle -> {
-                particle.update();
+    private void animateHorizontalSlide(Rectangle block, boolean slideLeft, int delayMs) {
+        // Slide distance
+        double slideDistance = 150 + random.nextDouble() * 100;
+        if (slideLeft) {
+            slideDistance = -slideDistance; // Negative for left direction
+        }
 
-                // Remove if faded out or way off screen
-                if (particle.alpha <= 0 ||
-                        particle.y > containerHeight + 100 ||
-                        particle.y < -100 ||
-                        particle.x < -50 ||
-                        particle.x > containerWidth + 50) {
-                    container.getChildren().remove(particle.circle);
-                    return true;
-                }
-                return false;
-            });
-        }));
-        animation.setCycleCount(200); // Run for ~3.2 seconds
-        animation.setOnFinished(e -> {
-            // Clean up any remaining particles
-            particles.forEach(p -> container.getChildren().remove(p.circle));
-        });
+        double animationDuration = 600 + random.nextDouble() * 200;
+
+        // Create horizontal slide animation
+        TranslateTransition slide = new TranslateTransition(Duration.millis(animationDuration), block);
+        slide.setByX(slideDistance);
+
+        // Slight vertical movement for variety
+        double verticalDrift = (random.nextDouble() - 0.5) * 20;
+        slide.setByY(verticalDrift);
+
+        // Create fade out animation
+        FadeTransition fade = new FadeTransition(Duration.millis(animationDuration), block);
+        fade.setFromValue(1.0);
+        fade.setToValue(0.0);
+
+        // Combine animations
+        ParallelTransition animation = new ParallelTransition(slide, fade);
+        animation.setDelay(Duration.millis(delayMs));
+
+        // Remove block when animation completes
+        animation.setOnFinished(e -> container.getChildren().remove(block));
+
         animation.play();
     }
 
-    private Particle createParticle(double startX, double startY, int intensity) {
-        // DRAMATIC velocity - explode in all directions!
-        double angle = random.nextDouble() * 2 * Math.PI;
-        double speed = 5 + random.nextDouble() * 10; // Much faster!
-        double velocityX = Math.cos(angle) * speed;
-        double velocityY = Math.sin(angle) * speed - 3; // Upward bias
-
-        // Larger particles for visibility
-        double size = 3 + random.nextDouble() * 6;
-
-        // Bright, dramatic colors based on intensity
-        Color color;
+    private Color getColorForIntensity(int intensity) {
         switch (intensity) {
-            case 4: // Tetris! - BRILLIANT GOLD
-                color = Color.color(1.0, 0.843, 0.0);
-                size *= 1.5; // Bigger particles for Tetris!
-                break;
-            case 3: // Triple - BRIGHT ORANGE
-                color = Color.color(1.0, 0.5, 0.0);
-                size *= 1.3;
-                break;
-            case 2: // Double - ELECTRIC CYAN
-                color = Color.color(0.0, 1.0, 1.0);
-                size *= 1.2;
-                break;
-            default: // Single - BRIGHT WHITE
-                color = Color.color(1.0, 1.0, 1.0);
-                break;
-        }
-
-        // Add variety with different colors
-        if (random.nextDouble() < 0.4) {
-            Color[] colors = {
-                    Color.color(1.0, 0.0, 0.5),  // Hot Pink
-                    Color.color(0.5, 0.0, 1.0),  // Purple
-                    Color.color(0.0, 1.0, 0.5),  // Lime Green
-                    Color.color(1.0, 1.0, 0.0),  // Yellow
-            };
-            color = colors[random.nextInt(colors.length)];
-        }
-
-        return new Particle(startX, startY, velocityX, velocityY, size, color);
-    }
-
-    private class Particle {
-        Circle circle;
-        double x, y;
-        double velocityX, velocityY;
-        double alpha = 1.0;
-        Color baseColor;
-        double rotation = 0;
-
-        Particle(double x, double y, double vx, double vy, double size, Color color) {
-            this.x = x;
-            this.y = y;
-            this.velocityX = vx;
-            this.velocityY = vy;
-            this.baseColor = color;
-
-            circle = new Circle(x, y, size);
-            circle.setFill(color);
-        }
-
-        void update() {
-            // Update position
-            x += velocityX;
-            y += velocityY;
-
-            // Apply gravity
-            velocityY += 0.4;
-
-            // Apply air resistance
-            velocityX *= 0.98;
-
-            // Fade out slowly for longer visibility
-            alpha -= 0.008;
-            alpha = Math.max(0, alpha);
-
-            // Rotation for visual effect
-            rotation += 0.1;
-
-            // Update circle
-            circle.setCenterX(x);
-            circle.setCenterY(y);
-            circle.setRotate(rotation * 180 / Math.PI);
-            circle.setFill(Color.color(
-                    baseColor.getRed(),
-                    baseColor.getGreen(),
-                    baseColor.getBlue(),
-                    alpha
-            ));
+            case 4: // Tetris - Gold
+                return Color.color(1.0, 0.843, 0.0);
+            case 3: // Triple - Orange
+                return Color.color(1.0, 0.5, 0.0);
+            case 2: // Double - Cyan
+                return Color.color(0.0, 1.0, 1.0);
+            default: // Single - White
+                return Color.color(1.0, 1.0, 1.0);
         }
     }
 }
