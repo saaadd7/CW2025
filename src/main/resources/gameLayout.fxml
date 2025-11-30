@@ -17,10 +17,13 @@
             <Insets top="20" right="20" bottom="20" left="20"/>
         </padding>
 
-        
-        <VBox spacing="20" alignment="CENTER" minWidth="180">
-            <Label text="LEVEL" styleClass="section-title"/>
-            <Label fx:id="levelLabel" text="1" prefWidth="140" prefHeight="80" alignment="CENTER" styleClass="level-display"/>
+        <VBox spacing="20" alignment="TOP_CENTER" minWidth="180" style="-fx-padding: 200 0 0 0;">
+
+            <Label text="LEVEL" styleClass="level-title-glow"/>
+
+            <HBox alignment="CENTER">
+                <Label fx:id="levelLabel" text="1" prefWidth="100" prefHeight="80" alignment="CENTER" styleClass="level-display"/>
+            </HBox>
 
             <VBox spacing="8" alignment="CENTER" style="-fx-padding: 20 0 0 0;">
                 <Label text="CONTROLS" styleClass="controls-title"/>
@@ -31,7 +34,6 @@
             </VBox>
         </VBox>
 
-        
         <VBox spacing="15" alignment="CENTER">
 
             <StackPane styleClass="score-container" alignment="CENTER">
@@ -41,12 +43,12 @@
             <StackPane fx:id="gameContainer">
                 <BorderPane fx:id="gameBoard" styleClass="gameBoard" prefWidth="212" maxWidth="212" prefHeight="412">
                     <center>
-                                <StackPane style="-fx-padding: 0; -fx-background-color: transparent;">
-                                    <GridPane fx:id="gamePanel" hgap="0" vgap="0" alignment="CENTER"
-                                              prefWidth="200" maxWidth="200" prefHeight="400" maxHeight="400"
-                                              style="-fx-padding: 0;"/>
-                                </StackPane>
-                            </center>
+                        <StackPane style="-fx-padding: 0; -fx-background-color: transparent;">
+                            <GridPane fx:id="gamePanel" hgap="0" vgap="0" alignment="CENTER"
+                                      prefWidth="200" maxWidth="200" prefHeight="400" maxHeight="400"
+                                      style="-fx-padding: 0;"/>
+                        </StackPane>
+                    </center>
                 </BorderPane>
 
                 <Pane fx:id="particlePane" mouseTransparent="true"
@@ -68,17 +70,20 @@
             </HBox>
         </VBox>
 
-        
-        <VBox spacing="10" alignment="CENTER" minWidth="180">
-            <VBox alignment="TOP_CENTER" spacing="10" styleClass="next-piece-container" prefWidth="150" prefHeight="150">
-                <padding>
-                    <Insets top="10"/>
-                </padding>
-                <Label text="NEXT PIECE" styleClass="section-title"/>
-                <StackPane alignment="CENTER">
-                    <GridPane fx:id="nextGrid" alignment="CENTER" hgap="1" vgap="1"/>
-                </StackPane>
-            </VBox>
+        <VBox spacing="20" alignment="TOP_CENTER" minWidth="180" style="-fx-padding: 200 0 0 0;">
+
+            <Label text="NEXT" styleClass="next-title-glow"/>
+
+            <HBox alignment="CENTER">
+                <VBox alignment="CENTER" spacing="0" styleClass="next-piece-container" prefWidth="100" prefHeight="80">
+                    <padding>
+                        <Insets top="5" bottom="5" left="5" right="5"/>
+                    </padding>
+                    <StackPane alignment="CENTER">
+                        <GridPane fx:id="nextGrid" alignment="CENTER" hgap="1" vgap="1"/>
+                    </StackPane>
+                </VBox>
+            </HBox>
         </VBox>
 
     </HBox>
