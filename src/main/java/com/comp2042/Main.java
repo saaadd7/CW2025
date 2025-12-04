@@ -15,14 +15,12 @@ public class Main extends Application {
     public static final String MAIN_MENU_FXML = "/fxml/mainMenu.fxml";
     public static final String GAME_LAYOUT_FXML = "/gameLayout.fxml"; // your real path
 
-    // NEW: Declare the SoundManager instance at the class level
     private SoundManager soundManager;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("TetrisJFX");
 
-        // NEW: Initialize the SoundManager before any FXML is loaded
         soundManager = new SoundManager();
         soundManager.playBackgroundMusic();
 
@@ -35,32 +33,25 @@ public class Main extends Application {
 
         MainMenuController controller = loader.getController();
         controller.setStage(stage);
-        controller.setMainApp(this);
-
-        // CRUCIAL NEW LINE: Pass the single SoundManager instance to the controller
-        controller.setSoundManager(soundManager);
-
-        stage.setScene(new Scene(root, 800, 800));
-        stage.show();
-    }
-
-    public void loadGame(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(GAME_LAYOUT_FXML));
-        Parent gameRoot = loader.load();
-
-        // Assuming GuiController and GameController are properly defined
-
-        // 1. Get the controller instance and cast it to the correct type
-        GuiController gui = loader.getController();
-
-        // Pass the GameBoardRenderer from gui to GameController
-        GameController game = new GameController(gui, gui.getGameBoardRenderer(), soundManager, this);
-
-        stage.setScene(new Scene(gameRoot, 800, 800));
-        stage.show();
-
-
-    }
+                controller.setMainApp(this);
+        
+                controller.setSoundManager(soundManager);
+        
+                stage.setScene(new Scene(root, 800, 800));
+                stage.show();
+            }
+        
+            public void loadGame(Stage stage) throws Exception {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(GAME_LAYOUT_FXML));
+                Parent gameRoot = loader.load();
+        
+                GuiController gui = loader.getController();
+        
+                GameController game = new GameController(gui, gui.getGameBoardRenderer(), soundManager, this);
+        
+                stage.setScene(new Scene(gameRoot, 800, 800));
+                stage.show();
+            }
 
 
 

@@ -12,8 +12,8 @@ public class GameController implements InputEventListener {
 
     private Board board = new SimpleBoard(22, 10);
 
-    private final GuiController viewGuiController; // Keep this reference for now for gameOver and viewRoot
-    private final GameBoardRenderer gameBoardRenderer; // Add GameBoardRenderer field
+    private final GuiController viewGuiController;
+    private final GameBoardRenderer gameBoardRenderer;
 
 
     private final SoundManager soundManager;
@@ -28,10 +28,6 @@ public class GameController implements InputEventListener {
 
         board.createNewBrick();
         viewGuiController.setEventListener(this);
-        // CRITICAL FIX: The initial call to initGameView should happen here,
-        // not inside the constructor, but we'll leave it as is for now
-        // since setEventListener is being used to trigger the start.
-        // We will focus the fix in createNewGame and setEventListener.
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
     }
@@ -42,7 +38,6 @@ public class GameController implements InputEventListener {
         ClearRow clearRow = null;
         if (!canMove) {
 
-            // 1. ADD THUD SOUND HERE (Piece Locked)
             if (soundManager != null) {
                 soundManager.playThudSound();
             }
@@ -52,7 +47,6 @@ public class GameController implements InputEventListener {
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
 
-                // 2. ADD SWOOSH SOUND HERE (Line Cleared)
                 if (soundManager != null) {
                     soundManager.playSwooshSound();
                 }
@@ -61,10 +55,8 @@ public class GameController implements InputEventListener {
                 viewGuiController.gameOver();
             }
 
-            gameBoardRenderer.refreshGameBackground(board.getBoardMatrix()); // Use gameBoardRenderer
-
+            gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
         } else {
-            //  DO NOT award +1 for user soft drops anymore.
             // This makes scoring dependent only on line clears (classic behavior).
         }
 
@@ -111,53 +103,38 @@ public class GameController implements InputEventListener {
             }
         } while (canMove);
 
-        // 🔊 1. Play THUD sound when the brick locks
         if (soundManager != null) {
             soundManager.playThudSound();
         }
 
-        // Brick has locked – merge into background
         board.mergeBrickToBackground();
 
-        // Clear any full rows
         clearRow = board.clearRows();
         if (clearRow.getLinesRemoved() > 0) {
             board.getScore().add(clearRow.getScoreBonus());
 
-            // 🔊 2. Play SWOOSH sound if lines were cleared
             if (soundManager != null) {
                 soundManager.playSwooshSound();
             }
         }
 
-        // Hard-drop bonus: I didnt add it because it was not in the original game
-
-
-        // Spawn a new brick or end game
         if (board.createNewBrick()) {
             viewGuiController.gameOver();
         }
 
-        // Redraw background with the locked piece
-        gameBoardRenderer.refreshGameBackground(board.getBoardMatrix()); // Use gameBoardRenderer
+        gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
 
         return new DownData(clearRow, board.getViewData());
     }
 
-    // GameController.java (New method implementation)
-
     @Override
     public void onBackToMenuEvent() {
-        // 1. CRITICAL: Stop the game loop/timeline
-        // The game loop (Timeline) is managed by the GuiController/FlowManager.
-        viewGuiController.gameOver(); // Stopping the game loop is part of the gameOver method.
+        viewGuiController.gameOver();
 
         if (mainApp != null) {
             try {
-                // 2. Access the current Stage/Window
                 Stage currentStage = (Stage) viewGuiController.getViewRoot().getScene().getWindow();
 
-                // 3. Switch the scene back to the main menu
                 mainApp.showMainMenu(currentStage);
             } catch (Exception e) {
                 System.err.println("Failed to switch back to Main Menu.");
