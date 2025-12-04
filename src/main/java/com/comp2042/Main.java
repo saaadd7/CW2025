@@ -1,6 +1,6 @@
 package com.comp2042;
 
-import com.comp2042.MainScreenui.MainMenuController;
+import com.comp2042.ui.MainMenuController;
 import com.comp2042.sounds.SoundManager;
 
 import javafx.application.Application;
