@@ -15,35 +15,28 @@ public class SoundManager {
     private boolean backgroundMusicEnabled = true;
 
     public SoundManager() {
-        // 1. Load thud.wav
         java.net.URL thudResource = getClass().getResource("/sounds/thud.wav");
         if (thudResource != null) {
             Media thudSound = new Media(thudResource.toExternalForm());
             thudPlayer = new MediaPlayer(thudSound);
             thudPlayer.setVolume(0.5);
-            System.out.println("Thud Sound Loaded");
         } else {
             System.err.println("ERROR: Sound file 'thud.wav' not found.");
         }
 
-        // 2. Load swoosh.wav
         java.net.URL swooshResource = getClass().getResource("/sounds/swoosh.wav");
         if (swooshResource != null) {
             Media swooshSound = new Media(swooshResource.toExternalForm());
             swooshPlayer = new MediaPlayer(swooshSound);
             swooshPlayer.setVolume(1.0);
-            System.out.println("Swoosh Sound Loaded");
         } else {
             System.err.println("ERROR: Sound file 'swoosh.wav' not found.");
         }
 
-        // 3. Load click.mp3
-        // I assume you kept the .mp3 extension. If you converted to .wav, change this to "click.wav"
         java.net.URL clickResource = getClass().getResource("/sounds/click.mp3");
         if (clickResource != null) {
             clickPlayer = new AudioClip(clickResource.toExternalForm());
             clickPlayer.setVolume(0.5);
-            System.out.println("Click Sound Loaded");
         } else {
             System.err.println("ERROR: 'click.mp3' not found. Check if the file is in src/main/resources/sounds/");
         }
@@ -52,8 +45,7 @@ public class SoundManager {
         if (backgroundMusicResource != null) {
             Media backgroundMusic = new Media(backgroundMusicResource.toExternalForm());
             backgroundMusicPlayer = new MediaPlayer(backgroundMusic);
-            backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Loop the music
-            System.out.println("Background Music Loaded");
+            backgroundMusicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         } else {
             System.err.println("ERROR: Sound file 'gamebgm.m4a' not found.");
         }
@@ -73,7 +65,6 @@ public class SoundManager {
         }
     }
 
-    // Play Click Sound
     public void playClickSound() {
         if (soundsEnabled && clickPlayer != null) {
             clickPlayer.play();
@@ -95,7 +86,6 @@ public class SoundManager {
 
     public void toggleSounds() {
         soundsEnabled = !soundsEnabled;
-        System.out.println("Sounds Enabled: " + soundsEnabled);
     }
 
     public boolean isSoundsEnabled() {
