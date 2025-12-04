@@ -34,6 +34,7 @@ public class MainMenuController {
 
     private Main mainApp;
     private SoundManager soundManager;
+    private Stage stage;
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -50,6 +51,7 @@ public class MainMenuController {
     @FXML
     public void initialize() {
         settingsButton.setOnAction(e -> openSettings());
+        helpButton.setOnAction(e -> handleHelpButton(e));
 
         if (rootPane != null && backgroundImage != null) {
             backgroundImage.fitWidthProperty().bind(rootPane.widthProperty());
@@ -103,24 +105,9 @@ public class MainMenuController {
 
     @FXML
     public void handleHelpButton(ActionEvent event) {
-        showHelpDialog();
-    }
-
-    private void showHelpDialog() {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Game Controls");
-        alert.setHeaderText("Game Controls");
-
-        alert.setContentText(
-                "Game Controls:\n\n" +
-                        "- ← (Left Arrow): Move piece left\n" +
-                        "- → (Right Arrow): Move piece right\n" +
-                        "- ↑ (Up Arrow) / X: Rotate piece Clockwise ONLY\n" +
-                        "- ↓ (Down Arrow): Soft Drop (Speed up)\n" +
-                        "- Space: Hard Drop (Instantly place)\n"
-        );
-
-        alert.showAndWait();
+        if (helpOverlay != null) {
+            helpOverlay.setVisible(true);
+        }
     }
 
     @FXML
