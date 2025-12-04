@@ -16,16 +16,15 @@ public class GameController implements InputEventListener {
     private final GameBoardRenderer gameBoardRenderer; // Add GameBoardRenderer field
 
 
-    // 1. Add a final field for the SoundManager
     private final SoundManager soundManager;
     private final Main mainApp;
 
-    // 2. Implement the two-argument constructor
-    public GameController(GuiController c, GameBoardRenderer gameBoardRenderer, SoundManager soundManager, Main mainApp) { // Add GameBoardRenderer to constructor
+    public GameController(GuiController c, GameBoardRenderer gameBoardRenderer, SoundManager soundManager, Main mainApp) {
+        this.board = new SimpleBoard(22, 10);
         this.viewGuiController = c;
-        this.gameBoardRenderer = gameBoardRenderer; // Initialize GameBoardRenderer
+        this.gameBoardRenderer = gameBoardRenderer;
         this.soundManager = soundManager;
-        this.mainApp = mainApp; // Store the Main app reference!
+        this.mainApp = mainApp;
 
         board.createNewBrick();
         viewGuiController.setEventListener(this);
@@ -132,9 +131,7 @@ public class GameController implements InputEventListener {
         }
 
         // Hard-drop bonus: I didnt add it because it was not in the original game
-        if (dropDistance > 0) {
-            ;
-        }
+
 
         // Spawn a new brick or end game
         if (board.createNewBrick()) {
