@@ -30,13 +30,10 @@ public class GuiController implements Initializable {
     private SoundManager soundManager;
     private InputEventListener eventListener;
 
-    // UI Controllers
     private GameBoardRenderer gameBoardRenderer;
     private GameInfoPanelController gameInfoPanelController;
     private GameFlowController gameFlowController;
     private InputHandler inputHandler;
-
-    // FXML Components
 
     @FXML private Pane particlePane;
     private ParticleEffect particleEffect;
@@ -71,13 +68,12 @@ public class GuiController implements Initializable {
         }
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
 
-        // Initialize sub-controllers
         gameBoardRenderer = new GameBoardRenderer(gamePanel);
         gameInfoPanelController = new GameInfoPanelController(scoreLabel, levelLabel, nextGrid);
         gameFlowController = new GameFlowController(
                 gameBoardRenderer, gameInfoPanelController, groupNotification, pauseButton, gameOverPanel);
         inputHandler = new InputHandler(gameFlowController, gameBoardRenderer);
-        particleEffect = new ParticleEffect(gamePanel); // Use gamePanel as container
+        particleEffect = new ParticleEffect(gamePanel);
         gameFlowController.setParticleEffect(particleEffect);
 
         // Game Panel UI setup
@@ -89,19 +85,15 @@ public class GuiController implements Initializable {
         clip.heightProperty().bind(gamePanel.heightProperty());
         gamePanel.setClip(clip);
 
-        // Input handling
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
         gamePanel.setOnKeyPressed(inputHandler::handleKeyPress);
 
-        // Pause button setup
         pauseButton.setFocusTraversable(false);
         pauseButton.setMnemonicParsing(false);
 
-        // Game Over Panel
         gameOverPanel.setVisible(false);
 
-        // Reflection effect (if still desired)
         final Reflection reflection = new Reflection();
         reflection.setFraction(0.8);
         reflection.setTopOpacity(0.9);
@@ -117,9 +109,8 @@ public class GuiController implements Initializable {
 
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
-        // Pass the event listener to the game flow controller as well
-        gameFlowController.setEventListener(eventListener); // Assuming you'll add this setter in GameFlowController
-        inputHandler.setEventListener(eventListener); // Assuming you'll add this setter in InputHandler
+        gameFlowController.setEventListener(eventListener);
+        inputHandler.setEventListener(eventListener);
     }
 
     public void bindScore(IntegerProperty scoreProp) {
@@ -134,28 +125,24 @@ public class GuiController implements Initializable {
     public void newGame(ActionEvent e) {
         soundManager.playClickSound();
         gameFlowController.newGame();
-        gamePanel.requestFocus(); // Ensure gamePanel has focus after new game
+        gamePanel.requestFocus();
     }
 
     @FXML
     public void pauseGame(ActionEvent e) {
         soundManager.playClickSound();
         gameFlowController.pauseGame();
-        gamePanel.requestFocus(); // Ensure gamePanel has focus after pause/resume
+        gamePanel.requestFocus();
     }
 
     @FXML
     public void onSettingsClicked(ActionEvent e) {
         soundManager.playClickSound();
-        System.out.println("Settings Button Clicked");
-        // TODO: Add logic to switch to settings screen
     }
 
     @FXML
     public void onHelpClicked(ActionEvent e) {
         soundManager.playClickSound();
-        System.out.println("Help Button Clicked");
-        // TODO: Add logic to show help
     }
 
     @FXML
