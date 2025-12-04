@@ -1,18 +1,35 @@
 package com.comp2042;
 
+import com.comp2042.core.Board;
+import com.comp2042.core.SimpleBoard;
+import com.comp2042.event.*;
+import com.comp2042.sounds.SoundManager;
+import com.comp2042.ui.GameBoardRenderer;
+import com.comp2042.ui.GuiController;
+import javafx.stage.Stage;
+
 public class GameController implements InputEventListener {
 
-    private Board board = new SimpleBoard(25, 10);
+    private Board board = new SimpleBoard(22, 10);
 
     private final GuiController viewGuiController;
+    private final GameBoardRenderer gameBoardRenderer;
 
-    public GameController(GuiController c) {
-        viewGuiController = c;
+
+    private final SoundManager soundManager;
+    private final Main mainApp;
+
+    public GameController(GuiController c, GameBoardRenderer gameBoardRenderer, SoundManager soundManager, Main mainApp) {
+        this.board = new SimpleBoard(22, 10);
+        this.viewGuiController = c;
+        this.gameBoardRenderer = gameBoardRenderer;
+        this.soundManager = soundManager;
+        this.mainApp = mainApp;
+
         board.createNewBrick();
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
-
     }
 
     @Override
@@ -20,19 +37,26 @@ public class GameController implements InputEventListener {
         boolean canMove = board.moveBrickDown();
         ClearRow clearRow = null;
         if (!canMove) {
+
+            if (soundManager != null) {
+                soundManager.playThudSound();
+            }
+
             board.mergeBrickToBackground();
             clearRow = board.clearRows();
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
+
+                if (soundManager != null) {
+                    soundManager.playSwooshSound();
+                }
             }
             if (board.createNewBrick()) {
                 viewGuiController.gameOver();
             }
 
-            viewGuiController.refreshGameBackground(board.getBoardMatrix());
-
+            gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
         } else {
-            //  DO NOT award +1 for user soft drops anymore.
             // This makes scoring dependent only on line clears (classic behavior).
         }
 
@@ -61,8 +85,10 @@ public class GameController implements InputEventListener {
     @Override
     public void createNewGame() {
         board.newGame();
-        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
+        gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
     }
+
     @Override
     public DownData onHardDropEvent(MoveEvent event) {
         int dropDistance = 0;
@@ -77,28 +103,43 @@ public class GameController implements InputEventListener {
             }
         } while (canMove);
 
-        // Brick has locked – merge into background
+        if (soundManager != null) {
+            soundManager.playThudSound();
+        }
+
         board.mergeBrickToBackground();
 
-        // Clear any full rows
         clearRow = board.clearRows();
         if (clearRow.getLinesRemoved() > 0) {
             board.getScore().add(clearRow.getScoreBonus());
+
+            if (soundManager != null) {
+                soundManager.playSwooshSound();
+            }
         }
 
-        // Hard-drop bonus: I didnt add it because it was not in the original game
-        if (dropDistance > 0) {;
-        }
-
-        // Spawn a new brick or end game
         if (board.createNewBrick()) {
             viewGuiController.gameOver();
         }
 
-        // Redraw background with the locked piece
-        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
 
         return new DownData(clearRow, board.getViewData());
     }
 
+    @Override
+    public void onBackToMenuEvent() {
+        viewGuiController.gameOver();
+
+        if (mainApp != null) {
+            try {
+                Stage currentStage = (Stage) viewGuiController.getViewRoot().getScene().getWindow();
+
+                mainApp.showMainMenu(currentStage);
+            } catch (Exception e) {
+                System.err.println("Failed to switch back to Main Menu.");
+                e.printStackTrace();
+            }
+        }
+    }
 }
