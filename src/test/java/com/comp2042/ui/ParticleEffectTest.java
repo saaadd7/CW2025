@@ -18,18 +18,16 @@ class ParticleEffectTest {
     void testExplosionAddsParticles() {
         // Arrange
         Pane container = new Pane();
-        // Give the pane a size so particles can calculate positions
-        container.setPrefSize(200, 400);
-
         ParticleEffect effect = new ParticleEffect(container);
 
         Platform.runLater(() -> {
+            // FIX: Manually resize the container so getWidth() returns 200 instead of 0
+            container.resize(200, 400);
+
             // Act
-            // Simulate clearing row 10 and 11
             effect.createLineClearExplosion(Arrays.asList(10, 11), 2);
 
             // Assert
-            // We expect particles (Rectangles) to be added to the container
             assertFalse(container.getChildren().isEmpty(), "Particles should be added to the pane after explosion");
         });
     }
@@ -40,8 +38,10 @@ class ParticleEffectTest {
         ParticleEffect effect = new ParticleEffect(container);
 
         Platform.runLater(() -> {
+            container.resize(200, 400); // Good practice to set size here too
             effect.createLineClearExplosion(null, 0);
-            assertTrue(container.getChildren().isEmpty());
+
+            assertTrue(container.getChildren().isEmpty(), "Should not add particles if row list is null");
         });
     }
 }

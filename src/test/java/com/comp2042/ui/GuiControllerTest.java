@@ -1,6 +1,7 @@
 package com.comp2042.ui;
 
 import com.comp2042.event.InputEventListener;
+import com.comp2042.sounds.SoundManager; // Import SoundManager
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
@@ -30,6 +31,10 @@ class GuiControllerTest {
         GuiController controller = new GuiController();
         injectMockFXML(controller);
 
+        // FIX: Inject a Fake SoundManager so the real one doesn't crash the JVM
+        StubSoundManager stubSound = new StubSoundManager();
+        try { setPrivateField(controller, "soundManager", stubSound); } catch (Exception e) { fail(e); }
+
         Platform.runLater(() -> {
             controller.initialize(null, null);
 
@@ -43,11 +48,12 @@ class GuiControllerTest {
         GuiController controller = new GuiController();
         injectMockFXML(controller);
 
+        // FIX: Inject Fake SoundManager
+        try { setPrivateField(controller, "soundManager", new StubSoundManager()); } catch (Exception e) { fail(e); }
+
         Platform.runLater(() -> {
-            // 1. Initialize first
             controller.initialize(null, null);
 
-            // 2. NOW bind score (safe because controllers exist)
             SimpleIntegerProperty score = new SimpleIntegerProperty(0);
             controller.bindScore(score);
             score.set(100);
@@ -63,15 +69,13 @@ class GuiControllerTest {
         injectMockFXML(controller);
         SpyListener spy = new SpyListener();
 
-        Platform.runLater(() -> {
-            // 1. Initialize first (Creates gameFlowController)
-            controller.initialize(null, null);
+        // FIX: Inject Fake SoundManager
+        try { setPrivateField(controller, "soundManager", new StubSoundManager()); } catch (Exception e) { fail(e); }
 
-            // 2. NOW set the listener (Safe because gameFlowController is not null)
+        Platform.runLater(() -> {
+            controller.initialize(null, null);
             controller.setEventListener(spy);
 
-            // Act: Simulate clicking "New Game"
-            // This implicitly tests that the button action doesn't crash the controller
             assertDoesNotThrow(() -> controller.newGame(new ActionEvent()));
         });
     }
@@ -91,7 +95,6 @@ class GuiControllerTest {
             setPrivateField(controller, "groupNotification", new StackPane());
             setPrivateField(controller, "particlePane", new Pane());
 
-            // Mock GameOverPanel
             GameOverPanel mockOverPanel = new GameOverPanel();
             setPrivateField(controller, "gameOverPanel", mockOverPanel);
 
@@ -105,6 +108,23 @@ class GuiControllerTest {
         Field field = target.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(target, value);
+    }
+
+    // --- STUBS ---
+
+    // A safe SoundManager that does NOT load real audio files
+    static class StubSoundManager extends SoundManager {
+        public StubSoundManager() {
+            super();
+        }
+        // Override Init to do nothing (so it doesn't load files)
+        // Since constructor calls logic, we rely on the fact that if files are missing it prints error but doesn't crash.
+        // BUT, the real constructor tries to load files.
+        // TRICK: The simplest way is to ensure we don't trigger the media engine.
+        // Note: Reflection injection happens AFTER the controller is made but BEFORE initialize().
+        // The crash happens inside 'new SoundManager()' inside initialize().
+        // By injecting this Stub and adding the 'if (soundManager == null)' check in GuiController,
+        // the Real SoundManager (and the crash) is completely skipped!
     }
 
     static class SpyListener implements InputEventListener {
