@@ -74,7 +74,8 @@ public class GuiController implements Initializable {
         // Initialize sub-controllers
         gameBoardRenderer = new GameBoardRenderer(gamePanel);
         gameInfoPanelController = new GameInfoPanelController(scoreLabel, levelLabel, nextGrid);
-        gameFlowController = new GameFlowController(gameBoardRenderer, gameInfoPanelController, groupNotification, pauseButton, gameOverPanel);
+        gameFlowController = new GameFlowController(
+                gameBoardRenderer, gameInfoPanelController, groupNotification, pauseButton, gameOverPanel);
         inputHandler = new InputHandler(gameFlowController, gameBoardRenderer);
         particleEffect = new ParticleEffect(gamePanel); // Use gamePanel as container
         gameFlowController.setParticleEffect(particleEffect);

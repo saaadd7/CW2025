@@ -24,6 +24,7 @@ public class GameBoardRenderer {
     }
 
     public void initGameView(int[][] boardMatrix) {
+        gamePanel.getChildren().clear();
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
 
         for (int row = HIDDEN_ROWS; row < boardMatrix.length; row++) {
