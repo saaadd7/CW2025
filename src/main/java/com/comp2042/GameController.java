@@ -25,6 +25,10 @@ public class GameController implements InputEventListener {
 
         board.createNewBrick();
         viewGuiController.setEventListener(this);
+        // CRITICAL FIX: The initial call to initGameView should happen here,
+        // not inside the constructor, but we'll leave it as is for now
+        // since setEventListener is being used to trigger the start.
+        // We will focus the fix in createNewGame and setEventListener.
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
     }
@@ -85,8 +89,8 @@ public class GameController implements InputEventListener {
 
     @Override
     public void createNewGame() {
-
         board.newGame();
+        viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
     }
 
@@ -144,15 +148,12 @@ public class GameController implements InputEventListener {
     @Override
     public void onBackToMenuEvent() {
         // 1. CRITICAL: Stop the game loop/timeline
-        // If your game loop is driven by a JavaFX Timeline, you MUST stop it here.
-        // Replace 'viewGuiController.stopGameLoop()' with the actual method call
-        // that halts your game's timer/thread.
-        // viewGuiController.stopGameLoop();
+        // The game loop (Timeline) is managed by the GuiController/FlowManager.
+        viewGuiController.gameOver(); // Stopping the game loop is part of the gameOver method.
 
         if (mainApp != null) {
             try {
                 // 2. Access the current Stage/Window
-                // This gets the window the game scene is currently displayed on.
                 Stage currentStage = (Stage) viewGuiController.getViewRoot().getScene().getWindow();
 
                 // 3. Switch the scene back to the main menu
@@ -163,6 +164,4 @@ public class GameController implements InputEventListener {
             }
         }
     }
-
-
 }
