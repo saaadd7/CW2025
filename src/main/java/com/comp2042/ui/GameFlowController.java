@@ -14,7 +14,7 @@ import javafx.animation.ParallelTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
+
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
@@ -57,30 +57,19 @@ public class GameFlowController {
     }
 
     public void start() {
-        System.out.println("GameFlowController.start() called");
-
-        // Stop any existing timeline first
         if (timeLine != null) {
             timeLine.stop();
         }
 
-        // CRITICAL: Set pause to false and game over to false
         isPause.set(false);
         isGameOver.set(false);
 
-        System.out.println("After setting: isPause = " + isPause.get() + ", isGameOver = " + isGameOver.get());
-
-        // Update button text - DON'T trigger events
         pauseButton.setText("Pause");
 
-        // Start the game timeline
         updateGameSpeed();
 
-        // CRITICAL FIX: Add a small delay before marking game as started
-        // This prevents any spurious button events during initialization
         javafx.application.Platform.runLater(() -> {
             gameStarted = true;
-            System.out.println("GameFlowController.start() completed - game now active");
         });
     }
 
@@ -97,12 +86,10 @@ public class GameFlowController {
             int linesRemoved = data.getClearRow().getLinesRemoved();
             totalLinesCleared += linesRemoved;
 
-            // Show score notification for each line cleared
             NotificationPanel scoreNotification = new NotificationPanel("+" + data.getClearRow().getScoreBonus());
             groupNotification.getChildren().add(scoreNotification);
             scoreNotification.showScore(groupNotification.getChildren());
 
-            // Trigger particle effect!
             if (particleEffect != null && data.getClearRow().getClearedRows() != null) {
                 particleEffect.createLineClearExplosion(
                         data.getClearRow().getClearedRows(),
@@ -110,14 +97,12 @@ public class GameFlowController {
                 );
             }
 
-            // Check if level should increase
             int newLevel = (totalLinesCleared / LINES_PER_LEVEL) + 1;
             if (newLevel > level) {
                 level = newLevel;
                 gameInfoPanelController.setLevel(level);
                 updateGameSpeed();
 
-                // Show level up notification with a slight delay
                 Timeline levelUpDelay = new Timeline(new KeyFrame(Duration.millis(500), e -> {
                     NotificationPanel levelUpNotification = new NotificationPanel("LEVEL " + level + "!");
                     groupNotification.getChildren().add(levelUpNotification);
@@ -136,21 +121,17 @@ public class GameFlowController {
             timeLine.stop();
         }
 
-        // Show dramatic Game Over notification
         NotificationPanel gameOverNotification = new NotificationPanel("GAME OVER");
         groupNotification.getChildren().add(gameOverNotification);
 
-        // Dramatic animation: scale up, fade in, and pulse effect
         gameOverNotification.setOpacity(0);
         gameOverNotification.setScaleX(0.5);
         gameOverNotification.setScaleY(0.5);
 
-        // Fade and scale animation
         FadeTransition ft = new FadeTransition(Duration.millis(600), gameOverNotification);
         ft.setFromValue(0);
         ft.setToValue(1);
 
-        // Scale up animation
         Timeline scaleTimeline = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 0.5),
@@ -166,12 +147,10 @@ public class GameFlowController {
                 )
         );
 
-        // Combine animations
         ParallelTransition entrance = new ParallelTransition(ft);
         entrance.play();
         scaleTimeline.play();
 
-        // Add a subtle pulse effect that repeats
         Timeline pulse = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.0),
@@ -194,76 +173,54 @@ public class GameFlowController {
     }
 
     public void newGame() {
-        System.out.println("GameFlowController.newGame() called");
-
-        // Stop existing timeline
         if (timeLine != null) {
             timeLine.stop();
         }
 
-        // Clear any existing notifications
         groupNotification.getChildren().clear();
 
         gameOverPanel.setVisible(false);
         eventListener.createNewGame();
 
-        // Reset state explicitly
         isPause.set(false);
         isGameOver.set(false);
         pauseButton.setText("Pause");
 
-        // Mark as started
         gameStarted = true;
-
-        System.out.println("After newGame: isPause = " + isPause.get() + ", isGameOver = " + isGameOver.get());
 
         level = 1;
         totalLinesCleared = 0;
         gameInfoPanelController.setLevel(1);
 
-        // Create and start new timeline
         updateGameSpeed();
     }
 
     public void pauseGame() {
-        System.out.println("pauseGame() called - gameStarted: " + gameStarted + ", isPause before: " + isPause.get());
-
-        // CRITICAL FIX: Don't allow pause until game has actually started
         if (!gameStarted || isGameOver.getValue() || timeLine == null) {
-            System.out.println("pauseGame() blocked - game not ready");
             return;
         }
 
         if (isPause.get()) {
-            // Currently paused, so resume
             timeLine.play();
             pauseButton.setText("Pause");
             isPause.set(false);
         } else {
-            // Currently playing, so pause
             timeLine.pause();
             pauseButton.setText("Resume");
             isPause.set(true);
         }
-
-        System.out.println("pauseGame() called - isPause after: " + isPause.get());
     }
 
     private void updateGameSpeed() {
-        // Always stop old timeline first
         if (timeLine != null) {
             timeLine.stop();
         }
 
-        // Create new timeline
         timeLine = new Timeline(new KeyFrame(Duration.millis(getDropSpeedForLevel()),
                 e -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))));
         timeLine.setCycleCount(Timeline.INDEFINITE);
 
-        // Always play - don't check pause state here
         timeLine.play();
-
-        System.out.println("Timeline created and started");
     }
 
     private int getDropSpeedForLevel() {
@@ -276,7 +233,6 @@ public class GameFlowController {
 
     public boolean isPaused() {
         boolean paused = isPause.get();
-        System.out.println("isPaused() called - returning: " + paused);
         return paused;
     }
 
