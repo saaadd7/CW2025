@@ -52,7 +52,10 @@ public class GuiController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        soundManager = new SoundManager();
+
+        if (soundManager == null) {
+            soundManager = new SoundManager();
+        }
         Button[] allButtons = {startButton, settingsButton, helpButton, pauseButton};
 
         if (particlePane != null) {
