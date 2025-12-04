@@ -10,6 +10,9 @@ import com.comp2042.core.logic.bricks.SBrick;
 import com.comp2042.core.logic.bricks.TBrick;
 import com.comp2042.core.logic.bricks.ZBrick;
 
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class RandomBrickGenerator implements BrickGenerator {
 
     private static final int INITIAL_QUEUE_SIZE = 4;

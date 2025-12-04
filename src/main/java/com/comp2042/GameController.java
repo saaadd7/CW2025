@@ -1,7 +1,10 @@
 package com.comp2042;
 
+import com.comp2042.core.Board;
+import com.comp2042.core.SimpleBoard;
+import com.comp2042.event.*;
 import com.comp2042.sounds.SoundManager;
-import com.comp2042.ui.GameBoardRenderer; // Import GameBoardRenderer
+import com.comp2042.ui.GameBoardRenderer;
 import com.comp2042.ui.GuiController;
 import javafx.stage.Stage;
 

@@ -1,8 +1,8 @@
 package com.comp2042.ui;
 
+import com.comp2042.event.InputEventListener;
+import com.comp2042.event.ViewData;
 import com.comp2042.sounds.SoundManager;
-import com.comp2042.InputEventListener;
-import com.comp2042.ViewData;
 import com.comp2042.ui.GameOverPanel;
 import com.comp2042.ui.NotificationPanel;
 import javafx.event.ActionEvent;

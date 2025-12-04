@@ -1,7 +1,6 @@
 package com.comp2042.core.logic.bricks;
 
-import com.comp2042.MatrixOperations;
-
+import com.comp2042.core.MatrixOperations;
 import java.util.ArrayList;
 import java.util.List;
 

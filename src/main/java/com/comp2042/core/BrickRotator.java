@@ -1,7 +1,7 @@
 package com.comp2042.core;
 
-import com.comp2042.logic.bricks.Brick;
-import com.comp2042.NextShapeInfo;
+import com.comp2042.core.logic.bricks.Brick;
+import com.comp2042.event.NextShapeInfo;
 import java.util.List;
 
 public class BrickRotator {

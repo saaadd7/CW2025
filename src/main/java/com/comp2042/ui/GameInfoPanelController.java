@@ -1,6 +1,6 @@
 package com.comp2042.ui;
 
-import com.comp2042.ViewData;
+import com.comp2042.event.ViewData;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.scene.control.Label;

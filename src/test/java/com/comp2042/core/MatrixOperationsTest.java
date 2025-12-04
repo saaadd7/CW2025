@@ -1,6 +1,6 @@
-package com.comp2042.logic;
- import com.comp2042.ClearRow;
- import com.comp2042.MatrixOperations;
+package com.comp2042.core;
+ import com.comp2042.event.ClearRow;
+ import com.comp2042.core.MatrixOperations;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;

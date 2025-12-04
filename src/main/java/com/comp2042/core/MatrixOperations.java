@@ -1,10 +1,13 @@
 package com.comp2042.core;
 
-import com.comp2042.ClearRow;
+import com.comp2042.event.ClearRow;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.stream.Collectors;
 
 public class MatrixOperations {
 

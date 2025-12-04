@@ -1,6 +1,7 @@
-package com.comp2042;
+package com.comp2042.event;
 
-public final class ViewData {
+import com.comp2042.core.MatrixOperations;
+import java.util.Arrays;public final class ViewData {
 
     // Main piece
     private final int[][] brickData;

@@ -1,10 +1,10 @@
 package com.comp2042.ui;
 
-import com.comp2042.DownData;
-import com.comp2042.EventType;
-import com.comp2042.EventSource;
-import com.comp2042.InputEventListener;
-import com.comp2042.MoveEvent;
+import com.comp2042.event.DownData;
+import com.comp2042.event.EventType;
+import com.comp2042.event.EventSource;
+import com.comp2042.event.InputEventListener;
+import com.comp2042.event.MoveEvent;
 import com.comp2042.ui.GameOverPanel;
 import com.comp2042.ui.NotificationPanel;
 import javafx.animation.KeyFrame;

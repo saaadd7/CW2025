@@ -1,4 +1,7 @@
-package com.comp2042;
+package com.comp2042.event;
+
+import com.comp2042.event.ClearRow;
+import com.comp2042.event.ViewData;
 
 public final class DownData {
     private final ClearRow clearRow;

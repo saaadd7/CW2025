@@ -1,14 +1,11 @@
 package com.comp2042.core;
 
-import com.comp2042.core.Board;
-import com.comp2042.ClearRow;
-import com.comp2042.MatrixOperations;
-import com.comp2042.NextShapeInfo;
-import com.comp2042.Score;
-import com.comp2042.ViewData;
-import com.comp2042.logic.bricks.Brick;
-import com.comp2042.logic.bricks.BrickGenerator;
-import com.comp2042.logic.bricks.RandomBrickGenerator;
+import com.comp2042.event.ClearRow;
+import com.comp2042.event.NextShapeInfo;
+import com.comp2042.event.ViewData;
+import com.comp2042.core.logic.bricks.Brick;
+import com.comp2042.core.logic.bricks.BrickGenerator;
+import com.comp2042.core.logic.bricks.RandomBrickGenerator;
 
 import java.awt.Point;
 import java.util.List;

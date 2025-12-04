@@ -1,6 +1,6 @@
 package com.comp2042.ui;
 
-import com.comp2042.ViewData;
+import com.comp2042.event.ViewData;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
