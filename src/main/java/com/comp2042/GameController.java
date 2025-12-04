@@ -2,6 +2,7 @@ package com.comp2042;
 
 import com.comp2042.sounds.SoundManager;
 import com.comp2042.ui.GameBoardRenderer; // Import GameBoardRenderer
+import com.comp2042.ui.GuiController;
 import javafx.stage.Stage;
 
 public class GameController implements InputEventListener {

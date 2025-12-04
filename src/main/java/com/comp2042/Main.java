@@ -2,6 +2,7 @@ package com.comp2042;
 
 import com.comp2042.ui.MainMenuController;
 import com.comp2042.sounds.SoundManager;
+import com.comp2042.ui.GuiController;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

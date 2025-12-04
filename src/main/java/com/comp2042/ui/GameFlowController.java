@@ -3,10 +3,10 @@ package com.comp2042.ui;
 import com.comp2042.DownData;
 import com.comp2042.EventType;
 import com.comp2042.EventSource;
-import com.comp2042.GameOverPanel;
 import com.comp2042.InputEventListener;
 import com.comp2042.MoveEvent;
-import com.comp2042.NotificationPanel;
+import com.comp2042.ui.GameOverPanel;
+import com.comp2042.ui.NotificationPanel;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.FadeTransition;
@@ -40,7 +40,7 @@ public class GameFlowController {
     private final GameInfoPanelController gameInfoPanelController;
     private final StackPane groupNotification;
     private final Button pauseButton;
-    private final com.comp2042.GameOverPanel gameOverPanel;
+    private final GameOverPanel gameOverPanel;
 
     private int level = 1;
     private int totalLinesCleared = 0;
@@ -48,7 +48,7 @@ public class GameFlowController {
 
     public GameFlowController(GameBoardRenderer gameBoardRenderer,
                               GameInfoPanelController gameInfoPanelController, StackPane groupNotification,
-                              Button pauseButton, com.comp2042.GameOverPanel gameOverPanel) {
+                              Button pauseButton, GameOverPanel gameOverPanel) {
         this.gameBoardRenderer = gameBoardRenderer;
         this.gameInfoPanelController = gameInfoPanelController;
         this.groupNotification = groupNotification;
