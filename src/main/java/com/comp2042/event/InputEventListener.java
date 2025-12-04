@@ -20,5 +20,5 @@ public interface InputEventListener {
 
     void createNewGame();
 
-   // void onLevelUp(int newLevel);
+
 }
