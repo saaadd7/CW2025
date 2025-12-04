@@ -32,7 +32,7 @@ public class SimpleBoard implements Board {
         score = new Score();
     }
 
-    // ... [moveBrickDown, moveBrickLeft, moveBrickRight, rotateLeftBrick methods remain the same] ...
+
 
     @Override
     public boolean moveBrickDown() {
@@ -138,9 +138,7 @@ public class SimpleBoard implements Board {
         return currentGameMatrix;
     }
 
-    // ======================================================
-    //  ViewData + Ghost Piece
-    // ======================================================
+
     @Override
     public ViewData getViewData() {
 
@@ -163,9 +161,7 @@ public class SimpleBoard implements Board {
         // 3. Create View Data
         ViewData view = new ViewData(brickMatrix, brickX, brickY, nextShape1, nextShape2, nextShape3);
 
-        // FIX 2: GHOST CALCULATION
-        // We explicitly use 'brickMatrix' (the current active shape) to calculate the ghost.
-        // This ensures the shadow ALWAYS matches the falling block.
+
         int ghostY = calculateGhostY(brickMatrix, brickX, brickY);
         view.setGhost(brickMatrix, brickX, ghostY);
 
@@ -201,9 +197,7 @@ public class SimpleBoard implements Board {
         createNewBrick();
     }
 
-    // ======================================================
-    //                  GHOST PIECE HELPERS
-    // ======================================================
+
     private int calculateGhostY(int[][] shape, int startX, int startY) {
         int ghostY = startY;
 
@@ -230,9 +224,7 @@ public class SimpleBoard implements Board {
                 int newY = y + row + 1;
                 int newX = x + col;
 
-                // Check boundaries using the confusing variable names:
-                // width = number of rows (25)
-                // height = number of cols (10)
+
 
                 if (newY >= width) { // Bottom boundary
                     return false;
