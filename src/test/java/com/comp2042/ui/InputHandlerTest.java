@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class InputHandlerTest {
 
-    // 1. Initialize JavaFX Toolkit
+    // 1. Initialize JavaFX Toolkit (prevents "Toolkit not initialized" errors)
     @BeforeAll
     static void initToolkit() {
         try {
@@ -20,7 +20,7 @@ class InputHandlerTest {
         }
     }
 
-    // 2. The Tests
+    // 2. The Test
     @Test
     void testMovementKeysTriggerEvents() {
         // Arrange
@@ -49,9 +49,7 @@ class InputHandlerTest {
         SpyListener spy = new SpyListener();
         handler.setEventListener(spy);
 
-        // Set the game to "Paused" manually via the Stub
-        // This tests that IF the game is paused, keys don't work.
-        // It does NOT test the 'P' key itself anymore.
+        // Set the game to "Paused" (manually setting state to ensure logic holds)
         flow.setPaused(true);
 
         // Act: Try to move RIGHT
@@ -61,8 +59,6 @@ class InputHandlerTest {
         assertNull(spy.lastEventType, "Movement should be ignored when paused");
     }
 
-    // REMOVED: testPauseKey() has been deleted.
-
     // --- Helper to create KeyEvents ---
     private KeyEvent createKeyEvent(KeyCode code) {
         return new KeyEvent(KeyEvent.KEY_PRESSED, "", "", code,
@@ -71,14 +67,16 @@ class InputHandlerTest {
 
     // --- STUBS (Fake classes to isolate the test) ---
 
+    // A fake renderer that does nothing (avoids JavaFX graphics errors)
     static class StubRenderer extends GameBoardRenderer {
-        public StubRenderer() { super(null); }
+        public StubRenderer() { super(null); } // Pass null to parent
         @Override public void refreshBrick(ViewData brick) { /* Do nothing */ }
     }
 
+    // A fake flow controller to control game state
     static class StubFlow extends GameFlowController {
         boolean paused = false;
-        // removed pauseMethodCalled flag as it is no longer tested
+        // Removed 'pauseMethodCalled' variable as it is no longer tested
 
         public StubFlow() { super(null, null, null, null, null); }
 
@@ -87,12 +85,13 @@ class InputHandlerTest {
         @Override public void handleDropResult(DownData data) { /* Do nothing */ }
 
         @Override public void pauseGame() {
-            // Logic removed or kept empty, as InputHandler shouldn't call this via 'P' anymore
+            // Logic removed since we aren't testing the 'P' key trigger anymore
         }
 
         public void setPaused(boolean p) { this.paused = p; }
     }
 
+    // A "Spy" listener that records what the InputHandler does
     static class SpyListener implements InputEventListener {
         EventType lastEventType;
 
