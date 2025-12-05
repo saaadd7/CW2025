@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 public class GameController implements InputEventListener {
 
-    private Board board = new SimpleBoard(22, 10);
+    private final Board board;
 
     private final GuiController viewGuiController;
     private final GameBoardRenderer gameBoardRenderer;
@@ -19,8 +19,8 @@ public class GameController implements InputEventListener {
     private final SoundManager soundManager;
     private final Main mainApp;
 
-    public GameController(GuiController c, GameBoardRenderer gameBoardRenderer, SoundManager soundManager, Main mainApp) {
-        this.board = new SimpleBoard(22, 10);
+    public GameController(GuiController c, GameBoardRenderer gameBoardRenderer, SoundManager soundManager, Main mainApp, int boardWidth, int boardHeight) {
+        this.board = new SimpleBoard(boardWidth, boardHeight);
         this.viewGuiController = c;
         this.gameBoardRenderer = gameBoardRenderer;
         this.soundManager = soundManager;
@@ -37,25 +37,7 @@ public class GameController implements InputEventListener {
         boolean canMove = board.moveBrickDown();
         ClearRow clearRow = null;
         if (!canMove) {
-
-            if (soundManager != null) {
-                soundManager.playThudSound();
-            }
-
-            board.mergeBrickToBackground();
-            clearRow = board.clearRows();
-            if (clearRow.getLinesRemoved() > 0) {
-                board.getScore().add(clearRow.getScoreBonus());
-
-                if (soundManager != null) {
-                    soundManager.playSwooshSound();
-                }
-            }
-            if (board.createNewBrick()) {
-                viewGuiController.gameOver();
-            }
-
-            gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
+            clearRow = handleBrickLanded();
         } else {
             // This makes scoring dependent only on line clears (classic behavior).
         }
@@ -93,7 +75,6 @@ public class GameController implements InputEventListener {
     public DownData onHardDropEvent(MoveEvent event) {
         int dropDistance = 0;
         boolean canMove;
-        ClearRow clearRow = null;
 
         // Move the current brick down until it can't move anymore
         do {
@@ -103,13 +84,19 @@ public class GameController implements InputEventListener {
             }
         } while (canMove);
 
+        ClearRow clearRow = handleBrickLanded();
+
+        return new DownData(clearRow, board.getViewData());
+    }
+
+    private ClearRow handleBrickLanded() {
         if (soundManager != null) {
             soundManager.playThudSound();
         }
 
         board.mergeBrickToBackground();
 
-        clearRow = board.clearRows();
+        ClearRow clearRow = board.clearRows();
         if (clearRow.getLinesRemoved() > 0) {
             board.getScore().add(clearRow.getScoreBonus());
 
@@ -123,9 +110,9 @@ public class GameController implements InputEventListener {
         }
 
         gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
-
-        return new DownData(clearRow, board.getViewData());
+        return clearRow;
     }
+
 
     @Override
     public void onBackToMenuEvent() {
