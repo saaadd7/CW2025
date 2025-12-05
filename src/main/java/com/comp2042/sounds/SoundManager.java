@@ -4,7 +4,9 @@ import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-public class SoundManager {
+public class SoundManager implements ISoundManager {
+
+    private static SoundManager instance;
 
     private MediaPlayer thudPlayer;
     private MediaPlayer swooshPlayer;
@@ -14,7 +16,7 @@ public class SoundManager {
     private boolean soundsEnabled = true;
     private boolean backgroundMusicEnabled = true;
 
-    public SoundManager() {
+    private SoundManager() {
         java.net.URL thudResource = getClass().getResource("/sounds/thud.wav");
         if (thudResource != null) {
             Media thudSound = new Media(thudResource.toExternalForm());
@@ -103,5 +105,12 @@ public class SoundManager {
 
     public boolean isBackgroundMusicEnabled() {
         return backgroundMusicEnabled;
+    }
+
+    public static SoundManager getInstance() {
+        if (instance == null) {
+            instance = new SoundManager();
+        }
+        return instance;
     }
 }

@@ -1,6 +1,6 @@
 package com.comp2042.ui;
 
-import com.comp2042.sounds.SoundManager;
+import com.comp2042.sounds.ISoundManager;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import org.junit.jupiter.api.BeforeAll;
@@ -83,21 +83,22 @@ class SettingsControllerTest {
         field.set(target, value);
     }
 
-    static class StubSoundManager extends SoundManager {
+    static class StubSoundManager implements ISoundManager {
         boolean sounds = true;
         boolean music = true;
 
         // We override the constructor to prevent loading real files
-        public StubSoundManager() {
-            super();
-        }
+        public StubSoundManager() { }
 
         // Override logic methods to avoid Media usage
         @Override public void toggleSounds() { sounds = !sounds; }
         @Override public boolean isSoundsEnabled() { return sounds; }
         @Override public void toggleBackgroundMusic() { music = !music; }
         @Override public boolean isBackgroundMusicEnabled() { return music; }
-        // Override play methods to do nothing
+        @Override public void playThudSound() {}
+        @Override public void playSwooshSound() {}
         @Override public void playClickSound() {}
+        @Override public void playBackgroundMusic() {}
+        @Override public void stopBackgroundMusic() {}
     }
 }

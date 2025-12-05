@@ -1,7 +1,9 @@
 package com.comp2042.ui;
 
+import com.comp2042.event.GameEvent;
 import com.comp2042.event.InputEventListener;
 import com.comp2042.event.ViewData;
+import com.comp2042.sounds.ISoundManager;
 import com.comp2042.sounds.SoundManager;
 import com.comp2042.ui.GameOverPanel;
 import com.comp2042.ui.NotificationPanel;
@@ -27,7 +29,7 @@ import java.util.ResourceBundle;
 
 public class GuiController implements Initializable {
 
-    private SoundManager soundManager;
+    private ISoundManager soundManager;
     private InputEventListener eventListener;
 
     private GameBoardRenderer gameBoardRenderer;
@@ -54,7 +56,7 @@ public class GuiController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         if (soundManager == null) {
-            soundManager = new SoundManager();
+            soundManager = SoundManager.getInstance();
         }
         Button[] allButtons = {startButton, settingsButton, helpButton, pauseButton};
 
@@ -126,8 +128,9 @@ public class GuiController implements Initializable {
 
     @FXML
     public void newGame(ActionEvent e) {
-        soundManager.playClickSound();
-        gameFlowController.newGame();
+        if (eventListener != null) {
+            eventListener.onGameEvent(new com.comp2042.event.NewGameEvent());
+        }
         gamePanel.requestFocus();
     }
 
@@ -151,7 +154,7 @@ public class GuiController implements Initializable {
     @FXML
     private void backToMainMenu() {
         if (eventListener != null) {
-            eventListener.onBackToMenuEvent();
+            eventListener.onGameEvent(new com.comp2042.event.BackToMenuEvent());
         }
     }
 

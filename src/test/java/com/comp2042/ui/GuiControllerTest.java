@@ -1,7 +1,8 @@
 package com.comp2042.ui;
 
+import com.comp2042.event.GameEvent;
 import com.comp2042.event.InputEventListener;
-import com.comp2042.sounds.SoundManager; // Import SoundManager
+import com.comp2042.sounds.ISoundManager;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
@@ -113,27 +114,22 @@ class GuiControllerTest {
     // --- STUBS ---
 
     // A safe SoundManager that does NOT load real audio files
-    static class StubSoundManager extends SoundManager {
-        public StubSoundManager() {
-            super();
-        }
-        // Override Init to do nothing (so it doesn't load files)
-        // Since constructor calls logic, we rely on the fact that if files are missing it prints error but doesn't crash.
-        // BUT, the real constructor tries to load files.
-        // TRICK: The simplest way is to ensure we don't trigger the media engine.
-        // Note: Reflection injection happens AFTER the controller is made but BEFORE initialize().
-        // The crash happens inside 'new SoundManager()' inside initialize().
-        // By injecting this Stub and adding the 'if (soundManager == null)' check in GuiController,
-        // the Real SoundManager (and the crash) is completely skipped!
+    static class StubSoundManager implements ISoundManager {
+        public void playThudSound() {}
+        public void playSwooshSound() {}
+        public void playClickSound() {}
+        public void playBackgroundMusic() {}
+        public void stopBackgroundMusic() {}
+        public void toggleSounds() {}
+        public boolean isSoundsEnabled() { return true; }
+        public void toggleBackgroundMusic() {}
+        public boolean isBackgroundMusicEnabled() { return true; }
     }
 
     static class SpyListener implements InputEventListener {
-        @Override public com.comp2042.event.DownData onDownEvent(com.comp2042.event.MoveEvent e) { return null; }
-        @Override public com.comp2042.event.ViewData onLeftEvent(com.comp2042.event.MoveEvent e) { return null; }
-        @Override public com.comp2042.event.ViewData onRightEvent(com.comp2042.event.MoveEvent e) { return null; }
-        @Override public com.comp2042.event.ViewData onRotateEvent(com.comp2042.event.MoveEvent e) { return null; }
-        @Override public com.comp2042.event.DownData onHardDropEvent(com.comp2042.event.MoveEvent e) { return null; }
-        @Override public void createNewGame() {}
-        @Override public void onBackToMenuEvent() {}
+        @Override
+        public Object onGameEvent(com.comp2042.event.GameEvent event) {
+            return null;
+        }
     }
 }

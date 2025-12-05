@@ -17,19 +17,12 @@ public class RandomBrickGenerator implements BrickGenerator {
 
     private static final int INITIAL_QUEUE_SIZE = 4;
 
-    private final List<Brick> brickList;
+    private final List<BrickType> brickTypeList;
 
     private final Deque<Brick> nextBricks = new ArrayDeque<>();
 
     public RandomBrickGenerator() {
-        brickList = new ArrayList<>();
-        brickList.add(new IBrick());
-        brickList.add(new JBrick());
-        brickList.add(new LBrick());
-        brickList.add(new OBrick());
-        brickList.add(new SBrick());
-        brickList.add(new TBrick());
-        brickList.add(new ZBrick());
+        brickTypeList = Arrays.asList(BrickType.values());
         while (nextBricks.size() < INITIAL_QUEUE_SIZE) {
             nextBricks.add(randomBrick());
         }
@@ -60,6 +53,7 @@ public class RandomBrickGenerator implements BrickGenerator {
     }
 
     private Brick randomBrick() {
-        return brickList.get(ThreadLocalRandom.current().nextInt(brickList.size()));
+        BrickType randomType = brickTypeList.get(ThreadLocalRandom.current().nextInt(brickTypeList.size()));
+        return BrickFactory.createBrick(randomType);
     }
 }

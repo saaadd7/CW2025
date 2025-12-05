@@ -1,9 +1,11 @@
 package com.comp2042;
 
 import com.comp2042.event.DownData;
+import com.comp2042.event.GameEvent;
 import com.comp2042.event.InputEventListener;
 import com.comp2042.event.MoveEvent;
 import com.comp2042.event.ViewData;
+import com.comp2042.sounds.SoundManager;
 import com.comp2042.ui.GameBoardRenderer;
 import com.comp2042.ui.GuiController;
 import javafx.application.Platform;
@@ -31,10 +33,7 @@ class GameControllerTest {
         StubRenderer renderer = new StubRenderer();
 
         // Act
-        // We pass 'null' for SoundManager and MainApp.
-        // Your GameController code handles nulls safely (e.g. "if (soundManager != null)"),
-        // so this is a valid way to test logic without sound files.
-        GameController controller = new GameController(gui, renderer, null, null);
+        GameController controller = new GameController(gui, renderer, SoundManager.getInstance(), null, 10, 20);
 
         // Assert
         assertTrue(gui.initCalled, "Controller should call initGameView on startup");
@@ -46,14 +45,14 @@ class GameControllerTest {
         // Arrange
         StubGuiController gui = new StubGuiController();
         StubRenderer renderer = new StubRenderer();
-        GameController controller = new GameController(gui, renderer, null, null);
+        GameController controller = new GameController(gui, renderer, SoundManager.getInstance(), null, 10, 20);
 
         // Act
-        // We simulate a RIGHT event. We don't need a valid MoveEvent object because
-        // GameController doesn't use the event data inside onRightEvent.
-        ViewData viewData = controller.onRightEvent(null);
+        Object result = controller.onGameEvent(new com.comp2042.event.RightEvent());
 
         // Assert
+        assertTrue(result instanceof ViewData);
+        ViewData viewData = (ViewData) result;
         assertNotNull(viewData, "Moving right should return updated view data");
         assertNotNull(viewData.getBrickData(), "View data should contain brick matrix");
     }
@@ -63,26 +62,24 @@ class GameControllerTest {
         // Arrange
         StubGuiController gui = new StubGuiController();
         StubRenderer renderer = new StubRenderer();
-        GameController controller = new GameController(gui, renderer, null, null);
+        GameController controller = new GameController(gui, renderer, SoundManager.getInstance(), null, 10, 20);
 
         // Act
-        // Simulate pressing Spacebar (Hard Drop)
-        DownData result = controller.onHardDropEvent(null);
+        Object result = controller.onGameEvent(new com.comp2042.event.HardDropEvent());
 
         // Assert
+        assertTrue(result instanceof DownData);
         assertNotNull(result, "Hard drop should return a result");
-        // We assume logic holds (Board was tested separately), we just ensure the controller passes data back.
     }
 
     @Test
     void testBackToMenuSafeExit() {
         // Arrange
         StubGuiController gui = new StubGuiController();
-        GameController controller = new GameController(gui, new StubRenderer(), null, null);
+        GameController controller = new GameController(gui, new StubRenderer(), SoundManager.getInstance(), null, 10, 20);
 
         // Act & Assert
-        // Calling this with null MainApp should catch exception and print error, but NOT crash the test.
-        assertDoesNotThrow(() -> controller.onBackToMenuEvent());
+        assertDoesNotThrow(() -> controller.onGameEvent(new com.comp2042.event.BackToMenuEvent()));
     }
 
     // --- STUBS (Fake Classes) ---

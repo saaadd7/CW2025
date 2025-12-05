@@ -33,60 +33,50 @@ public class GameController implements InputEventListener {
     }
 
     @Override
-    public DownData onDownEvent(MoveEvent event) {
-        boolean canMove = board.moveBrickDown();
-        ClearRow clearRow = null;
-        if (!canMove) {
-            clearRow = handleBrickLanded();
-        } else {
-            // This makes scoring dependent only on line clears (classic behavior).
+    public Object onGameEvent(GameEvent event) {
+        switch (event.getType()) {
+            case DOWN:
+                boolean canMove = board.moveBrickDown();
+                ClearRow clearRow = null;
+                if (!canMove) {
+                    clearRow = handleBrickLanded();
+                }
+                return new DownData(clearRow, board.getViewData());
+            case LEFT:
+                board.moveBrickLeft();
+                return board.getViewData();
+            case RIGHT:
+                board.moveBrickRight();
+                return board.getViewData();
+            case ROTATE:
+                board.rotateLeftBrick();
+                return board.getViewData();
+            case HARD_DROP:
+                boolean canMoveDrop;
+                do {
+                    canMoveDrop = board.moveBrickDown();
+                } while (canMoveDrop);
+                ClearRow clearRowDrop = handleBrickLanded();
+                return new DownData(clearRowDrop, board.getViewData());
+            case NEW_GAME:
+                board.newGame();
+                viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
+                gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
+                return null;
+            case BACK_TO_MENU:
+                viewGuiController.gameOver();
+                if (mainApp != null) {
+                    try {
+                        Stage currentStage = (Stage) viewGuiController.getViewRoot().getScene().getWindow();
+                        mainApp.showMainMenu(currentStage);
+                    } catch (Exception e) {
+                        System.err.println("Failed to switch back to Main Menu.");
+                        e.printStackTrace();
+                    }
+                }
+                return null;
         }
-
-        return new DownData(clearRow, board.getViewData());
-    }
-
-    @Override
-    public ViewData onLeftEvent(MoveEvent event) {
-        board.moveBrickLeft();
-        return board.getViewData();
-    }
-
-    @Override
-    public ViewData onRightEvent(MoveEvent event) {
-        board.moveBrickRight();
-        return board.getViewData();
-    }
-
-    @Override
-    public ViewData onRotateEvent(MoveEvent event) {
-        board.rotateLeftBrick();
-        return board.getViewData();
-    }
-
-
-    @Override
-    public void createNewGame() {
-        board.newGame();
-        viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
-        gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
-    }
-
-    @Override
-    public DownData onHardDropEvent(MoveEvent event) {
-        int dropDistance = 0;
-        boolean canMove;
-
-        // Move the current brick down until it can't move anymore
-        do {
-            canMove = board.moveBrickDown();
-            if (canMove) {
-                dropDistance++;
-            }
-        } while (canMove);
-
-        ClearRow clearRow = handleBrickLanded();
-
-        return new DownData(clearRow, board.getViewData());
+        return null;
     }
 
     private ClearRow handleBrickLanded() {
@@ -111,22 +101,5 @@ public class GameController implements InputEventListener {
 
         gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
         return clearRow;
-    }
-
-
-    @Override
-    public void onBackToMenuEvent() {
-        viewGuiController.gameOver();
-
-        if (mainApp != null) {
-            try {
-                Stage currentStage = (Stage) viewGuiController.getViewRoot().getScene().getWindow();
-
-                mainApp.showMainMenu(currentStage);
-            } catch (Exception e) {
-                System.err.println("Failed to switch back to Main Menu.");
-                e.printStackTrace();
-            }
-        }
     }
 }

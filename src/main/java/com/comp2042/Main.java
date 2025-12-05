@@ -21,7 +21,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("TetrisJFX");
 
-        soundManager = new SoundManager();
+        soundManager = SoundManager.getInstance();
         soundManager.playBackgroundMusic();
 
         showMainMenu(primaryStage);

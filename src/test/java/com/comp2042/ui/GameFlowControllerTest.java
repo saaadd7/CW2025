@@ -1,6 +1,7 @@
 package com.comp2042.ui;
 
 import com.comp2042.event.DownData;
+import com.comp2042.event.GameEvent;
 import com.comp2042.event.InputEventListener;
 import com.comp2042.event.ViewData;
 import javafx.application.Platform;
@@ -56,13 +57,10 @@ class GameFlowControllerTest {
         GameFlowController flow = new GameFlowController(renderer, infoPanel, new StackPane(), pauseBtn, gameOverPanel);
 
         flow.setEventListener(new InputEventListener() {
-            public DownData onDownEvent(com.comp2042.event.MoveEvent e) { return null; }
-            public ViewData onLeftEvent(com.comp2042.event.MoveEvent e) { return null; }
-            public ViewData onRightEvent(com.comp2042.event.MoveEvent e) { return null; }
-            public ViewData onRotateEvent(com.comp2042.event.MoveEvent e) { return null; }
-            public DownData onHardDropEvent(com.comp2042.event.MoveEvent e) { return null; }
-            public void createNewGame() { }
-            public void onBackToMenuEvent() {}
+            @Override
+            public Object onGameEvent(com.comp2042.event.GameEvent event) {
+                return null;
+            }
         });
 
         Platform.runLater(() -> {
