@@ -4,6 +4,10 @@ import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
+/**
+ * Manages all sound effects and background music for the game.
+ * Provides methods to play specific sounds, toggle sound effects and background music on/off.
+ */
 public class SoundManager implements ISoundManager {
 
     private static SoundManager instance;
@@ -16,6 +20,11 @@ public class SoundManager implements ISoundManager {
     private boolean soundsEnabled = true;
     private boolean backgroundMusicEnabled = true;
 
+    /**
+     * Constructs a SoundManager and loads all necessary audio files.
+     * Initializes MediaPlayers and AudioClips for various game sounds.
+     * Prints error messages to System.err if any audio files are not found.
+     */
     private SoundManager() {
         java.net.URL thudResource = getClass().getResource("/sounds/thud.wav");
         if (thudResource != null) {
@@ -53,6 +62,9 @@ public class SoundManager implements ISoundManager {
         }
     }
 
+    /**
+     * Plays the 'thud' sound effect if sounds are enabled.
+     */
     public void playThudSound() {
         if (soundsEnabled && thudPlayer != null) {
             thudPlayer.seek(thudPlayer.getStartTime());
@@ -60,6 +72,9 @@ public class SoundManager implements ISoundManager {
         }
     }
 
+    /**
+     * Plays the 'swoosh' sound effect if sounds are enabled.
+     */
     public void playSwooshSound() {
         if (soundsEnabled && swooshPlayer != null) {
             swooshPlayer.seek(swooshPlayer.getStartTime());
@@ -67,18 +82,29 @@ public class SoundManager implements ISoundManager {
         }
     }
 
+    /**
+     * Plays the 'click' sound effect if sounds are enabled.
+     */
     public void playClickSound() {
         if (soundsEnabled && clickPlayer != null) {
             clickPlayer.play();
         }
     }
 
+    /**
+     * Plays the background music if background music is enabled.
+     * The music is set to loop indefinitely.
+     */
     public void playBackgroundMusic() {
         if (backgroundMusicEnabled && backgroundMusicPlayer != null) {
             backgroundMusicPlayer.play();
         }
     }
 
+    /**
+     * Stops the background music.
+     * Sets `backgroundMusicEnabled` to false.
+     */
     public void stopBackgroundMusic() {
         if (backgroundMusicPlayer != null) {
             backgroundMusicPlayer.stop();
@@ -86,14 +112,25 @@ public class SoundManager implements ISoundManager {
         backgroundMusicEnabled = false;
     }
 
+    /**
+     * Toggles the state of all sound effects (on/off).
+     */
     public void toggleSounds() {
         soundsEnabled = !soundsEnabled;
     }
 
+    /**
+     * Checks if sound effects are currently enabled.
+     * @return true if sounds are enabled, false otherwise.
+     */
     public boolean isSoundsEnabled() {
         return soundsEnabled;
     }
 
+    /**
+     * Toggles the state of background music (on/off).
+     * If enabled, it starts playing the background music; if disabled, it stops it.
+     */
     public void toggleBackgroundMusic() {
         backgroundMusicEnabled = !backgroundMusicEnabled;
         if (backgroundMusicEnabled) {
@@ -103,6 +140,10 @@ public class SoundManager implements ISoundManager {
         }
     }
 
+    /**
+     * Checks if background music is currently enabled.
+     * @return true if background music is enabled, false otherwise.
+     */
     public boolean isBackgroundMusicEnabled() {
         return backgroundMusicEnabled;
     }

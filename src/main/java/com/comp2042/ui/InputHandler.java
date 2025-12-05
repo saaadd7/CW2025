@@ -7,21 +7,43 @@ import javafx.scene.input.KeyEvent;
 import com.comp2042.ui.GameFlowController;
 import com.comp2042.ui.GameBoardRenderer;
 
+/**
+ * Handles user input from keyboard events and translates them into game actions.
+ * This class interacts with {@link GameFlowController} and {@link InputEventListener}
+ * to control the game state and update the game board.
+ */
 public class InputHandler {
 
     private InputEventListener eventListener;
 
+    /**
+     * Sets the event listener that will handle game input events.
+     * @param eventListener The listener to be set.
+     */
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
     }
     private final GameFlowController gameFlowController;
     private final GameBoardRenderer gameBoardRenderer;
 
+    /**
+     * Constructs an InputHandler with references to the game flow controller and game board renderer.
+     *
+     * @param gameFlowController The controller responsible for managing the game's overall flow.
+     * @param gameBoardRenderer The renderer responsible for updating the visual game board.
+     */
     public InputHandler(GameFlowController gameFlowController, GameBoardRenderer gameBoardRenderer) {
         this.gameFlowController = gameFlowController;
         this.gameBoardRenderer = gameBoardRenderer;
     }
 
+    /**
+     * Handles keyboard key press events.
+     * Translates key presses into game movements (left, right, down, rotate, hard drop),
+     * and game control actions (new game, pause).
+     *
+     * @param keyEvent The KeyEvent triggered by the user's key press.
+     */
     public void handleKeyPress(KeyEvent keyEvent) {
         if (eventListener == null) return;
 

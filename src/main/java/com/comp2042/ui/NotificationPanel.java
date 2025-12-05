@@ -15,8 +15,19 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
+/**
+ * A custom JavaFX {@link BorderPane} used to display transient notifications
+ * such as score bonuses or "GAME OVER" messages.
+ * It features animation for fading out and moving the notification.
+ */
 public class NotificationPanel extends BorderPane {
 
+    /**
+     * Constructs a NotificationPanel with a specified text.
+     * Applies different styling and effects based on whether the text is "GAME OVER".
+     *
+     * @param text The text to be displayed in the notification.
+     */
     public NotificationPanel(String text) {
         // Special styling for GAME OVER
         if (text.contains("GAME OVER")) {
@@ -63,17 +74,24 @@ public class NotificationPanel extends BorderPane {
         }
     }
 
+    /**
+     * Displays the notification with a fade-out and translate animation.
+     * The notification is removed from the parent's children list after the animation finishes.
+     *
+     * @param list The {@link ObservableList} of {@link Node}s (typically the parent's children)
+     *             from which this notification panel will be removed after animation.
+     */
     public void showScore(ObservableList<Node> list) {
         FadeTransition ft = new FadeTransition(Duration.millis(2000), this);
         TranslateTransition tt = new TranslateTransition(Duration.millis(2500), this);
-        tt.setByY(-40);
-        ft.setFromValue(1);
-        ft.setToValue(0);
-        ParallelTransition transition = new ParallelTransition(tt, ft);
+        tt.setByY(-40); // Moves the notification up by 40 pixels
+        ft.setFromValue(1); // Starts fully opaque
+        ft.setToValue(0);   // Ends fully transparent
+        ParallelTransition transition = new ParallelTransition(tt, ft); // Play both animations simultaneously
         transition.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                list.remove(NotificationPanel.this);
+                list.remove(NotificationPanel.this); // Remove from parent after animation
             }
         });
         transition.play();

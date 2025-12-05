@@ -5,34 +5,48 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
+/**
+ * Controller for the settings menu.
+ * Manages sound and background music toggling, and provides functionality to close the settings window.
+ */
 public class SettingsController {
 
-    // Matches the fx:id="soundToggleButton" in settingsMenu.fxml
+    /**
+     * FXML-injected button to toggle sound effects.
+     * Matches the fx:id="soundToggleButton" in settingsMenu.fxml.
+     */
     @FXML
     private Button soundToggleButton;
 
+    /**
+     * FXML-injected button to toggle background music.
+     */
     @FXML
     private Button backgroundMusicToggleButton;
 
     private ISoundManager soundManager;
     private Stage settingsStage; // Reference to the window this controller manages
-    // ...
+
+    /**
+     * Sets the SoundManager instance and initializes the button text.
+     * This is called by MainMenuController when the settings window is opened.
+     *
+     * @param soundManager The SoundManager instance to be used for sound control.
+     */
     public void setSoundManager(ISoundManager soundManager) {
-        this.soundManager = soundManager;
-        updateSoundButtonText(); // Set initial text
-        updateBackgroundMusicButtonText();
-    }
 
     /**
      * Sets the stage (window) associated with this controller.
      * Used to close the window when the user clicks 'Back'.
+     *
+     * @param stage The JavaFX Stage object for the settings window.
      */
     public void setSettingsStage(Stage stage) {
         this.settingsStage = stage;
     }
 
     /**
-     * Updates the text of the sound toggle button based on the current sound state.
+     * Updates the text and style of the sound toggle button based on the current sound state.
      */
     private void updateSoundButtonText() {
         if (soundManager != null) {
@@ -57,6 +71,9 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Updates the text and style of the background music toggle button based on the current music state.
+     */
     private void updateBackgroundMusicButtonText() {
         if (soundManager != null) {
             boolean enabled = soundManager.isBackgroundMusicEnabled();
@@ -80,6 +97,10 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Toggles the sound effects on or off via the SoundManager.
+     * This method is called when the soundToggleButton is clicked.
+     */
     @FXML
     private void toggleSounds() {
         if (soundManager != null) {
@@ -88,6 +109,10 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Toggles the background music on or off via the SoundManager.
+     * This method is called when the backgroundMusicToggleButton is clicked.
+     */
     @FXML
     private void toggleBackgroundMusic() {
         if (soundManager != null) {

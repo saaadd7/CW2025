@@ -9,14 +9,31 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.stream.Collectors;
 
+/**
+ * A utility class containing static methods for performing various operations
+ * on 2D integer matrices, primarily used for game board and brick manipulations
+ * in a Tetris-like game.
+ */
 public class MatrixOperations {
 
 
-    //We don't want to instantiate this utility class
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
     private MatrixOperations(){
 
     }
 
+    /**
+     * Checks if a given brick, placed at a specific (x, y) offset, intersects
+     * with an existing matrix (e.g., the game board boundaries or other settled bricks).
+     *
+     * @param matrix The background matrix (e.g., game board).
+     * @param brick The 2D array representing the brick's shape.
+     * @param x The x-coordinate (column) offset for the brick.
+     * @param y The y-coordinate (row) offset for the brick.
+     * @return true if an intersection or out-of-bounds condition is detected, false otherwise.
+     */
     public static boolean intersect(final int[][] matrix, final int[][] brick, int x, int y) {
         for (int i = 0; i < brick.length; i++) {
             for (int j = 0; j < brick[i].length; j++) {
@@ -24,17 +41,24 @@ public class MatrixOperations {
                     int targetX = x + j;
                     int targetY = y + i;
                     if (targetX < 0 || targetX >= matrix[0].length || targetY < 0 || targetY >= matrix.length) {
-                        return true;
+                        return true; // Collision with boundary
                     }
     
                     if (matrix[targetY][targetX] != 0) {
-                        return true;
+                        return true; // Collision with existing block
                     }
                 }
             }
         }
         return false;
     }
+
+    /**
+     * Creates a deep copy of a 2D integer array.
+     *
+     * @param original The original 2D integer array to copy.
+     * @return A new 2D integer array that is a deep copy of the original.
+     */
     public static int[][] copy(int[][] original) {
         int[][] myInt = new int[original.length][];
         for (int i = 0; i < original.length; i++) {
@@ -46,6 +70,16 @@ public class MatrixOperations {
         return myInt;
     }
 
+    /**
+     * Merges a brick into a background matrix at a specified position.
+     * The brick's non-zero elements overwrite the corresponding elements in the background matrix.
+     *
+     * @param filledFields The background matrix (e.g., game board).
+     * @param brick The 2D array representing the brick's shape.
+     * @param x The x-coordinate (column) offset for merging the brick.
+     * @param y The y-coordinate (row) offset for merging the brick.
+     * @return A new 2D integer array representing the merged matrix.
+     */
     public static int[][] merge(int[][] filledFields, int[][] brick, int x, int y) {
         int[][] copy = copy(filledFields);
         for (int i = 0; i < brick.length; i++) {
@@ -53,6 +87,7 @@ public class MatrixOperations {
                 if (brick[i][j] != 0) {
                     int targetX = x + j;
                     int targetY = y + i;
+                    // Ensure the target coordinates are within the bounds of the copy matrix
                     if (targetY >= 0 && targetY < copy.length && targetX >= 0 && targetX < copy[0].length) {
                         copy[targetY][targetX] = brick[i][j];
                     }
@@ -62,6 +97,15 @@ public class MatrixOperations {
         return copy;
     }
 
+    /**
+     * Checks for and removes any complete rows from the given matrix.
+     * Rows are considered complete if they contain no zero (empty) cells.
+     * The method returns a {@link ClearRow} object detailing the changes.
+     *
+     * @param matrix The 2D integer array representing the game board.
+     * @return A {@link ClearRow} object containing the number of lines removed,
+     *         the new matrix after clearing rows, the score bonus, and a list of cleared row indices.
+     */
     public static ClearRow checkRemoving(final int[][] matrix) {
         int[][] tmp = new int[matrix.length][matrix[0].length];
         Deque<int[]> newRows = new ArrayDeque<>();
@@ -87,14 +131,22 @@ public class MatrixOperations {
             if (row != null) {
                 tmp[i] = row;
             } else {
+                // Fill remaining top rows with zeros if fewer rows than original matrix size
+                // (This happens if rows were cleared)
                 break;
             }
         }
         int scoreBonus = 50 * clearedRows.size() * clearedRows.size();
-        // UPDATED: Pass clearedRows to ClearRow constructor
         return new ClearRow(clearedRows.size(), tmp, scoreBonus, clearedRows);
     }
 
+    /**
+     * Creates a deep copy of a list of 2D integer arrays.
+     * This is useful for copying brick shape matrices to prevent unintended modifications.
+     *
+     * @param list The list of 2D integer arrays to deep copy.
+     * @return A new {@link List} containing deep copies of the original 2D integer arrays.
+     */
     public static List<int[][]> deepCopyList(List<int[][]> list){
         return list.stream().map(MatrixOperations::copy).collect(Collectors.toList());
     }

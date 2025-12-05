@@ -9,6 +9,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 
+/**
+ * Controller for the game information panel, responsible for displaying the player's score,
+ * current level, and a preview of the next falling brick.
+ */
 public class GameInfoPanelController {
 
     private static final int PREVIEW_BRICK_SIZE = 12;
@@ -19,6 +23,13 @@ public class GameInfoPanelController {
     private final GridPane nextGrid;
     private final Rectangle[][] nextCells = new Rectangle[NEXT_GRID_SIZE][NEXT_GRID_SIZE];
 
+    /**
+     * Constructs a GameInfoPanelController.
+     *
+     * @param scoreLabel The JavaFX Label to display the score.
+     * @param levelLabel The JavaFX Label to display the current level.
+     * @param nextGrid The JavaFX GridPane to display the next brick preview.
+     */
     public GameInfoPanelController(Label scoreLabel, Label levelLabel, GridPane nextGrid) {
         this.scoreLabel = scoreLabel;
         this.levelLabel = levelLabel;
@@ -26,6 +37,10 @@ public class GameInfoPanelController {
         initNextGrid();
     }
 
+    /**
+     * Initializes the GridPane for the next brick preview.
+     * Sets up its dimensions and creates a grid of transparent rectangles.
+     */
     private void initNextGrid() {
         if (nextGrid == null) {
             return;
@@ -50,10 +65,21 @@ public class GameInfoPanelController {
         }
     }
 
+    /**
+     * Updates the preview of the next brick based on the provided {@link ViewData}.
+     * Only the first next brick is currently displayed.
+     *
+     * @param brick The {@link ViewData} containing the data for the next brick.
+     */
     public void updatePreviews(ViewData brick) {
         drawPreview(brick.getNextBrickData1());
     }
 
+    /**
+     * Draws the brick preview onto the {@code nextGrid}.
+     *
+     * @param data The 2D integer array representing the brick's shape to be displayed as a preview.
+     */
     private void drawPreview(int[][] data) {
         if (nextGrid == null) return;
 
@@ -78,17 +104,35 @@ public class GameInfoPanelController {
         }
     }
 
+    /**
+     * Binds the score label's text property to an {@link IntegerProperty}.
+     * This allows the score display to update automatically when the score changes.
+     *
+     * @param scoreProp The {@link IntegerProperty} representing the game's score.
+     */
     public void bindScore(IntegerProperty scoreProp) {
         scoreLabel.textProperty().bind(Bindings.format("Score: %d", scoreProp));
     }
 
+    /**
+     * Sets the text of the level label to display the current game level.
+     *
+     * @param level The current game level.
+     */
     public void setLevel(int level) {
         levelLabel.setText(String.valueOf(level));
     }
     
+    /**
+     * Returns the appropriate fill color for a block based on its integer value.
+     * This is a helper method to map brick types to their visual colors.
+     *
+     * @param i The integer value representing the block type.
+     * @return The JavaFX {@link Color} for the block's fill.
+     */
     private Color getFillColor(int i) {
         switch (i) {
-            case 0: return Color.TRANSPARENT;
+            case 0: return Color.TRANSPARENT; // Empty space
             case 1: return Color.AQUA;
             case 2: return Color.BLUEVIOLET;
             case 3: return Color.DARKGREEN;
@@ -96,7 +140,7 @@ public class GameInfoPanelController {
             case 5: return Color.RED;
             case 6: return Color.BEIGE;
             case 7: return Color.BURLYWOOD;
-            default: return Color.WHITE;
+            default: return Color.WHITE; // Fallback for unknown values
         }
     }
 }

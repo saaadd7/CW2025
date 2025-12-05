@@ -7,8 +7,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
+/**
+ * A custom JavaFX {@link BorderPane} designed to display a "GAME OVER" message
+ * with a pulsating visual effect.
+ */
 public class GameOverPanel extends BorderPane {
 
+    /**
+     * Constructs a new GameOverPanel.
+     * Initializes the "GAME OVER" label, applies custom styling,
+     * centers the label, and sets up a pulsating animation.
+     */
     public GameOverPanel() {
         // Create the "GAME OVER" label
         final Label gameOverLabel = new Label("GAME OVER");
