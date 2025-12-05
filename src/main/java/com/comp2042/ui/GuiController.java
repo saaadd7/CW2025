@@ -127,6 +127,7 @@ public class GuiController implements Initializable {
      */
     public void initGameView(int[][] boardMatrix, ViewData brick) {
         gameBoardRenderer.initGameView(boardMatrix);
+        gameBoardRenderer.refreshBrick(brick); // Added this line
         gameInfoPanelController.updatePreviews(brick);
         gameFlowController.start();
         gamePanel.requestFocus();
