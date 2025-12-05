@@ -97,6 +97,27 @@ public class GameController implements InputEventListener {
                 }
                 return null;
         }
-<<<<<<< HEAD
         return null;
     }
+
+    /**
+     * Handles the logic when a brick lands on the board.
+     * This includes adding the brick to the board, checking for cleared rows,
+     * updating the score, creating a new brick, and checking for game over.
+     * @return A {@link ClearRow} object if rows were cleared, otherwise null.
+     */
+    private ClearRow handleBrickLanded() {
+        board.mergeBrickToBackground();
+        ClearRow clearRow = board.clearRows();
+        if (clearRow != null) {
+            soundManager.playClickSound();
+            board.getScore().add(clearRow.getLinesRemoved());
+        }
+        boolean isGameOver = board.createNewBrick();
+        if (isGameOver) {
+            soundManager.playThudSound();
+            viewGuiController.gameOver();
+        }
+        return clearRow;
+    }
+}

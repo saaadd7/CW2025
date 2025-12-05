@@ -28,7 +28,6 @@ class GameControllerTest {
         StubGuiController gui = new StubGuiController();
         StubRenderer renderer = new StubRenderer();
 
-<<<<<<< HEAD
         GameController controller = new GameController(gui, renderer, SoundManager.getInstance(), null, 10, 20);
 
         assertTrue(gui.initCalled, "Controller should call initGameView on startup");
@@ -39,7 +38,6 @@ class GameControllerTest {
     void testOnRightEvent() {
         StubGuiController gui = new StubGuiController();
         StubRenderer renderer = new StubRenderer();
-<<<<<<< HEAD
         GameController controller = new GameController(gui, renderer, SoundManager.getInstance(), null, 10, 20);
 
         // Act
@@ -56,7 +54,6 @@ class GameControllerTest {
     void testOnHardDrop() {
         StubGuiController gui = new StubGuiController();
         StubRenderer renderer = new StubRenderer();
-<<<<<<< HEAD
         GameController controller = new GameController(gui, renderer, SoundManager.getInstance(), null, 10, 20);
 
         // Act
@@ -70,7 +67,6 @@ class GameControllerTest {
     @Test
     void testBackToMenuSafeExit() {
         StubGuiController gui = new StubGuiController();
-<<<<<<< HEAD
         GameController controller = new GameController(gui, new StubRenderer(), SoundManager.getInstance(), null, 10, 20);
 
         // Act & Assert

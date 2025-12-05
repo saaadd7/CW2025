@@ -34,6 +34,10 @@ public class SettingsController {
      * @param soundManager The SoundManager instance to be used for sound control.
      */
     public void setSoundManager(ISoundManager soundManager) {
+        this.soundManager = soundManager;
+        updateSoundButtonText();
+        updateBackgroundMusicButtonText();
+    }
 
     /**
      * Sets the stage (window) associated with this controller.
