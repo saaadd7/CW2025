@@ -47,7 +47,7 @@ public class Main extends Application {
         
                 GuiController gui = loader.getController();
         
-                GameController game = new GameController(gui, gui.getGameBoardRenderer(), soundManager, this);
+                GameController game = new GameController(gui, gui.getGameBoardRenderer(), soundManager, this, 22, 10);
         
                 stage.setScene(new Scene(gameRoot, 800, 800));
                 stage.show();
