@@ -1,7 +1,6 @@
 package com.comp2042.ui;
 
-import com.comp2042.event.EventSource;
-import com.comp2042.event.EventType;
+import com.comp2042.event.GameEvent;
 import com.comp2042.event.InputEventListener;
 import com.comp2042.event.MoveEvent;
 import javafx.scene.input.KeyEvent;
@@ -24,33 +23,46 @@ public class InputHandler {
     }
 
     public void handleKeyPress(KeyEvent keyEvent) {
+        if (eventListener == null) return;
+
         if (!gameFlowController.isPaused() && !gameFlowController.isGameOver()) {
+            GameEvent event = null;
             switch (keyEvent.getCode()) {
                 case LEFT:
                 case A:
-                    gameBoardRenderer.refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
-                    return;
+                    event = new com.comp2042.event.LeftEvent();
+                    break;
                 case RIGHT:
                 case D:
-                    gameBoardRenderer.refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
-                    return;
+                    event = new com.comp2042.event.RightEvent();
+                    break;
                 case UP:
                 case W:
-                    gameBoardRenderer.refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
-                    return;
+                    event = new com.comp2042.event.RotateEvent();
+                    break;
                 case DOWN:
                 case S:
-                    gameFlowController.handleDropResult(eventListener.onDownEvent(new MoveEvent(EventType.DOWN, EventSource.USER)));
-                    return;
+                    event = new com.comp2042.event.DownEvent();
+                    break;
                 case SPACE:
-                    gameFlowController.handleDropResult(eventListener.onHardDropEvent(new MoveEvent(EventType.HARD_DROP, EventSource.USER)));
-                    return;
+                    event = new com.comp2042.event.HardDropEvent();
+                    break;
+            }
+
+            if (event != null) {
+                Object result = eventListener.onGameEvent(event);
+                if (result instanceof com.comp2042.event.DownData) {
+                    gameFlowController.handleDropResult((com.comp2042.event.DownData) result);
+                } else if (result instanceof com.comp2042.event.ViewData) {
+                    gameBoardRenderer.refreshBrick((com.comp2042.event.ViewData) result);
+                }
             }
         }
 
+        // Handle global keys regardless of game state
         switch (keyEvent.getCode()) {
             case N:
-                gameFlowController.newGame();
+                eventListener.onGameEvent(new com.comp2042.event.NewGameEvent());
                 break;
             case P:
                 gameFlowController.pauseGame();

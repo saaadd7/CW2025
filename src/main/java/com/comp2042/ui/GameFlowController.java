@@ -1,8 +1,7 @@
 package com.comp2042.ui;
 
 import com.comp2042.event.DownData;
-import com.comp2042.event.EventType;
-import com.comp2042.event.EventSource;
+import com.comp2042.event.GameEvent;
 import com.comp2042.event.InputEventListener;
 import com.comp2042.event.MoveEvent;
 import com.comp2042.ui.GameOverPanel;
@@ -73,10 +72,13 @@ public class GameFlowController {
         });
     }
 
-    private void moveDown(MoveEvent event) {
+    private void moveDown() {
         if (!isPause.getValue() && !isGameOver.getValue()) {
             if(eventListener != null) {
-                handleDropResult(eventListener.onDownEvent(event));
+                Object result = eventListener.onGameEvent(new com.comp2042.event.DownEvent());
+                if (result instanceof DownData) {
+                    handleDropResult((DownData) result);
+                }
             }
         }
     }
@@ -180,7 +182,9 @@ public class GameFlowController {
         groupNotification.getChildren().clear();
 
         gameOverPanel.setVisible(false);
-        eventListener.createNewGame();
+        if (eventListener != null) {
+            eventListener.onGameEvent(new com.comp2042.event.NewGameEvent());
+        }
 
         isPause.set(false);
         isGameOver.set(false);
@@ -217,7 +221,7 @@ public class GameFlowController {
         }
 
         timeLine = new Timeline(new KeyFrame(Duration.millis(getDropSpeedForLevel()),
-                e -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))));
+                e -> moveDown()));
         timeLine.setCycleCount(Timeline.INDEFINITE);
 
         timeLine.play();

@@ -1,6 +1,6 @@
 package com.comp2042.ui;
 
-import com.comp2042.sounds.SoundManager;
+import com.comp2042.sounds.ISoundManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
@@ -14,14 +14,10 @@ public class SettingsController {
     @FXML
     private Button backgroundMusicToggleButton;
 
-    private SoundManager soundManager;
+    private ISoundManager soundManager;
     private Stage settingsStage; // Reference to the window this controller manages
-
-    /**
-     * Sets the SoundManager instance and initializes the button text.
-     * This is called by MainMenuController when the settings window is opened.
-     */
-    public void setSoundManager(SoundManager soundManager) {
+    // ...
+    public void setSoundManager(ISoundManager soundManager) {
         this.soundManager = soundManager;
         updateSoundButtonText(); // Set initial text
         updateBackgroundMusicButtonText();

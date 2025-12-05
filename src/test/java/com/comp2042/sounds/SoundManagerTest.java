@@ -20,7 +20,7 @@ class SoundManagerTest {
     @Test
     void testInitialState() {
         // Arrange & Act
-        SoundManager soundManager = new SoundManager();
+        SoundManager soundManager = SoundManager.getInstance();
 
         // Assert
         assertTrue(soundManager.isSoundsEnabled(), "Sounds should be ON by default");
@@ -30,7 +30,7 @@ class SoundManagerTest {
     @Test
     void testToggleSoundEffects() {
         // Arrange
-        SoundManager soundManager = new SoundManager();
+        SoundManager soundManager = SoundManager.getInstance();
 
         // Act 1: Turn OFF
         soundManager.toggleSounds();
@@ -44,7 +44,7 @@ class SoundManagerTest {
     @Test
     void testToggleBackgroundMusic() {
         // Arrange
-        SoundManager soundManager = new SoundManager();
+        SoundManager soundManager = SoundManager.getInstance();
 
         // Act 1: Turn OFF
         soundManager.toggleBackgroundMusic();
@@ -59,10 +59,17 @@ class SoundManagerTest {
     void testSafeAudioCalls() {
         // This is a "Smoke Test". We can't easily hear the sound in a unit test,
         // but we can ensure calling the methods doesn't crash the game.
-        SoundManager soundManager = new SoundManager();
+        SoundManager soundManager = SoundManager.getInstance();
 
         assertDoesNotThrow(() -> soundManager.playClickSound());
         assertDoesNotThrow(() -> soundManager.playThudSound());
         assertDoesNotThrow(() -> soundManager.playSwooshSound());
+    }
+
+    @Test
+    void testSingletonInstance() {
+        SoundManager instance1 = SoundManager.getInstance();
+        SoundManager instance2 = SoundManager.getInstance();
+        assertSame(instance1, instance2, "Both instances should be the same for a Singleton");
     }
 }

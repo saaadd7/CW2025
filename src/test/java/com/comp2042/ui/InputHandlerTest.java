@@ -109,12 +109,13 @@ class InputHandlerTest {
     static class SpyListener implements InputEventListener {
         EventType lastEventType;
 
-        @Override public ViewData onLeftEvent(MoveEvent event) { lastEventType = event.getEventType(); return null; }
-        @Override public ViewData onRightEvent(MoveEvent event) { lastEventType = event.getEventType(); return null; }
-        @Override public ViewData onRotateEvent(MoveEvent event) { lastEventType = event.getEventType(); return null; }
-        @Override public DownData onDownEvent(MoveEvent event) { lastEventType = event.getEventType(); return new DownData(null, null); }
-        @Override public DownData onHardDropEvent(MoveEvent event) { lastEventType = event.getEventType(); return new DownData(null, null); }
-        @Override public void createNewGame() { }
-        @Override public void onBackToMenuEvent() { }
+        @Override
+        public Object onGameEvent(GameEvent event) {
+            lastEventType = event.getType();
+            if (event.getType() == EventType.DOWN || event.getType() == EventType.HARD_DROP) {
+                return new DownData(null, null);
+            }
+            return null;
+        }
     }
 }
