@@ -12,21 +12,18 @@ import java.util.List;
 
 public class SimpleBoard implements Board {
 
-    private final int width;
-    private final int height;
+    private final int rows;
+    private final int cols;
     private final BrickGenerator brickGenerator;
     private final BrickRotator brickRotator;
     private int[][] currentGameMatrix;
     private Point currentOffset;
     private final Score score;
 
-    public SimpleBoard(int width, int height) {
-        // NOTE: Based on your GameController, you are passing (25, 10).
-        // This means 'width' acts as ROWS and 'height' acts as COLUMNS.
-        // It is confusing naming, but the logic works consistently with it.
-        this.width = width;
-        this.height = height;
-        currentGameMatrix = new int[width][height];
+    public SimpleBoard(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+        currentGameMatrix = new int[rows][cols];
         brickGenerator = new RandomBrickGenerator();
         brickRotator = new BrickRotator();
         score = new Score();
@@ -34,14 +31,12 @@ public class SimpleBoard implements Board {
 
 
 
-    @Override
-    public boolean moveBrickDown() {
-        int[][] boardCopy = MatrixOperations.copy(currentGameMatrix);
+    private boolean moveBrick(int dx, int dy) {
         Point newPos = new Point(currentOffset);
-        newPos.translate(0, 1);
+        newPos.translate(dx, dy);
 
         boolean conflict = MatrixOperations.intersect(
-                boardCopy,
+                currentGameMatrix,
                 brickRotator.getCurrentShape(),
                 newPos.x,
                 newPos.y
@@ -53,48 +48,21 @@ public class SimpleBoard implements Board {
 
         currentOffset = newPos;
         return true;
+    }
+
+    @Override
+    public boolean moveBrickDown() {
+        return moveBrick(0, 1);
     }
 
     @Override
     public boolean moveBrickLeft() {
-        int[][] boardCopy = MatrixOperations.copy(currentGameMatrix);
-        Point newPos = new Point(currentOffset);
-        newPos.translate(-1, 0);
-
-        boolean conflict = MatrixOperations.intersect(
-                boardCopy,
-                brickRotator.getCurrentShape(),
-                newPos.x,
-                newPos.y
-        );
-
-        if (conflict) {
-            return false;
-        }
-
-        currentOffset = newPos;
-        return true;
+        return moveBrick(-1, 0);
     }
 
     @Override
     public boolean moveBrickRight() {
-        int[][] boardCopy = MatrixOperations.copy(currentGameMatrix);
-        Point newPos = new Point(currentOffset);
-        newPos.translate(1, 0);
-
-        boolean conflict = MatrixOperations.intersect(
-                boardCopy,
-                brickRotator.getCurrentShape(),
-                newPos.x,
-                newPos.y
-        );
-
-        if (conflict) {
-            return false;
-        }
-
-        currentOffset = newPos;
-        return true;
+        return moveBrick(1, 0);
     }
 
     @Override
@@ -192,7 +160,7 @@ public class SimpleBoard implements Board {
 
     @Override
     public void newGame() {
-        currentGameMatrix = new int[width][height];
+        currentGameMatrix = new int[rows][cols];
         score.reset();
         createNewBrick();
     }
@@ -226,11 +194,11 @@ public class SimpleBoard implements Board {
 
 
 
-                if (newY >= width) { // Bottom boundary
+                if (newY >= rows) { // Bottom boundary
                     return false;
                 }
 
-                if (newX < 0 || newX >= height) { // Left/Right boundary
+                if (newX < 0 || newX >= cols) { // Left/Right boundary
                     return false;
                 }
 
