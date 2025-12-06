@@ -170,13 +170,40 @@ public class GameFlowController {
     }
 
     private void animateGameOver(NotificationPanel panel) {
+        // 1. Initial State: Invisible and Small
         panel.setOpacity(0);
-        panel.setScaleX(0.5);
-        panel.setScaleY(0.5);
-        FadeTransition ft = new FadeTransition(Duration.millis(600), panel);
-        ft.setFromValue(0);
-        ft.setToValue(1);
-        ParallelTransition entrance = new ParallelTransition(ft);
+        panel.setScaleX(0.0);
+        panel.setScaleY(0.0);
+
+        // 2. Entrance Animation (Pop up and Fade in)
+        // Fade In
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(500), panel);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+
+        // Scale Up (Zoom from 0 to 1)
+        ScaleTransition scaleUp = new ScaleTransition(Duration.millis(500), panel);
+        scaleUp.setFromX(0.0);
+        scaleUp.setFromY(0.0);
+        scaleUp.setToX(1.0);
+        scaleUp.setToY(1.0);
+        // EASE_OUT makes it slow down as it reaches full size (smoother pop)
+        scaleUp.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
+
+        // Combine Fade and Scale so they happen together
+        ParallelTransition entrance = new ParallelTransition(fadeIn, scaleUp);
+
+        // 3. Pulse Animation (The "Heartbeat" Loop)
+        ScaleTransition pulse = new ScaleTransition(Duration.millis(900), panel);
+        pulse.setFromX(1.0);
+        pulse.setFromY(1.0);
+        pulse.setToX(1.15); // Grow 15% bigger
+        pulse.setToY(1.15);
+        pulse.setCycleCount(Animation.INDEFINITE); // Loop forever
+        pulse.setAutoReverse(true); // Grow then shrink
+
+        // 4. Sequence: Play Entrance first, then start Pulsing
+        entrance.setOnFinished(e -> pulse.play());
         entrance.play();
     }
 
