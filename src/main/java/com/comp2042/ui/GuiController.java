@@ -125,6 +125,25 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    /**
+     * Sets the game mode. Called by the Main Menu or Tests before the game starts.
+     */
+    public void setGameMode(GameMode mode) {
+        this.currentMode = mode;
+
+        // Optional: Update labels immediately if they exist
+        Platform.runLater(() -> {
+            if (modeNameLabel != null) {
+                modeNameLabel.setText("Mode: " + mode);
+            }
+            if (modeDetailsLabel != null) {
+                if (mode == GameMode.SPRINT) modeDetailsLabel.setText("Clear 30 Lines");
+                else if (mode == GameMode.ULTRA) modeDetailsLabel.setText("2 Minute Timer");
+                else modeDetailsLabel.setText("Endless");
+            }
+        });
+    }
+
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
         gameFlowController.setEventListener(eventListener);
@@ -244,7 +263,7 @@ public class GuiController implements Initializable {
                 modeDetailsLabel.setText("Endless Marathon");
                 break;
             case SPRINT:
-                modeDetailsLabel.setText("Clear 40 Lines");
+                modeDetailsLabel.setText("Clear 30 Lines");
                 break;
             case ULTRA:
                 modeDetailsLabel.setText("2 Minute Timer");

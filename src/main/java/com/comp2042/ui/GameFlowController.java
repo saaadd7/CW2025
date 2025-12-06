@@ -72,7 +72,7 @@ public class GameFlowController {
 
         // --- Mode Logic ---
         if (currentMode == GameMode.ULTRA) {
-            startUltraTimer(180); // 2 Minutes
+            startUltraTimer(120); // 2 Minutes
         } else if (currentMode == GameMode.SPRINT) {
             linesToClearGoal = 30;
         }
