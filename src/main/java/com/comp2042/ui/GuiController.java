@@ -130,6 +130,8 @@ public class GuiController implements Initializable {
     @FXML
     public void newGame(ActionEvent e) {
         gameOverPanel.setVisible(false);
+        gameFlowController.newGame();
+
         if (eventListener != null) {
             eventListener.onGameEvent(new com.comp2042.event.NewGameEvent());
         }
@@ -170,5 +172,9 @@ public class GuiController implements Initializable {
 
     public GameInfoPanelController getGameInfoPanelController() {
         return gameInfoPanelController;
+    }
+
+    public GameFlowController getGameFlowController() {
+        return gameFlowController;
     }
 }

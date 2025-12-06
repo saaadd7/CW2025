@@ -1,0 +1,134 @@
+@startuml
+title Advanced Tetris Game Class Diagram
+
+' Hide the word "class" for all classes
+hide circle
+
+' Define main interfaces (Use interface keyword)
+interface InputEventListener
+interface Command
+interface IBrick
+interface ISoundManager
+interface BrickGenerator
+interface Board
+
+' Define main classes and abstracts
+abstract class Brick
+class GameController
+class Score
+class BrickRotator
+class MatrixOperations
+class EventSource
+class ViewData
+class GuiController
+class InputHandler
+class GameBoardRenderer
+class SoundManager
+class SimpleBoard
+class RandomBrickGenerator
+class BrickFactory
+
+' Concrete Bricks (implement IBrick, extend Brick)
+class JBrick
+class LBrick
+class OBrick
+class SBrick
+class TBrick
+class ZBrick
+
+' Concrete Commands (implement Command)
+class DropDownCommand
+class HardDropCommand
+class MoveLeftCommand
+class MoveRightCommand
+class RotateCommand
+
+' UI Components (additional)
+class GameFlowController
+class GameInfoPanelController
+class GameOverPanel
+class MainMenuController
+class NotificationPanel
+class ParticleEffect
+class SettingsController
+
+
+' --- Packages and Relationships ---
+
+' Core Logic
+package "Core Logic" {
+    ' Use Composition (*--) for strong ownership/management
+    GameController "1" *-- "1" Board : manages
+    GameController "1" *-- "1" Score : tracks
+    GameController "1" *-- "1" BrickGenerator : uses
+    GameController "1" *-- "1" EventSource : emits/listens
+    ' Use Aggregation (o--) for collection of independent objects (Commands)
+    GameController "1" o-- "0..*" Command : executes
+    ' Use Dependency (..>) for using an interface/service
+    GameController "1" ..> "1" ISoundManager : plays sounds
+    ' Use Realization (..|>) for interface implementation
+    InputEventListener <|.. GameController
+
+    Board <|.. SimpleBoard : implements
+    Board "1" ..> "1" MatrixOperations : uses
+    BrickRotator "1" ..> "1" MatrixOperations : uses
+}
+
+' Bricks
+package "Bricks" {
+    ' Use generalization (<|-- for inheritance)
+    Brick <|-- JBrick
+    Brick <|-- LBrick
+    Brick <|-- OBrick
+    Brick <|-- SBrick
+    Brick <|-- TBrick
+    Brick <|-- ZBrick
+    ' Brick implements IBrick
+    IBrick <|.. Brick
+
+    BrickGenerator <|.. RandomBrickGenerator : implements
+    BrickGenerator "1" *-- "1" BrickFactory : uses
+    BrickFactory "1" --> "0..*" IBrick : creates
+}
+
+' Commands
+package "Commands" {
+    Command <|.. DropDownCommand
+    Command <|.. HardDropCommand
+    Command <|.. MoveLeftCommand
+    Command <|.. MoveRightCommand
+    Command <|.. RotateCommand
+}
+
+' Events
+package "Events" {
+    InputEventListener <|.. InputHandler : implements
+    ' Use Aggregation (o--) for collection of listeners
+    EventSource "1" o-- "0..*" InputEventListener : notifies
+    ' Dependency on ViewData as a Data Transfer Object (DTO)
+    GameController ..> ViewData
+}
+
+' Sounds
+package "Sounds" {
+    ISoundManager <|.. SoundManager : implements
+}
+
+' UI Layer
+package "UI" {
+    GameFlowController "1" --> "1" GameController : controls
+    GameFlowController "1" *-- "1" GuiController : manages view
+
+    GuiController "1" *-- "1" GameBoardRenderer : renders
+    GuiController "1" *-- "1" InputHandler : receives input
+    GuiController "1" ..> "1" ViewData : displays
+
+    ' Use Aggregation (o--) for containing UI components
+    GuiController "1" o-- "0..*" GameInfoPanelController
+    GuiController "1" o-- "0..*" GameOverPanel
+    GuiController "1" o-- "0..*" MainMenuController
+    GuiController "1" o-- "0..*" NotificationPanel
+    GuiController "1" o-- "0..*" ParticleEffect
+    GuiController "1" o-- "0..*" SettingsController
+}
+@enduml

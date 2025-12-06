@@ -34,7 +34,6 @@ public class GameFlowController {
     private int totalLinesCleared = 0;
     private static final int LINES_PER_LEVEL = 5;
 
-    // ... (Setters and Constructor remain the same) ...
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
     }
@@ -52,8 +51,6 @@ public class GameFlowController {
         this.pauseButton = pauseButton;
         this.gameOverPanel = gameOverPanel;
     }
-
-    // --- FIX STARTS HERE ---
 
     /**
      * Helper method to clean up the UI (hide Game Over text, etc)
@@ -80,7 +77,7 @@ public class GameFlowController {
             timeLine.stop();
         }
 
-        // FIX: Call resetUI to remove the badge!
+        // Call resetUI to remove the badge
         resetUI();
 
         updateGameSpeed();
@@ -91,28 +88,29 @@ public class GameFlowController {
     }
 
     public void newGame() {
+        // 1. Stop the old timeline so the game loop doesn't overlap
         if (timeLine != null) {
             timeLine.stop();
         }
 
-        // FIX: Call resetUI here too to avoid duplicate code
+        // 2. Clean up UI (Game Over text, etc.)
         resetUI();
 
-        if (eventListener != null) {
-            eventListener.onGameEvent(new com.comp2042.event.NewGameEvent());
-        }
+        // 3. REMOVED: Don't fire NewGameEvent here - this was causing the infinite loop!
+        // The GameController already handles board initialization when it receives
+        // the NEW_GAME event that triggered this method.
 
-        gameStarted = true;
+        // Reset level and line counters
         level = 1;
         totalLinesCleared = 0;
+
+        // 4. Update the View to show Level 1
         gameInfoPanelController.setLevel(1);
 
-        updateGameSpeed();
+        // 5. Start the game logic
+        gameStarted = true;
+        updateGameSpeed(); // This will now correctly calculate speed for Level 1
     }
-
-    // --- FIX ENDS HERE ---
-
-    // ... (The rest of your methods: moveDown, handleDropResult, gameOver, pauseGame, etc. remain exactly the same) ...
 
     private void moveDown() {
         if (!isPause.getValue() && !isGameOver.getValue()) {
@@ -223,11 +221,11 @@ public class GameFlowController {
 
         if (isPause.get()) {
             timeLine.play();
-            pauseButton.setText("Pause");
+            pauseButton.setText("PAUSE");
             isPause.set(false);
         } else {
             timeLine.pause();
-            pauseButton.setText("Resume");
+            pauseButton.setText("RESUME");
             isPause.set(true);
         }
     }

@@ -5,6 +5,7 @@ import com.comp2042.core.SimpleBoard;
 import com.comp2042.event.*;
 import com.comp2042.sounds.SoundManager;
 import com.comp2042.ui.GameBoardRenderer;
+import com.comp2042.ui.GameFlowController;
 import com.comp2042.ui.GuiController;
 import javafx.stage.Stage;
 
@@ -14,15 +15,19 @@ public class GameController implements InputEventListener {
 
     private final GuiController viewGuiController;
     private final GameBoardRenderer gameBoardRenderer;
-
+    private final GameFlowController gameFlowController;
 
     private final SoundManager soundManager;
     private final Main mainApp;
 
-    public GameController(GuiController c, GameBoardRenderer gameBoardRenderer, SoundManager soundManager, Main mainApp, int boardWidth, int boardHeight) {
+    // Add a flag to prevent recursive calls
+    private boolean isProcessingNewGame = false;
+
+    public GameController(GuiController c, GameBoardRenderer gameBoardRenderer, GameFlowController gameFlowController, SoundManager soundManager, Main mainApp, int boardWidth, int boardHeight) {
         this.board = new SimpleBoard(boardWidth, boardHeight);
         this.viewGuiController = c;
         this.gameBoardRenderer = gameBoardRenderer;
+        this.gameFlowController = gameFlowController;
         this.soundManager = soundManager;
         this.mainApp = mainApp;
 
@@ -59,9 +64,25 @@ public class GameController implements InputEventListener {
                 ClearRow clearRowDrop = handleBrickLanded();
                 return new DownData(clearRowDrop, board.getViewData());
             case NEW_GAME:
-                board.newGame();
-                viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
-                gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
+                // FIX: Prevent recursive calls
+                if (isProcessingNewGame) {
+                    return null;
+                }
+
+                isProcessingNewGame = true;
+                try {
+                    // 1. Reset the board state
+                    board.newGame();
+
+                    // 2. Update UI (this should NOT fire another NewGameEvent)
+                    gameFlowController.newGame();
+
+                    // 3. Refresh the view
+                    viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
+                    gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
+                } finally {
+                    isProcessingNewGame = false;
+                }
                 return null;
             case BACK_TO_MENU:
                 viewGuiController.gameOver();
