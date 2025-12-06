@@ -175,4 +175,6 @@ public class GameBoardRenderer {
         if (value == 0) return Color.TRANSPARENT;
         return Color.rgb(200, 200, 200, 0.3); // Semi-transparent gray
     }
+
+
 }

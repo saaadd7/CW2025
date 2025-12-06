@@ -3,6 +3,7 @@ package com.comp2042.core;
 import com.comp2042.event.ClearRow;
 import com.comp2042.event.ViewData;
 import com.comp2042.core.Score;
+import com.comp2042.GameMode;
 
 /**
  * Defines the contract for a game board in a block-stacking game like Tetris.
@@ -83,4 +84,11 @@ public interface Board {
      * resetting the score, and preparing for a new game.
      */
     void newGame();
+
+
+    // Game mode methods
+    void setGameMode(GameMode mode);
+    GameMode getGameMode();
+    boolean isGameModeComplete();
+    String getGameModeStatus();
 }

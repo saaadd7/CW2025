@@ -24,7 +24,7 @@
             <Image url="@../images/IMG_1032.JPG"/>
         </image>
         <effect>
-            <GaussianBlur radius="5"/>
+            <GaussianBlur radius="3"/>
         </effect>
     </ImageView>
 

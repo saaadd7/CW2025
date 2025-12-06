@@ -2,12 +2,8 @@ package com.comp2042.ui;
 
 import com.comp2042.event.DownData;
 import com.comp2042.event.InputEventListener;
-import com.comp2042.ui.GameOverPanel;
-import com.comp2042.ui.NotificationPanel;
-import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.ParallelTransition;
-import javafx.animation.Timeline;
+import com.comp2042.GameMode; // Ensure this import exists!
+import javafx.animation.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Button;
@@ -16,14 +12,21 @@ import javafx.util.Duration;
 
 public class GameFlowController {
 
-    private Timeline timeLine;
+    // --- Core Game Variables ---
+    private Timeline gameLoop;
+    private Timeline ultraTimer;
     private boolean gameStarted = false;
     private final BooleanProperty isPause = new SimpleBooleanProperty(false);
     private final BooleanProperty isGameOver = new SimpleBooleanProperty(false);
 
+    // --- Mode Variables ---
+    private GameMode currentMode = GameMode.CLASSIC;
+    private int linesToClearGoal = 0;
+    private int secondsRemaining = 0;
+
+    // --- Dependencies ---
     private InputEventListener eventListener;
     private ParticleEffect particleEffect;
-
     private final GameBoardRenderer gameBoardRenderer;
     private final GameInfoPanelController gameInfoPanelController;
     private final StackPane groupNotification;
@@ -32,15 +35,7 @@ public class GameFlowController {
 
     private int level = 1;
     private int totalLinesCleared = 0;
-    private static final int LINES_PER_LEVEL = 5;
-
-    public void setEventListener(InputEventListener eventListener) {
-        this.eventListener = eventListener;
-    }
-
-    public void setParticleEffect(ParticleEffect particleEffect) {
-        this.particleEffect = particleEffect;
-    }
+    private static final int LINES_PER_LEVEL = 7;
 
     public GameFlowController(GameBoardRenderer gameBoardRenderer,
                               GameInfoPanelController gameInfoPanelController, StackPane groupNotification,
@@ -52,64 +47,56 @@ public class GameFlowController {
         this.gameOverPanel = gameOverPanel;
     }
 
+    public void setEventListener(InputEventListener eventListener) {
+        this.eventListener = eventListener;
+    }
+
+    public void setParticleEffect(ParticleEffect particleEffect) {
+        this.particleEffect = particleEffect;
+    }
+
     /**
-     * Helper method to clean up the UI (hide Game Over text, etc)
+     * Starts a new game with the specific mode rules.
      */
-    public void resetUI() {
-        // 1. Clear the "GAME OVER" text added to the notification group
-        groupNotification.getChildren().clear();
+    public void newGame(GameMode mode) {
+        this.currentMode = mode;
 
-        // 2. Hide the static Game Over panel (if used)
-        if (gameOverPanel != null) {
-            gameOverPanel.setVisible(false);
-        }
+        if (gameLoop != null) gameLoop.stop();
+        if (ultraTimer != null) ultraTimer.stop();
 
-        // 3. Reset Pause button text
-        pauseButton.setText("Pause");
-
-        // 4. Reset Flags
-        isPause.set(false);
-        isGameOver.set(false);
-    }
-
-    public void start() {
-        if (timeLine != null) {
-            timeLine.stop();
-        }
-
-        // Call resetUI to remove the badge
         resetUI();
-
-        updateGameSpeed();
-
-        javafx.application.Platform.runLater(() -> {
-            gameStarted = true;
-        });
-    }
-
-    public void newGame() {
-        // 1. Stop the old timeline so the game loop doesn't overlap
-        if (timeLine != null) {
-            timeLine.stop();
-        }
-
-        // 2. Clean up UI (Game Over text, etc.)
-        resetUI();
-
-        // 3. REMOVED: Don't fire NewGameEvent here - this was causing the infinite loop!
-        // The GameController already handles board initialization when it receives
-        // the NEW_GAME event that triggered this method.
-
-        // Reset level and line counters
         level = 1;
         totalLinesCleared = 0;
-
-        // 4. Update the View to show Level 1
         gameInfoPanelController.setLevel(1);
-
-        // 5. Start the game logic
         gameStarted = true;
-        updateGameSpeed(); // This will now correctly calculate speed for Level 1
+
+        // --- Mode Logic ---
+        if (currentMode == GameMode.ULTRA) {
+            startUltraTimer(180); // 2 Minutes
+        } else if (currentMode == GameMode.SPRINT) {
+            linesToClearGoal = 30;
+        }
+
+        updateGameSpeed();
+    }
+
+    // Default start (Defaults to Classic if called without args)
+    public void start() {
+        newGame(GameMode.CLASSIC);
+    }
+
+    private void startUltraTimer(int seconds) {
+        this.secondsRemaining = seconds;
+        ultraTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            if (!isPause.get() && !isGameOver.get()) {
+                secondsRemaining--;
+                if (secondsRemaining <= 0) {
+                    gameOver("TIME'S UP!");
+                }
+            }
+        }));
+        ultraTimer.setCycleCount(Timeline.INDEFINITE);
+        ultraTimer.play();
     }
 
     private void moveDown() {
@@ -133,128 +120,104 @@ public class GameFlowController {
             scoreNotification.showScore(groupNotification.getChildren());
 
             if (particleEffect != null && data.getClearRow().getClearedRows() != null) {
-                particleEffect.createLineClearExplosion(
-                        data.getClearRow().getClearedRows(),
-                        linesRemoved
-                );
+                particleEffect.createLineClearExplosion(data.getClearRow().getClearedRows(), linesRemoved);
             }
 
-            int newLevel = (totalLinesCleared / LINES_PER_LEVEL) + 1;
-            if (newLevel > level) {
-                level = newLevel;
-                gameInfoPanelController.setLevel(level);
-                updateGameSpeed();
+            // --- Sprint Win Condition ---
+            if (currentMode == GameMode.SPRINT) {
+                if ((linesToClearGoal - totalLinesCleared) <= 0) {
+                    gameOver("VICTORY!");
+                    return;
+                }
+            }
 
-                Timeline levelUpDelay = new Timeline(new KeyFrame(Duration.millis(500), e -> {
-                    NotificationPanel levelUpNotification = new NotificationPanel("LEVEL " + level + "!");
-                    groupNotification.getChildren().add(levelUpNotification);
-                    levelUpNotification.showScore(groupNotification.getChildren());
-                }));
-                levelUpDelay.play();
+            // --- Classic Leveling ---
+            if (currentMode != GameMode.ULTRA) {
+                int newLevel = (totalLinesCleared / LINES_PER_LEVEL) + 1;
+                if (newLevel > level) {
+                    level = newLevel;
+                    gameInfoPanelController.setLevel(level);
+                    updateGameSpeed();
+                    showLevelUpNotification();
+                }
             }
         }
-
         gameBoardRenderer.refreshBrick(data.getViewData());
         gameInfoPanelController.updatePreviews(data.getViewData());
     }
 
-    public void gameOver() {
-        if (timeLine != null) {
-            timeLine.stop();
-        }
+    private void showLevelUpNotification() {
+        Timeline levelUpDelay = new Timeline(new KeyFrame(Duration.millis(500), e -> {
+            NotificationPanel levelUpNotification = new NotificationPanel("LEVEL " + level + "!");
+            groupNotification.getChildren().add(levelUpNotification);
+            levelUpNotification.showScore(groupNotification.getChildren());
+        }));
+        levelUpDelay.play();
+    }
 
-        NotificationPanel gameOverNotification = new NotificationPanel("GAME OVER");
+    public void gameOver(String message) {
+        if (gameLoop != null) gameLoop.stop();
+        if (ultraTimer != null) ultraTimer.stop();
+
+        NotificationPanel gameOverNotification = new NotificationPanel(message);
         groupNotification.getChildren().add(gameOverNotification);
-
-        gameOverNotification.setOpacity(0);
-        gameOverNotification.setScaleX(0.5);
-        gameOverNotification.setScaleY(0.5);
-
-        FadeTransition ft = new FadeTransition(Duration.millis(600), gameOverNotification);
-        ft.setFromValue(0);
-        ft.setToValue(1);
-
-        Timeline scaleTimeline = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 0.5),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 0.5)
-                ),
-                new KeyFrame(Duration.millis(600),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.1),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.1)
-                ),
-                new KeyFrame(Duration.millis(800),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.0),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.0)
-                )
-        );
-
-        ParallelTransition entrance = new ParallelTransition(ft);
-        entrance.play();
-        scaleTimeline.play();
-
-        Timeline pulse = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.0),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.0)
-                ),
-                new KeyFrame(Duration.millis(1000),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.05),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.05)
-                ),
-                new KeyFrame(Duration.millis(2000),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.0),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.0)
-                )
-        );
-        pulse.setCycleCount(Timeline.INDEFINITE);
-        pulse.setDelay(Duration.millis(800));
-        pulse.play();
-
+        animateGameOver(gameOverNotification);
         isGameOver.setValue(true);
     }
 
+    public void gameOver() {
+        gameOver("GAME OVER");
+    }
+
+    private void animateGameOver(NotificationPanel panel) {
+        panel.setOpacity(0);
+        panel.setScaleX(0.5);
+        panel.setScaleY(0.5);
+        FadeTransition ft = new FadeTransition(Duration.millis(600), panel);
+        ft.setFromValue(0);
+        ft.setToValue(1);
+        ParallelTransition entrance = new ParallelTransition(ft);
+        entrance.play();
+    }
+
     public void pauseGame() {
-        if (!gameStarted || isGameOver.getValue() || timeLine == null) {
-            return;
-        }
+        if (!gameStarted || isGameOver.getValue() || gameLoop == null) return;
 
         if (isPause.get()) {
-            timeLine.play();
+            gameLoop.play();
+            if(ultraTimer != null && currentMode == GameMode.ULTRA) ultraTimer.play();
             pauseButton.setText("PAUSE");
             isPause.set(false);
         } else {
-            timeLine.pause();
+            gameLoop.pause();
+            if(ultraTimer != null) ultraTimer.pause();
             pauseButton.setText("RESUME");
             isPause.set(true);
         }
     }
 
     private void updateGameSpeed() {
-        if (timeLine != null) {
-            timeLine.stop();
-        }
-
-        timeLine = new Timeline(new KeyFrame(Duration.millis(getDropSpeedForLevel()),
-                e -> moveDown()));
-        timeLine.setCycleCount(Timeline.INDEFINITE);
-
-        timeLine.play();
+        if (gameLoop != null) gameLoop.stop();
+        gameLoop = new Timeline(new KeyFrame(Duration.millis(getDropSpeedForLevel()), e -> moveDown()));
+        gameLoop.setCycleCount(Timeline.INDEFINITE);
+        gameLoop.play();
     }
 
     private int getDropSpeedForLevel() {
         int baseSpeed = 400;
         int speedDecrease = 40;
         int minSpeed = 100;
-
         return Math.max(minSpeed, baseSpeed - (level - 1) * speedDecrease);
     }
 
-    public boolean isPaused() {
-        return isPause.get();
+    public void resetUI() {
+        groupNotification.getChildren().clear();
+        if (gameOverPanel != null) gameOverPanel.setVisible(false);
+        pauseButton.setText("Pause");
+        isPause.set(false);
+        isGameOver.set(false);
     }
 
-    public boolean isGameOver() {
-        return isGameOver.get();
-    }
+    public boolean isPaused() { return isPause.get(); }
+    public boolean isGameOver() { return isGameOver.get(); }
 }

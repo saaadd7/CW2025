@@ -69,13 +69,20 @@ public class Main extends Application {
              * @param stage the primary stage where the game will be displayed.
              * @throws Exception if the FXML file cannot be loaded.
              */
-            public void loadGame(Stage stage) throws Exception {
+            public void loadGame(Stage stage, GameMode mode) throws Exception {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource(GAME_LAYOUT_FXML));
                 Parent gameRoot = loader.load();
         
                 GuiController gui = loader.getController();
         
-                GameController game = new GameController(gui, gui.getGameBoardRenderer(), gui.getGameFlowController(), soundManager, this, 22, 10);
+                GameController game = new GameController(
+                        gui,
+                        gui.getGameBoardRenderer(),
+                        gui.getGameFlowController(),
+                        soundManager,
+                        this,
+                        22, 10);
+                game.initGame(mode);
         
                 stage.setScene(new Scene(gameRoot, 800, 800));
                 stage.show();

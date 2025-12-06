@@ -23,11 +23,17 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.layout.Pane;
 import com.comp2042.ui.ParticleEffect;
+import javafx.scene.control.Label;
+import javafx.application.Platform;
+import com.comp2042.GameMode;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class GuiController implements Initializable {
+
+
+    private GameMode currentMode = GameMode.CLASSIC;
 
     private ISoundManager soundManager;
     private InputEventListener eventListener;
@@ -50,10 +56,15 @@ public class GuiController implements Initializable {
     @FXML private Button helpButton;
     @FXML private GridPane nextGrid;
     @FXML private Parent viewRoot;
+    @FXML private Label modeNameLabel;
+    @FXML private Label modeDetailsLabel;
+    @FXML
+    private Button modeButton;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
 
         if (soundManager == null) {
             soundManager = SoundManager.getInstance();
@@ -110,6 +121,7 @@ public class GuiController implements Initializable {
         gameBoardRenderer.initGameView(boardMatrix);
         gameInfoPanelController.updatePreviews(brick);
         gameFlowController.start();
+        gameFlowController.newGame(this.currentMode);
         gamePanel.requestFocus();
     }
 
@@ -123,6 +135,42 @@ public class GuiController implements Initializable {
         gameInfoPanelController.bindScore(scoreProp);
     }
 
+    /**
+     * NEW METHOD: Updates the two-line mode status display.
+     * @param modeName The name of the mode (e.g., "Sprint", "Classic")
+     * @param details The specific stats (e.g., "Lines: 1/20", "Score: 1500")
+     */
+    /**
+     * Updates the mode display.
+     * Fix: Classic Mode shows the Big Score Box, but hides the small yellow details.
+     */
+    public void updateModeStatus(String modeName, String details) {
+        Platform.runLater(() -> {
+
+            // 1. Update Top Label (e.g., "Mode: Classic")
+            if (modeNameLabel != null) {
+                modeNameLabel.setText("Mode: " + modeName);
+            }
+
+            // 2. Update Bottom Label (The small yellow text)
+            if (modeDetailsLabel != null) {
+                // If Classic, we CLEAR this line so we don't duplicate the score
+                if (modeName.equalsIgnoreCase("Classic")) {
+                    modeDetailsLabel.setText("");
+                } else {
+                    // For Sprint (Lines: 1/20), we show it
+                    modeDetailsLabel.setText(details);
+                }
+            }
+
+            // 3. Ensure the Big Score Box is ALWAYS VISIBLE
+            // (I previously hid this, which was the mistake)
+            if (scoreLabel != null) {
+                scoreLabel.setVisible(true);
+            }
+        });
+    }
+
     public void gameOver() {
         gameFlowController.gameOver();
     }
@@ -130,7 +178,7 @@ public class GuiController implements Initializable {
     @FXML
     public void newGame(ActionEvent e) {
         gameOverPanel.setVisible(false);
-        gameFlowController.newGame();
+        gameFlowController.newGame(this.currentMode);;
 
         if (eventListener != null) {
             eventListener.onGameEvent(new com.comp2042.event.NewGameEvent());
@@ -159,6 +207,48 @@ public class GuiController implements Initializable {
     private void backToMainMenu() {
         if (eventListener != null) {
             eventListener.onGameEvent(new com.comp2042.event.BackToMenuEvent());
+        }
+    }
+
+
+    @FXML
+    public void switchMode() {
+        // Cycle through the modes: Classic -> Sprint -> Ultra -> Classic
+        switch (currentMode) {
+            case CLASSIC:
+                currentMode = GameMode.SPRINT;
+                break;
+            case SPRINT:
+                currentMode = GameMode.ULTRA;
+                break;
+            case ULTRA:
+                currentMode = GameMode.CLASSIC;
+                break;
+        }
+
+        // Update the labels to reflect the change
+        updateModeDisplay();
+
+        // OPTIONAL: Restart the game immediately when mode changes
+        // so the user plays the new mode right away.
+        newGame(null);
+    }
+
+    private void updateModeDisplay() {
+        // Update the big Mode Title
+        modeNameLabel.setText("Mode: " + currentMode.toString());
+
+        // Update the sub-text to explain the rules
+        switch (currentMode) {
+            case CLASSIC:
+                modeDetailsLabel.setText("Endless Marathon");
+                break;
+            case SPRINT:
+                modeDetailsLabel.setText("Clear 40 Lines");
+                break;
+            case ULTRA:
+                modeDetailsLabel.setText("2 Minute Timer");
+                break;
         }
     }
 

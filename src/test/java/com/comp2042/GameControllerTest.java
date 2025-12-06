@@ -9,6 +9,7 @@ import com.comp2042.ui.GameFlowController;
 import com.comp2042.ui.GuiController;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
+import javafx.scene.layout.GridPane;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,11 +33,15 @@ class GameControllerTest {
         StubRenderer renderer = new StubRenderer();
         StubGameFlowController gameFlow = new StubGameFlowController();
 
-        // Act
         GameController controller = new GameController(gui, renderer, gameFlow, SoundManager.getInstance(), null, 10, 20);
 
+        // Act
+        // FIX: The constructor no longer initializes the view immediately.
+        // We must call initGame() explicitly to trigger the UI setup.
+        controller.initGame(GameMode.CLASSIC);
+
         // Assert
-        assertTrue(gui.initCalled, "Controller should call initGameView on startup");
+        assertTrue(gui.initCalled, "Controller should call initGameView inside initGame()");
         assertTrue(gui.bindScoreCalled, "Controller should bind the score property");
     }
 
@@ -47,6 +52,9 @@ class GameControllerTest {
         StubRenderer renderer = new StubRenderer();
         StubGameFlowController gameFlow = new StubGameFlowController();
         GameController controller = new GameController(gui, renderer, gameFlow, SoundManager.getInstance(), null, 10, 20);
+
+        // Initialize the board so it's not null
+        controller.initGame(GameMode.CLASSIC);
 
         // Act
         Object result = controller.onGameEvent(new com.comp2042.event.RightEvent());
@@ -65,6 +73,7 @@ class GameControllerTest {
         StubRenderer renderer = new StubRenderer();
         StubGameFlowController gameFlow = new StubGameFlowController();
         GameController controller = new GameController(gui, renderer, gameFlow, SoundManager.getInstance(), null, 10, 20);
+        controller.initGame(GameMode.CLASSIC);
 
         // Act
         Object result = controller.onGameEvent(new com.comp2042.event.HardDropEvent());
@@ -92,6 +101,7 @@ class GameControllerTest {
         StubRenderer renderer = new StubRenderer();
         StubGameFlowController gameFlow = new StubGameFlowController();
         GameController controller = new GameController(gui, renderer, gameFlow, SoundManager.getInstance(), null, 10, 20);
+        controller.initGame(GameMode.CLASSIC);
 
         // Act - Trigger a new game event
         controller.onGameEvent(new com.comp2042.event.NewGameEvent());
@@ -104,7 +114,9 @@ class GameControllerTest {
 
     // Fake Renderer to avoid JavaFX graphics issues
     static class StubRenderer extends GameBoardRenderer {
-        public StubRenderer() { super(null); }
+        // FIX: Pass a new GridPane to super to avoid NullPointerException in parent constructor
+        public StubRenderer() { super(new GridPane()); }
+
         @Override public void refreshGameBackground(int[][] board) {}
         @Override public void refreshBrick(ViewData brick) {}
         @Override public void initGameView(int[][] boardMatrix) {}
@@ -124,21 +136,23 @@ class GameControllerTest {
         public void initGameView(int[][] boardMatrix, ViewData brick) {
             initCalled = true;
         }
-
         @Override
         public void bindScore(IntegerProperty scoreProp) {
             bindScoreCalled = true;
         }
-
         @Override
         public void gameOver() {
             // Do nothing
         }
+        // FIX: Added updateModeStatus stub to prevent errors
+        @Override
+        public void updateModeStatus(String name, String details) {
+            // Do nothing
+        }
 
-        // Add getter for GameFlowController to satisfy GameController constructor in tests
         @Override
         public GameFlowController getGameFlowController() {
-            return new StubGameFlowController(); // Return a stub here too
+            return new StubGameFlowController();
         }
     }
 
@@ -147,12 +161,12 @@ class GameControllerTest {
         boolean newGameCalled = false;
 
         public StubGameFlowController() {
-            super(null, null, null, null, null); // Pass nulls for dependencies not needed in stub
+            super(null, null, null, null, null);
         }
 
+        // FIX: Updated Signature to match the parent class!
         @Override
-        public void newGame() {
-            // No need to call super.newGame() in the stub, just track the call
+        public void newGame(GameMode mode) {
             newGameCalled = true;
         }
     }

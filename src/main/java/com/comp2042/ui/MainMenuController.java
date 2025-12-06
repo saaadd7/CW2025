@@ -86,15 +86,37 @@ public class MainMenuController {
      */
     @FXML
     public void startGame() {
+        System.out.println("Start button was clicked!");
+
+        // 1. Find the file using the correct Classpath
+        var file = getClass().getResource("/fxml/GameMode.fxml");
+
+        System.out.println("GameMode file found? " + (file != null ? "YES: " + file : "NO"));
+
+        if (file == null) {
+            System.err.println("STOPPING: Cannot continue without the FXML file.");
+            return;
+        }
+
         try {
-            if (mainApp != null) {
-                mainApp.loadGame(stage);
-            }
+            // FIX: Use the 'file' variable we found above!
+            // Do NOT use "src/main/resources/..." strings here.
+            FXMLLoader loader = new FXMLLoader(file);
+
+            Parent root = loader.load();
+
+            GameModeController controller = loader.getController();
+            controller.setMainApp(this.mainApp);
+            controller.setStage(this.stage);
+
+            stage.setScene(new Scene(root, 800, 800));
+            stage.show();
+
         } catch (Exception ex) {
             ex.printStackTrace();
+            System.err.println("Could not load /fxml/GameMode.fxml");
         }
     }
-
     /**
      * Opens the settings window as a modal dialog.
      * Initializes the {@link SettingsController} with the current {@link SoundManager}.
