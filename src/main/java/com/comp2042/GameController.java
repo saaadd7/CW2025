@@ -9,6 +9,10 @@ import com.comp2042.ui.GameFlowController;
 import com.comp2042.ui.GuiController;
 import javafx.stage.Stage;
 
+/**
+ * The main controller for the game logic. It acts as a bridge between the user interface (GUI) and the game's core logic (Board).
+ * It handles user input events, updates the game state, and manages the overall game flow.
+ */
 public class GameController implements InputEventListener {
 
     private final Board board;
@@ -20,6 +24,17 @@ public class GameController implements InputEventListener {
 
     private boolean isProcessingNewGame = false;
 
+    /**
+     * Constructs a new GameController.
+     *
+     * @param c                  The GUI controller.
+     * @param gameBoardRenderer  The renderer for the game board.
+     * @param gameFlowController The controller for the game flow.
+     * @param soundManager       The manager for sound effects.
+     * @param mainApp            The main application class.
+     * @param boardWidth         The width of the game board.
+     * @param boardHeight        The height of the game board.
+     */
     public GameController(GuiController c, GameBoardRenderer gameBoardRenderer, GameFlowController gameFlowController, SoundManager soundManager, Main mainApp, int boardWidth, int boardHeight) {
         // 1. We create the board here, default to Classic for now
         this.board = new SimpleBoard(boardWidth, boardHeight);
@@ -36,7 +51,10 @@ public class GameController implements InputEventListener {
     }
 
     /**
-     * NEW METHOD: Initializes the game with the specific mode (Classic/Sprint/Ultra)
+     * Initializes the game with a specific game mode.
+     * This method sets up the game board, resets the timer, and updates the UI for the new game.
+     *
+     * @param mode The game mode to initialize (e.g., Classic, Sprint, Ultra).
      */
     public void initGame(GameMode mode) {
         // 1. Set the mode
@@ -54,6 +72,13 @@ public class GameController implements InputEventListener {
         gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
     }
 
+    /**
+     * Handles incoming game events from the user interface.
+     * This method is the central point for processing user actions like moving or rotating bricks.
+     *
+     * @param event The game event to process.
+     * @return An object containing data for the UI to update, or null if no update is needed.
+     */
     @Override
     public Object onGameEvent(GameEvent event) {
         switch (event.getType()) {
@@ -115,6 +140,12 @@ public class GameController implements InputEventListener {
         return null;
     }
 
+    /**
+     * Handles the logic when a brick has landed.
+     * This includes merging the brick to the board, checking for cleared lines, and checking for game over conditions.
+     *
+     * @return A ClearRow object containing information about cleared lines.
+     */
     private ClearRow handleBrickLanded() {
         if (soundManager != null) soundManager.playThudSound();
 
@@ -142,7 +173,8 @@ public class GameController implements InputEventListener {
     }
 
     /**
-     * NEW METHOD: Handles what happens when the player wins
+     * Handles the victory condition.
+     * This stops the game and displays a victory message.
      */
     private void handleVictory() {
         // Stop the game loop

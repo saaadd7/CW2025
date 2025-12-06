@@ -6,6 +6,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
+/**
+ * Controller for the game mode selection screen.
+ * This class handles user interaction for choosing a game mode (Classic, Sprint, Ultra)
+ * and launching the game accordingly.
+ */
 public class GameModeController {
 
     private Main mainApp; // Reference to Main
@@ -16,16 +21,28 @@ public class GameModeController {
     @FXML private Button ultraButton;
     @FXML private Button backButton;
 
-    // 1. We need this method to get the Main application reference
+    /**
+     * Sets the main application instance.
+     *
+     * @param mainApp The main application instance.
+     */
     public void setMainApp(Main mainApp) {
         this.mainApp = mainApp;
     }
 
-    // 2. We need the stage reference
+    /**
+     * Sets the stage for this controller.
+     *
+     * @param stage The stage to be used.
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
+    /**
+     * Initializes the controller.
+     * This method is automatically called after the FXML file has been loaded.
+     */
     @FXML
     public void initialize() {
         classicButton.setOnAction(e -> launchGame(GameMode.CLASSIC));
@@ -35,6 +52,11 @@ public class GameModeController {
         backButton.setOnAction(e -> returnToMenu());
     }
 
+    /**
+     * Launches the game with the selected mode.
+     *
+     * @param mode The game mode to launch.
+     */
     private void launchGame(GameMode mode) {
         try {
             if (mainApp != null) {
@@ -46,6 +68,9 @@ public class GameModeController {
         }
     }
 
+    /**
+     * Returns to the main menu.
+     */
     private void returnToMenu() {
         try {
             if (mainApp != null) {

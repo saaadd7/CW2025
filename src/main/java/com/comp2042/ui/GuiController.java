@@ -30,6 +30,10 @@ import com.comp2042.GameMode;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * The main controller for the Graphical User Interface (GUI).
+ * It manages all UI elements, handles user interactions, and communicates with the game logic controllers.
+ */
 public class GuiController implements Initializable {
 
 
@@ -62,6 +66,13 @@ public class GuiController implements Initializable {
     private Button modeButton;
 
 
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     *
+     * @param location  The location used to resolve relative paths for the root object, or null if the location is not known.
+     * @param resources The resources used to localize the root object, or null if the root object was not localized.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         updateModeDisplay();
@@ -117,6 +128,12 @@ public class GuiController implements Initializable {
         reflection.setTopOffset(-12);
     }
 
+    /**
+     * Initializes the game view with the board matrix and the first brick.
+     *
+     * @param boardMatrix The game board matrix.
+     * @param brick       The initial brick data.
+     */
     public void initGameView(int[][] boardMatrix, ViewData brick) {
         gameOverPanel.setVisible(false);
         gameBoardRenderer.initGameView(boardMatrix);
@@ -128,6 +145,7 @@ public class GuiController implements Initializable {
 
     /**
      * Sets the game mode. Called by the Main Menu or Tests before the game starts.
+     * @param mode The game mode to set.
      */
     public void setGameMode(GameMode mode) {
         this.currentMode = mode;
@@ -145,24 +163,31 @@ public class GuiController implements Initializable {
         });
     }
 
+    /**
+     * Sets the event listener for game events.
+     *
+     * @param eventListener The event listener to set.
+     */
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
         gameFlowController.setEventListener(eventListener);
         inputHandler.setEventListener(eventListener);
     }
 
+    /**
+     * Binds the score property to the score label.
+     *
+     * @param scoreProp The integer property representing the score.
+     */
     public void bindScore(IntegerProperty scoreProp) {
         gameInfoPanelController.bindScore(scoreProp);
     }
 
     /**
-     * NEW METHOD: Updates the two-line mode status display.
-     * @param modeName The name of the mode (e.g., "Sprint", "Classic")
-     * @param details The specific stats (e.g., "Lines: 1/20", "Score: 1500")
-     */
-    /**
-     * Updates the mode display.
-     * Fix: Classic Mode shows the Big Score Box, but hides the small yellow details.
+     * Updates the two-line mode status display.
+     *
+     * @param modeName The name of the mode (e.g., "Sprint", "Classic").
+     * @param details  The specific stats (e.g., "Lines: 1/20", "Score: 1500").
      */
     public void updateModeStatus(String modeName, String details) {
         Platform.runLater(() -> {
@@ -191,10 +216,18 @@ public class GuiController implements Initializable {
         });
     }
 
+    /**
+     * Signals the game over state to the UI.
+     */
     public void gameOver() {
         gameFlowController.gameOver();
     }
 
+    /**
+     * Starts a new game.
+     *
+     * @param e The action event.
+     */
     @FXML
     public void newGame(ActionEvent e) {
         gameOverPanel.setVisible(false);
@@ -206,6 +239,11 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    /**
+     * Pauses the game.
+     *
+     * @param e The action event.
+     */
     @FXML
     public void pauseGame(ActionEvent e) {
         soundManager.playClickSound();
@@ -213,16 +251,29 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    /**
+     * Handles the settings button click event.
+     *
+     * @param e The action event.
+     */
     @FXML
     public void onSettingsClicked(ActionEvent e) {
         soundManager.playClickSound();
     }
 
+    /**
+     * Handles the help button click event.
+     *
+     * @param e The action event.
+     */
     @FXML
     public void onHelpClicked(ActionEvent e) {
         soundManager.playClickSound();
     }
 
+    /**
+     * Navigates back to the main menu.
+     */
     @FXML
     private void backToMainMenu() {
         if (eventListener != null) {
@@ -231,6 +282,9 @@ public class GuiController implements Initializable {
     }
 
 
+    /**
+     * Switches the game mode.
+     */
     @FXML
     public void switchMode() {
         // Cycle through the modes: Classic -> Sprint -> Ultra -> Classic
@@ -272,18 +326,38 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Returns the root node of the view.
+     *
+     * @return The root parent node.
+     */
     public Parent getViewRoot() {
         return viewRoot;
     }
 
+    /**
+     * Returns the game board renderer.
+     *
+     * @return The game board renderer.
+     */
     public GameBoardRenderer getGameBoardRenderer() {
         return gameBoardRenderer;
     }
 
+    /**
+     * Returns the game info panel controller.
+     *
+     * @return The game info panel controller.
+     */
     public GameInfoPanelController getGameInfoPanelController() {
         return gameInfoPanelController;
     }
 
+    /**
+     * Returns the game flow controller.
+     *
+     * @return The game flow controller.
+     */
     public GameFlowController getGameFlowController() {
         return gameFlowController;
     }

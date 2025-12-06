@@ -10,6 +10,12 @@ import com.comp2042.event.ViewData;
  */
 public interface InputEventListener {
 
+    /**
+     * Handles a game event.
+     *
+     * @param event The game event to handle.
+     * @return An object representing the result of the event, or null if there is no result.
+     */
     Object onGameEvent(GameEvent event);
 
 }

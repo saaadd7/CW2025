@@ -10,6 +10,9 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
+/**
+ * Manages the game flow, including the main game loop, timers, scoring, and game state transitions.
+ */
 public class GameFlowController {
 
     // --- Core Game Variables ---
@@ -37,6 +40,15 @@ public class GameFlowController {
     private int totalLinesCleared = 0;
     private static final int LINES_PER_LEVEL = 7;
 
+    /**
+     * Constructs a new GameFlowController.
+     *
+     * @param gameBoardRenderer       The renderer for the game board.
+     * @param gameInfoPanelController The controller for the game info panel.
+     * @param groupNotification       The container for notifications.
+     * @param pauseButton             The pause button.
+     * @param gameOverPanel           The game over panel.
+     */
     public GameFlowController(GameBoardRenderer gameBoardRenderer,
                               GameInfoPanelController gameInfoPanelController, StackPane groupNotification,
                               Button pauseButton, GameOverPanel gameOverPanel) {
@@ -47,16 +59,28 @@ public class GameFlowController {
         this.gameOverPanel = gameOverPanel;
     }
 
+    /**
+     * Sets the event listener for game events.
+     *
+     * @param eventListener The event listener.
+     */
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
     }
 
+    /**
+     * Sets the particle effect for line clearing.
+     *
+     * @param particleEffect The particle effect.
+     */
     public void setParticleEffect(ParticleEffect particleEffect) {
         this.particleEffect = particleEffect;
     }
 
     /**
      * Starts a new game with the specific mode rules.
+     *
+     * @param mode The game mode to start.
      */
     public void newGame(GameMode mode) {
         this.currentMode = mode;
@@ -80,7 +104,9 @@ public class GameFlowController {
         updateGameSpeed();
     }
 
-    // Default start (Defaults to Classic if called without args)
+    /**
+     * Default start method, defaults to Classic mode.
+     */
     public void start() {
         newGame(GameMode.CLASSIC);
     }
@@ -112,6 +138,11 @@ public class GameFlowController {
         }
     }
 
+    /**
+     * Handles the result of a drop action.
+     *
+     * @param data The data from the drop action.
+     */
     public void handleDropResult(DownData data) {
         if (data.getClearRow() != null && data.getClearRow().getLinesRemoved() > 0) {
             int linesRemoved = data.getClearRow().getLinesRemoved();
@@ -157,6 +188,11 @@ public class GameFlowController {
         levelUpDelay.play();
     }
 
+    /**
+     * Ends the game with a specific message.
+     *
+     * @param message The message to display.
+     */
     public void gameOver(String message) {
         if (gameLoop != null) gameLoop.stop();
         if (ultraTimer != null) ultraTimer.stop();
@@ -167,6 +203,9 @@ public class GameFlowController {
         isGameOver.setValue(true);
     }
 
+    /**
+     * Ends the game with the default "GAME OVER" message.
+     */
     public void gameOver() {
         gameOver("GAME OVER");
     }
@@ -190,7 +229,7 @@ public class GameFlowController {
         scaleUp.setToX(1.0);
         scaleUp.setToY(1.0);
         // EASE_OUT makes it slow down as it reaches full size (smoother pop)
-        scaleUp.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
+        scaleUp.setInterpolator(Interpolator.EASE_OUT);
 
         // Combine Fade and Scale so they happen together
         ParallelTransition entrance = new ParallelTransition(fadeIn, scaleUp);
@@ -209,6 +248,9 @@ public class GameFlowController {
         entrance.play();
     }
 
+    /**
+     * Pauses or resumes the game.
+     */
     public void pauseGame() {
         if (!gameStarted || isGameOver.getValue() || gameLoop == null) return;
 
@@ -239,6 +281,9 @@ public class GameFlowController {
         return Math.max(minSpeed, baseSpeed - (level - 1) * speedDecrease);
     }
 
+    /**
+     * Resets the UI to its initial state.
+     */
     public void resetUI() {
         groupNotification.getChildren().clear();
         if (gameOverPanel != null) gameOverPanel.setVisible(false);
@@ -247,6 +292,17 @@ public class GameFlowController {
         isGameOver.set(false);
     }
 
+    /**
+     * Checks if the game is paused.
+     *
+     * @return true if the game is paused, false otherwise.
+     */
     public boolean isPaused() { return isPause.get(); }
+
+    /**
+     * Checks if the game is over.
+     *
+     * @return true if the game is over, false otherwise.
+     */
     public boolean isGameOver() { return isGameOver.get(); }
 }

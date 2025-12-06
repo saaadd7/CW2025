@@ -5,6 +5,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
+/**
+ * Controller for the settings menu.
+ * This class handles user interaction for changing game settings, such as sound and music.
+ */
 public class SettingsController {
 
     // Matches the fx:id="soundToggleButton" in settingsMenu.fxml
@@ -16,7 +20,12 @@ public class SettingsController {
 
     private ISoundManager soundManager;
     private Stage settingsStage; // Reference to the window this controller manages
-    // ...
+
+    /**
+     * Sets the sound manager for this controller.
+     *
+     * @param soundManager The sound manager to be used.
+     */
     public void setSoundManager(ISoundManager soundManager) {
         this.soundManager = soundManager;
         updateSoundButtonText(); // Set initial text
@@ -26,6 +35,8 @@ public class SettingsController {
     /**
      * Sets the stage (window) associated with this controller.
      * Used to close the window when the user clicks 'Back'.
+     *
+     * @param stage The stage for this controller.
      */
     public void setSettingsStage(Stage stage) {
         this.settingsStage = stage;
@@ -57,6 +68,9 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Updates the text of the background music toggle button based on the current music state.
+     */
     private void updateBackgroundMusicButtonText() {
         if (soundManager != null) {
             boolean enabled = soundManager.isBackgroundMusicEnabled();
@@ -80,6 +94,9 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Toggles the game sounds on or off.
+     */
     @FXML
     private void toggleSounds() {
         if (soundManager != null) {
@@ -88,6 +105,9 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Toggles the background music on or off.
+     */
     @FXML
     private void toggleBackgroundMusic() {
         if (soundManager != null) {
