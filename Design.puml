@@ -1,0 +1,183 @@
+@startuml
+title "Tetris Game Class Diagram"
+
+!theme vibrant
+
+package "com.comp2042" {
+
+  class Main
+  enum GameMode
+  class GameController
+
+  package "ui" {
+    class GuiController
+    class GameBoardRenderer
+    class GameFlowController
+    class GameInfoPanelController
+    class GameOverPanel
+    class InputHandler
+    class MainMenuController
+    class NotificationPanel
+    class ParticleEffect
+    class SettingsController
+    class GameModeController
+  }
+
+  package "core" {
+    interface Board
+    class SimpleBoard
+    class BrickRotator
+    class MatrixOperations
+    class Score
+  }
+
+  package "core.logic.bricks" {
+    interface Brick
+    class IBrick
+    class JBrick
+    class LBrick
+    class OBrick
+    class SBrick
+    class TBrick
+    class ZBrick
+    interface BrickGenerator
+    class RandomBrickGenerator
+    class BrickFactory
+    enum BrickType
+  }
+
+  package "core.logic.command" {
+    interface Command
+    class DropDownCommand
+    class HardDropCommand
+    class MoveLeftCommand
+    class MoveRightCommand
+    class RotateCommand
+  }
+
+  package "event" {
+    interface InputEventListener
+    class GameEvent
+    class DownEvent
+    class HardDropEvent
+    class LeftEvent
+    class RightEvent
+    class RotateEvent
+    class NewGameEvent
+    class BackToMenuEvent
+    enum EventType
+    class ViewData
+    class DownData
+    class ClearRow
+    class NextShapeInfo
+    enum EventSource
+  }
+
+  package "sounds" {
+    interface ISoundManager
+    class SoundManager
+  }
+}
+
+'=================================
+' Relationships
+'=================================
+
+' --- Main Application ---
+Main --|> javafx.application.Application
+Main o-- SoundManager
+Main o-- Stage
+Main --> MainMenuController : shows
+Main --> GameController : shows
+
+' --- Game Controller ---
+GameController ..|> InputEventListener
+GameController o-- Board
+GameController o-- GuiController
+GameController o-- GameBoardRenderer
+GameController o-- GameFlowController
+GameController o-- SoundManager
+GameController o-- Main
+
+' --- UI Layer ---
+GuiController ..|> javafx.fxml.Initializable
+GuiController o-- GameBoardRenderer
+GuiController o-- GameInfoPanelController
+GuiController o-- GameFlowController
+GuiController o-- InputHandler
+GuiController o-- ParticleEffect
+GuiController o-- GameOverPanel
+GuiController o-- ISoundManager
+GuiController --> InputEventListener
+
+MainMenuController o-- Main
+MainMenuController o-- SoundManager
+MainMenuController o-- Stage
+
+GameModeController o-- Main
+GameModeController o-- Stage
+
+SettingsController o-- ISoundManager
+SettingsController o-- Stage
+
+GameFlowController --> GameBoardRenderer
+GameFlowController --> GameInfoPanelController
+GameFlowController o-- InputEventListener
+GameFlowController o-- ParticleEffect
+GameFlowController o-- GameOverPanel
+
+InputHandler --> GameFlowController
+InputHandler --> GameBoardRenderer
+InputHandler o-- InputEventListener
+
+' --- Core Logic ---
+Board <|.. SimpleBoard
+SimpleBoard o-- BrickGenerator
+SimpleBoard o-- BrickRotator
+SimpleBoard o-- Score
+
+BrickRotator o-- Brick
+
+' --- Bricks ---
+Brick <|.. IBrick
+Brick <|.. JBrick
+Brick <|.. LBrick
+Brick <|.. OBrick
+Brick <|.. SBrick
+Brick <|.. TBrick
+Brick <|.. ZBrick
+
+BrickGenerator <|.. RandomBrickGenerator
+RandomBrickGenerator o-- BrickFactory
+BrickFactory --> Brick
+
+' --- Commands ---
+Command <|.. DropDownCommand
+Command <|.. HardDropCommand
+Command <|.. MoveLeftCommand
+Command <|.. MoveRightCommand
+Command <|.. RotateCommand
+
+DropDownCommand o-- Board
+HardDropCommand o-- Board
+MoveLeftCommand o-- Board
+MoveRightCommand o-- Board
+RotateCommand o-- Board
+
+' --- Events ---
+GameEvent <|-- DownEvent
+GameEvent <|-- HardDropEvent
+GameEvent <|-- LeftEvent
+GameEvent <|-- RightEvent
+GameEvent <|-- RotateEvent
+GameEvent <|-- NewGameEvent
+GameEvent <|-- BackToMenuEvent
+
+GameEvent o-- EventType
+
+InputEventListener ..> GameEvent
+
+' --- Sounds ---
+ISoundManager <|.. SoundManager
+
+@enduml

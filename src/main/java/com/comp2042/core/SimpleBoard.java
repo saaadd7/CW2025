@@ -6,6 +6,7 @@ import com.comp2042.event.ViewData;
 import com.comp2042.core.logic.bricks.Brick;
 import com.comp2042.core.logic.bricks.BrickGenerator;
 import com.comp2042.core.logic.bricks.RandomBrickGenerator;
+import com.comp2042.GameMode;
 
 import java.awt.Point;
 import java.util.List;
@@ -24,6 +25,9 @@ public class SimpleBoard implements Board {
     private int[][] currentGameMatrix;
     private Point currentOffset;
     private final Score score;
+    private GameMode gameMode = GameMode.CLASSIC;
+    private int linesCleared = 0;
+    private long startTime = 0;
 
     /**
      * Constructs a new SimpleBoard with specified dimensions.
@@ -207,6 +211,7 @@ public class SimpleBoard implements Board {
     public ClearRow clearRows() {
         ClearRow clearRow = MatrixOperations.checkRemoving(currentGameMatrix);
         currentGameMatrix = clearRow.getNewMatrix();
+        linesCleared += clearRow.getLinesRemoved();
         return clearRow;
     }
 
@@ -227,7 +232,10 @@ public class SimpleBoard implements Board {
     public void newGame() {
         currentGameMatrix = new int[rows][cols];
         score.reset();
+        linesCleared = 0;
+        startTime = System.currentTimeMillis();
         createNewBrick();
+
     }
 
 
@@ -290,5 +298,49 @@ public class SimpleBoard implements Board {
         }
 
         return true;
+    }
+
+    @Override
+    public void setGameMode(GameMode mode) {
+        this.gameMode = mode;
+        if (mode == GameMode.ULTRA) {
+            startTime = System.currentTimeMillis();
+        }
+    }
+
+    @Override
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    @Override
+    public boolean isGameModeComplete() {
+        switch (gameMode) {
+            case SPRINT:
+                return linesCleared >= 30;
+            case ULTRA:
+                long elapsed = System.currentTimeMillis() - startTime;
+                return elapsed >= 120000; // 2 minutes in milliseconds
+            case CLASSIC:
+            default:
+                return false; // Classic never completes, only game over
+        }
+    }
+
+    @Override
+    public String getGameModeStatus() {
+        switch (gameMode) {
+            case SPRINT:
+                return "Lines: " + linesCleared + "/30";
+            case ULTRA:
+                long elapsed = System.currentTimeMillis() - startTime;
+                long remaining = Math.max(0, 120000 - elapsed);
+                long seconds = (remaining / 1000) % 60;
+                long minutes = remaining / 60000;
+                return String.format("Time: %d:%02d", minutes, seconds);
+            case CLASSIC:
+            default:
+                return "Score: " + score.scoreProperty().get();
+        }
     }
 }

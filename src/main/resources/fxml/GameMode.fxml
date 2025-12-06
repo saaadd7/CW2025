@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.comp2042.ui.GameModeController"
+      alignment="CENTER"
+      spacing="20"
+      style="-fx-background-color: #2C3E50;"
+      prefWidth="600"
+      prefHeight="500">
+
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+
+    <Label text="SELECT GAME MODE" style="-fx-text-fill: white; -fx-font-size: 32px; -fx-font-weight: bold;">
+        <font>
+            <Font name="Arial Bold" size="32"/>
+        </font>
+    </Label>
+
+    <VBox spacing="15" alignment="CENTER">
+        <Button fx:id="classicButton" text="CLASSIC" prefWidth="300" prefHeight="60"
+                style="-fx-font-size: 20px; -fx-background-color: #3498db; -fx-text-fill: white;"/>
+        <Label text="Play until game over" style="-fx-text-fill: #BDC3C7; -fx-font-size: 14px;"/>
+
+        <Button fx:id="sprintButton" text="SPRINT" prefWidth="300" prefHeight="60"
+                style="-fx-font-size: 20px; -fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+        <Label text="Clear 30 lines as fast as possible" style="-fx-text-fill: #BDC3C7; -fx-font-size: 14px;"/>
+
+        <Button fx:id="ultraButton" text="ULTRA" prefWidth="300" prefHeight="60"
+                style="-fx-font-size: 20px; -fx-background-color: #f39c12; -fx-text-fill: white;"/>
+        <Label text="Score as much as possible in 3 minutes" style="-fx-text-fill: #BDC3C7; -fx-font-size: 14px;"/>
+    </VBox>
+
+    <Button fx:id="backButton" text="BACK TO MENU" prefWidth="200" prefHeight="40"
+            style="-fx-font-size: 16px; -fx-background-color: #95a5a6; -fx-text-fill: white;"/>
+</VBox>

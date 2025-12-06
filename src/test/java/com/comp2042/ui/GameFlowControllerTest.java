@@ -1,11 +1,11 @@
 package com.comp2042.ui;
 
-import com.comp2042.event.DownData;
-import com.comp2042.event.GameEvent;
+import com.comp2042.GameMode; // <--- 1. IMPORT ADDED
 import com.comp2042.event.InputEventListener;
 import com.comp2042.event.ViewData;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -37,12 +37,16 @@ class GameFlowControllerTest {
         Platform.runLater(() -> {
             // Act 1: Start
             flow.start();
+
+            // Assert
             assertFalse(flow.isPaused());
             assertFalse(flow.isGameOver());
 
             // Act 2: Pause
             flow.pauseGame();
-            // Assert: If no crash occurs here, the logic is sound.
+
+            // Assert
+            assertTrue(flow.isPaused()); // Validated pause state
         });
     }
 
@@ -65,14 +69,15 @@ class GameFlowControllerTest {
 
         Platform.runLater(() -> {
             // Act
-            flow.newGame();
+            // <--- 2. FIX: Passed GameMode.CLASSIC argument
+            flow.newGame(GameMode.CLASSIC);
 
             // Assert
             assertFalse(flow.isGameOver());
             assertFalse(flow.isPaused());
             assertEquals(1, infoPanel.level);
 
-            // This now checks the REAL JavaFX property, which the controller set to false
+            // This checks the JavaFX property on the stub
             assertFalse(gameOverPanel.isVisible(), "Game Over panel should be hidden");
         });
     }
@@ -80,23 +85,22 @@ class GameFlowControllerTest {
     // --- STUBS ---
 
     static class StubRenderer extends GameBoardRenderer {
-        public StubRenderer() { super(null); }
+        // <--- 3. FIX: Pass a real GridPane to avoid NPE in parent constructor
+        public StubRenderer() { super(new GridPane()); }
         @Override public void refreshBrick(ViewData data) {}
     }
 
     static class StubInfoPanel extends GameInfoPanelController {
         int level = 0;
-        public StubInfoPanel() { super(null, null, null); } // Fix for constructor arguments
+        // <--- 3. FIX: Pass nulls is usually okay here if parent doesn't use them immediately
+        public StubInfoPanel() { super(null, null, null); }
         @Override public void setLevel(int level) { this.level = level; }
         @Override public void updatePreviews(ViewData data) {}
     }
 
-    // FIX: Removed the illegal overrides.
-    // We rely on the parent class (StackPane/Node) to handle the visible property.
     static class StubGameOverPanel extends GameOverPanel {
         public StubGameOverPanel() {
-            // If GameOverPanel has a specific constructor, you might need 'super(...)' here.
-            // Assuming default or no-arg constructor works for now.
+            // Default constructor
         }
     }
 }

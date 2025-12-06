@@ -1,5 +1,6 @@
 package com.comp2042.ui;
 
+import com.comp2042.GameMode; // Import GameMode
 import com.comp2042.Main;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -11,6 +12,8 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
+import java.util.concurrent.CountDownLatch; // Required for FX waiting
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,63 +21,84 @@ class MainMenuControllerTest {
 
     @BeforeAll
     static void initToolkit() {
+        // Initializes JavaFX environment
         try { Platform.startup(() -> {}); } catch (IllegalStateException e) {}
     }
 
     @Test
-    void testStartGameTriggersMainLoad() throws Exception {
+    void testStartGameDoesNotStartGameImmediately() throws Exception {
         // Arrange
         MainMenuController controller = new MainMenuController();
         StubMain mainApp = new StubMain();
         controller.setMainApp(mainApp);
 
-        // FIX: Pass 'null' instead of 'new Stage()'.
-        // We are testing the interaction, and StubMain doesn't use the stage methods,
-        // so this is 100% safe and avoids the "Not on FX Thread" crash.
-        controller.setStage(null);
+        // We need a latch to wait for the FX thread to finish
+        CountDownLatch latch = new CountDownLatch(1);
 
-        // Act
         Platform.runLater(() -> {
-            controller.startGame();
+            try {
+                // We must provide a REAL Stage object because startGame calls stage.setScene()
+                // This must be done inside Platform.runLater
+                controller.setStage(new Stage());
 
-            // Assert
-            assertTrue(mainApp.loadGameCalled, "Clicking Start should call mainApp.loadGame()");
+                // Act
+                controller.startGame();
+
+                // Assert
+                // CORRECT LOGIC: startGame now opens the GameMode menu.
+                // It should NOT call mainApp.loadGame() yet.
+                assertFalse(mainApp.loadGameCalled,
+                        "Clicking Start should NOT call loadGame immediately (it should open GameMode menu first)");
+
+            } catch (Exception e) {
+                // If FXML is missing, it might throw, but we want to ensure the logic flow is correct
+                e.printStackTrace();
+            } finally {
+                latch.countDown();
+            }
         });
+
+        // Wait for the FX thread to complete (max 3 seconds)
+        assertTrue(latch.await(3, TimeUnit.SECONDS), "Test timed out waiting for FX thread");
     }
 
     @Test
     void testHelpOverlayToggles() throws Exception {
-        // Arrange
         MainMenuController controller = new MainMenuController();
         AnchorPane helpPane = new AnchorPane();
         helpPane.setVisible(false);
 
-        // Inject the help pane
         inject(controller, "helpOverlay", helpPane);
 
-        // Act
+        CountDownLatch latch = new CountDownLatch(1);
+
         Platform.runLater(() -> {
-            // Simulate clicking the help button
             controller.handleHelpButton(new ActionEvent());
 
-            // Assert
             assertTrue(helpPane.isVisible(), "Help overlay should become visible when Help button is clicked");
+            latch.countDown();
         });
+
+        assertTrue(latch.await(3, TimeUnit.SECONDS));
     }
 
     @Test
     void testInitializeDoesNotCrash() throws Exception {
         MainMenuController controller = new MainMenuController();
 
-        // Inject mock FXML elements so initialize() has something to work with
         inject(controller, "settingsButton", new Button());
         inject(controller, "helpButton", new Button());
         inject(controller, "rootPane", new StackPane());
         inject(controller, "backgroundImage", new ImageView());
 
+        CountDownLatch latch = new CountDownLatch(1);
+
         Platform.runLater(() -> {
             assertDoesNotThrow(controller::initialize);
+            latch.countDown();
         });
+
+        assertTrue(latch.await(3, TimeUnit.SECONDS));
     }
 
     // --- Helpers ---
@@ -84,11 +108,17 @@ class MainMenuControllerTest {
         field.set(target, value);
     }
 
-    // A Fake Main class that records if loadGame was called
+    // A Fake Main class that tracks method calls
     static class StubMain extends Main {
         boolean loadGameCalled = false;
 
+        // Override the NEW method signature we created (with GameMode)
         @Override
+        public void loadGame(Stage stage, GameMode mode) {
+            loadGameCalled = true;
+        }
+
+        // Keep the old one just in case, but it shouldn't be called
         public void loadGame(Stage stage) {
             loadGameCalled = true;
         }

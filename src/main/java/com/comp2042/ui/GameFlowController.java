@@ -2,28 +2,34 @@ package com.comp2042.ui;
 
 import com.comp2042.event.DownData;
 import com.comp2042.event.InputEventListener;
-import com.comp2042.ui.GameOverPanel;
-import com.comp2042.ui.NotificationPanel;
-import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.ParallelTransition;
-import javafx.animation.Timeline;
+import com.comp2042.GameMode; // Ensure this import exists!
+import javafx.animation.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
+/**
+ * Manages the game flow, including the main game loop, timers, scoring, and game state transitions.
+ */
 public class GameFlowController {
 
-    private Timeline timeLine;
+    // --- Core Game Variables ---
+    private Timeline gameLoop;
+    private Timeline ultraTimer;
     private boolean gameStarted = false;
     private final BooleanProperty isPause = new SimpleBooleanProperty(false);
     private final BooleanProperty isGameOver = new SimpleBooleanProperty(false);
 
+    // --- Mode Variables ---
+    private GameMode currentMode = GameMode.CLASSIC;
+    private int linesToClearGoal = 0;
+    private int secondsRemaining = 120;
+
+    // --- Dependencies ---
     private InputEventListener eventListener;
     private ParticleEffect particleEffect;
-
     private final GameBoardRenderer gameBoardRenderer;
     private final GameInfoPanelController gameInfoPanelController;
     private final StackPane groupNotification;
@@ -32,17 +38,17 @@ public class GameFlowController {
 
     private int level = 1;
     private int totalLinesCleared = 0;
-    private static final int LINES_PER_LEVEL = 5;
+    private static final int LINES_PER_LEVEL = 7;
 
-    // ... (Setters and Constructor remain the same) ...
-    public void setEventListener(InputEventListener eventListener) {
-        this.eventListener = eventListener;
-    }
-
-    public void setParticleEffect(ParticleEffect particleEffect) {
-        this.particleEffect = particleEffect;
-    }
-
+    /**
+     * Constructs a new GameFlowController.
+     *
+     * @param gameBoardRenderer       The renderer for the game board.
+     * @param gameInfoPanelController The controller for the game info panel.
+     * @param groupNotification       The container for notifications.
+     * @param pauseButton             The pause button.
+     * @param gameOverPanel           The game over panel.
+     */
     public GameFlowController(GameBoardRenderer gameBoardRenderer,
                               GameInfoPanelController gameInfoPanelController, StackPane groupNotification,
                               Button pauseButton, GameOverPanel gameOverPanel) {
@@ -53,66 +59,73 @@ public class GameFlowController {
         this.gameOverPanel = gameOverPanel;
     }
 
-    // --- FIX STARTS HERE ---
+    /**
+     * Sets the event listener for game events.
+     *
+     * @param eventListener The event listener.
+     */
+    public void setEventListener(InputEventListener eventListener) {
+        this.eventListener = eventListener;
+    }
 
     /**
-     * Helper method to clean up the UI (hide Game Over text, etc)
+     * Sets the particle effect for line clearing.
+     *
+     * @param particleEffect The particle effect.
      */
-    public void resetUI() {
-        // 1. Clear the "GAME OVER" text added to the notification group
-        groupNotification.getChildren().clear();
-
-        // 2. Hide the static Game Over panel (if used)
-        if (gameOverPanel != null) {
-            gameOverPanel.setVisible(false);
-        }
-
-        // 3. Reset Pause button text
-        pauseButton.setText("Pause");
-
-        // 4. Reset Flags
-        isPause.set(false);
-        isGameOver.set(false);
+    public void setParticleEffect(ParticleEffect particleEffect) {
+        this.particleEffect = particleEffect;
     }
 
-    public void start() {
-        if (timeLine != null) {
-            timeLine.stop();
-        }
+    /**
+     * Starts a new game with the specific mode rules.
+     *
+     * @param mode The game mode to start.
+     */
+    public void newGame(GameMode mode) {
+        this.currentMode = mode;
 
-        // FIX: Call resetUI to remove the badge!
+        if (gameLoop != null) gameLoop.stop();
+        if (ultraTimer != null) ultraTimer.stop();
+
         resetUI();
-
-        updateGameSpeed();
-
-        javafx.application.Platform.runLater(() -> {
-            gameStarted = true;
-        });
-    }
-
-    public void newGame() {
-        if (timeLine != null) {
-            timeLine.stop();
-        }
-
-        // FIX: Call resetUI here too to avoid duplicate code
-        resetUI();
-
-        if (eventListener != null) {
-            eventListener.onGameEvent(new com.comp2042.event.NewGameEvent());
-        }
-
-        gameStarted = true;
         level = 1;
         totalLinesCleared = 0;
         gameInfoPanelController.setLevel(1);
+        gameStarted = true;
+
+        // --- Mode Logic ---
+        if (currentMode == GameMode.ULTRA) {
+            startUltraTimer(120); // 2 Minutes
+        } else if (currentMode == GameMode.SPRINT) {
+            linesToClearGoal = 30;
+        }
 
         updateGameSpeed();
     }
 
-    // --- FIX ENDS HERE ---
+    /**
+     * Default start method, defaults to Classic mode.
+     */
+    public void start() {
+        newGame(GameMode.CLASSIC);
+    }
 
-    // ... (The rest of your methods: moveDown, handleDropResult, gameOver, pauseGame, etc. remain exactly the same) ...
+    private void startUltraTimer(int seconds) {
+        this.secondsRemaining = seconds;
+        gameInfoPanelController.updateTime(secondsRemaining);
+        ultraTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            if (!isPause.get() && !isGameOver.get()) {
+                secondsRemaining--;
+                gameInfoPanelController.updateTime(secondsRemaining);
+                if (secondsRemaining <= 0) {
+                    gameOver("VICTORY!");
+                }
+            }
+        }));
+        ultraTimer.setCycleCount(Timeline.INDEFINITE);
+        ultraTimer.play();
+    }
 
     private void moveDown() {
         if (!isPause.getValue() && !isGameOver.getValue()) {
@@ -125,6 +138,11 @@ public class GameFlowController {
         }
     }
 
+    /**
+     * Handles the result of a drop action.
+     *
+     * @param data The data from the drop action.
+     */
     public void handleDropResult(DownData data) {
         if (data.getClearRow() != null && data.getClearRow().getLinesRemoved() > 0) {
             int linesRemoved = data.getClearRow().getLinesRemoved();
@@ -135,128 +153,156 @@ public class GameFlowController {
             scoreNotification.showScore(groupNotification.getChildren());
 
             if (particleEffect != null && data.getClearRow().getClearedRows() != null) {
-                particleEffect.createLineClearExplosion(
-                        data.getClearRow().getClearedRows(),
-                        linesRemoved
-                );
+                particleEffect.createLineClearExplosion(data.getClearRow().getClearedRows(), linesRemoved);
             }
 
-            int newLevel = (totalLinesCleared / LINES_PER_LEVEL) + 1;
-            if (newLevel > level) {
-                level = newLevel;
-                gameInfoPanelController.setLevel(level);
-                updateGameSpeed();
+            // --- Sprint Win Condition ---
+            if (currentMode == GameMode.SPRINT) {
+                if ((linesToClearGoal - totalLinesCleared) <= 0) {
+                    gameOver("VICTORY!");
+                    return;
+                }
+            }
 
-                Timeline levelUpDelay = new Timeline(new KeyFrame(Duration.millis(500), e -> {
-                    NotificationPanel levelUpNotification = new NotificationPanel("LEVEL " + level + "!");
-                    groupNotification.getChildren().add(levelUpNotification);
-                    levelUpNotification.showScore(groupNotification.getChildren());
-                }));
-                levelUpDelay.play();
+            // --- Classic Leveling ---
+            if (currentMode != GameMode.ULTRA) {
+                int newLevel = (totalLinesCleared / LINES_PER_LEVEL) + 1;
+                if (newLevel > level) {
+                    level = newLevel;
+                    gameInfoPanelController.setLevel(level);
+                    updateGameSpeed();
+                    showLevelUpNotification();
+                }
             }
         }
-
         gameBoardRenderer.refreshBrick(data.getViewData());
         gameInfoPanelController.updatePreviews(data.getViewData());
     }
 
-    public void gameOver() {
-        if (timeLine != null) {
-            timeLine.stop();
-        }
+    private void showLevelUpNotification() {
+        Timeline levelUpDelay = new Timeline(new KeyFrame(Duration.millis(500), e -> {
+            NotificationPanel levelUpNotification = new NotificationPanel("LEVEL " + level + "!");
+            groupNotification.getChildren().add(levelUpNotification);
+            levelUpNotification.showScore(groupNotification.getChildren());
+        }));
+        levelUpDelay.play();
+    }
 
-        NotificationPanel gameOverNotification = new NotificationPanel("GAME OVER");
+    /**
+     * Ends the game with a specific message.
+     *
+     * @param message The message to display.
+     */
+    public void gameOver(String message) {
+        if (gameLoop != null) gameLoop.stop();
+        if (ultraTimer != null) ultraTimer.stop();
+
+        NotificationPanel gameOverNotification = new NotificationPanel(message);
         groupNotification.getChildren().add(gameOverNotification);
-
-        gameOverNotification.setOpacity(0);
-        gameOverNotification.setScaleX(0.5);
-        gameOverNotification.setScaleY(0.5);
-
-        FadeTransition ft = new FadeTransition(Duration.millis(600), gameOverNotification);
-        ft.setFromValue(0);
-        ft.setToValue(1);
-
-        Timeline scaleTimeline = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 0.5),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 0.5)
-                ),
-                new KeyFrame(Duration.millis(600),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.1),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.1)
-                ),
-                new KeyFrame(Duration.millis(800),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.0),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.0)
-                )
-        );
-
-        ParallelTransition entrance = new ParallelTransition(ft);
-        entrance.play();
-        scaleTimeline.play();
-
-        Timeline pulse = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.0),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.0)
-                ),
-                new KeyFrame(Duration.millis(1000),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.05),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.05)
-                ),
-                new KeyFrame(Duration.millis(2000),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleXProperty(), 1.0),
-                        new javafx.animation.KeyValue(gameOverNotification.scaleYProperty(), 1.0)
-                )
-        );
-        pulse.setCycleCount(Timeline.INDEFINITE);
-        pulse.setDelay(Duration.millis(800));
-        pulse.play();
-
+        animateGameOver(gameOverNotification);
         isGameOver.setValue(true);
     }
 
+    /**
+     * Ends the game with the default "GAME OVER" message.
+     */
+    public void gameOver() {
+        gameOver("GAME OVER");
+    }
+
+    private void animateGameOver(NotificationPanel panel) {
+        // 1. Initial State: Invisible and Small
+        panel.setOpacity(0);
+        panel.setScaleX(0.0);
+        panel.setScaleY(0.0);
+
+        // 2. Entrance Animation (Pop up and Fade in)
+        // Fade In
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(500), panel);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+
+        // Scale Up (Zoom from 0 to 1)
+        ScaleTransition scaleUp = new ScaleTransition(Duration.millis(500), panel);
+        scaleUp.setFromX(0.0);
+        scaleUp.setFromY(0.0);
+        scaleUp.setToX(1.0);
+        scaleUp.setToY(1.0);
+        // EASE_OUT makes it slow down as it reaches full size (smoother pop)
+        scaleUp.setInterpolator(Interpolator.EASE_OUT);
+
+        // Combine Fade and Scale so they happen together
+        ParallelTransition entrance = new ParallelTransition(fadeIn, scaleUp);
+
+        // 3. Pulse Animation (The "Heartbeat" Loop)
+        ScaleTransition pulse = new ScaleTransition(Duration.millis(900), panel);
+        pulse.setFromX(1.0);
+        pulse.setFromY(1.0);
+        pulse.setToX(1.15); // Grow 15% bigger
+        pulse.setToY(1.15);
+        pulse.setCycleCount(Animation.INDEFINITE); // Loop forever
+        pulse.setAutoReverse(true); // Grow then shrink
+
+        // 4. Sequence: Play Entrance first, then start Pulsing
+        entrance.setOnFinished(e -> pulse.play());
+        entrance.play();
+    }
+
+    /**
+     * Pauses or resumes the game.
+     */
     public void pauseGame() {
-        if (!gameStarted || isGameOver.getValue() || timeLine == null) {
-            return;
-        }
+        if (!gameStarted || isGameOver.getValue() || gameLoop == null) return;
 
         if (isPause.get()) {
-            timeLine.play();
-            pauseButton.setText("Pause");
+            gameLoop.play();
+            if(ultraTimer != null && currentMode == GameMode.ULTRA) ultraTimer.play();
+            pauseButton.setText("PAUSE");
             isPause.set(false);
         } else {
-            timeLine.pause();
-            pauseButton.setText("Resume");
+            gameLoop.pause();
+            if(ultraTimer != null) ultraTimer.pause();
+            pauseButton.setText("RESUME");
             isPause.set(true);
         }
     }
 
     private void updateGameSpeed() {
-        if (timeLine != null) {
-            timeLine.stop();
-        }
-
-        timeLine = new Timeline(new KeyFrame(Duration.millis(getDropSpeedForLevel()),
-                e -> moveDown()));
-        timeLine.setCycleCount(Timeline.INDEFINITE);
-
-        timeLine.play();
+        if (gameLoop != null) gameLoop.stop();
+        gameLoop = new Timeline(new KeyFrame(Duration.millis(getDropSpeedForLevel()), e -> moveDown()));
+        gameLoop.setCycleCount(Timeline.INDEFINITE);
+        gameLoop.play();
     }
 
     private int getDropSpeedForLevel() {
         int baseSpeed = 400;
         int speedDecrease = 40;
         int minSpeed = 100;
-
         return Math.max(minSpeed, baseSpeed - (level - 1) * speedDecrease);
     }
 
-    public boolean isPaused() {
-        return isPause.get();
+    /**
+     * Resets the UI to its initial state.
+     */
+    public void resetUI() {
+        groupNotification.getChildren().clear();
+        if (gameOverPanel != null) gameOverPanel.setVisible(false);
+        pauseButton.setText("Pause");
+        isPause.set(false);
+        isGameOver.set(false);
     }
 
-    public boolean isGameOver() {
-        return isGameOver.get();
-    }
+    /**
+     * Checks if the game is paused.
+     *
+     * @return true if the game is paused, false otherwise.
+     */
+    public boolean isPaused() { return isPause.get(); }
+
+    /**
+     * Checks if the game is over.
+     *
+     * @return true if the game is over, false otherwise.
+     */
+    public boolean isGameOver() { return isGameOver.get(); }
 }

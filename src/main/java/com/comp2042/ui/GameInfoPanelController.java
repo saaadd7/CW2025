@@ -143,4 +143,19 @@ public class GameInfoPanelController {
             default: return Color.WHITE; // Fallback for unknown values
         }
     }
+    // Add this inside GameInfoPanelController
+    public void updateTime(int secondsRemaining) {
+        if (levelLabel != null) {
+            // Calculate minutes and seconds
+            int minutes = secondsRemaining / 60;
+            int seconds = secondsRemaining % 60;
+
+            // Format it nicely (e.g., "01:59")
+            String timeString = String.format("%02d:%02d", minutes, seconds);
+
+            // We temporarily use the level label to show time in Ultra mode
+            // Or if you have a specific timeLabel, use that instead.
+            levelLabel.setText(timeString);
+        }
+    }
 }

@@ -82,11 +82,11 @@ public class NotificationPanel extends BorderPane {
      *             from which this notification panel will be removed after animation.
      */
     public void showScore(ObservableList<Node> list) {
-        FadeTransition ft = new FadeTransition(Duration.millis(2000), this);
-        TranslateTransition tt = new TranslateTransition(Duration.millis(2500), this);
+        FadeTransition ft = new FadeTransition(Duration.millis(1000), this);
+        TranslateTransition tt = new TranslateTransition(Duration.millis(700), this);
         tt.setByY(-40); // Moves the notification up by 40 pixels
-        ft.setFromValue(1); // Starts fully opaque
-        ft.setToValue(0);   // Ends fully transparent
+        ft.setFromValue(1);
+        ft.setToValue(0);
         ParallelTransition transition = new ParallelTransition(tt, ft); // Play both animations simultaneously
         transition.setOnFinished(new EventHandler<ActionEvent>() {
             @Override

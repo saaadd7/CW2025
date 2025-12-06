@@ -5,33 +5,80 @@ import com.comp2042.core.SimpleBoard;
 import com.comp2042.event.*;
 import com.comp2042.sounds.SoundManager;
 import com.comp2042.ui.GameBoardRenderer;
+import com.comp2042.ui.GameFlowController;
 import com.comp2042.ui.GuiController;
 import javafx.stage.Stage;
 
+/**
+ * The main controller for the game logic. It acts as a bridge between the user interface (GUI) and the game's core logic (Board).
+ * It handles user input events, updates the game state, and manages the overall game flow.
+ */
 public class GameController implements InputEventListener {
 
     private final Board board;
-
     private final GuiController viewGuiController;
     private final GameBoardRenderer gameBoardRenderer;
-
-
+    private final GameFlowController gameFlowController;
     private final SoundManager soundManager;
     private final Main mainApp;
 
-    public GameController(GuiController c, GameBoardRenderer gameBoardRenderer, SoundManager soundManager, Main mainApp, int boardWidth, int boardHeight) {
+    private boolean isProcessingNewGame = false;
+
+    /**
+     * Constructs a new GameController.
+     *
+     * @param c                  The GUI controller.
+     * @param gameBoardRenderer  The renderer for the game board.
+     * @param gameFlowController The controller for the game flow.
+     * @param soundManager       The manager for sound effects.
+     * @param mainApp            The main application class.
+     * @param boardWidth         The width of the game board.
+     * @param boardHeight        The height of the game board.
+     */
+    public GameController(GuiController c, GameBoardRenderer gameBoardRenderer, GameFlowController gameFlowController, SoundManager soundManager, Main mainApp, int boardWidth, int boardHeight) {
+        // 1. We create the board here, default to Classic for now
         this.board = new SimpleBoard(boardWidth, boardHeight);
+
         this.viewGuiController = c;
         this.gameBoardRenderer = gameBoardRenderer;
+        this.gameFlowController = gameFlowController;
         this.soundManager = soundManager;
         this.mainApp = mainApp;
 
-        board.createNewBrick();
+        // NOTE: We do NOT start the game here anymore.
+        // We wait for initGame() to be called by the GameModeController.
         viewGuiController.setEventListener(this);
-        viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
-        viewGuiController.bindScore(board.getScore().scoreProperty());
     }
 
+    /**
+     * Initializes the game with a specific game mode.
+     * This method sets up the game board, resets the timer, and updates the UI for the new game.
+     *
+     * @param mode The game mode to initialize (e.g., Classic, Sprint, Ultra).
+     */
+    public void initGame(GameMode mode) {
+        // 1. Set the mode
+        board.setGameMode(mode);
+
+        // 2. Reset board and timer
+        board.newGame();
+
+        // 3. Update UI
+        viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
+        viewGuiController.bindScore(board.getScore().scoreProperty());
+        viewGuiController.updateModeStatus(mode.toString(), board.getGameModeStatus());
+
+        // 4. Force a refresh so the board isn't empty
+        gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
+    }
+
+    /**
+     * Handles incoming game events from the user interface.
+     * This method is the central point for processing user actions like moving or rotating bricks.
+     *
+     * @param event The game event to process.
+     * @return An object containing data for the UI to update, or null if no update is needed.
+     */
     @Override
     public Object onGameEvent(GameEvent event) {
         switch (event.getType()) {
@@ -41,7 +88,15 @@ public class GameController implements InputEventListener {
                 if (!canMove) {
                     clearRow = handleBrickLanded();
                 }
+                viewGuiController.updateModeStatus(board.getGameMode().toString(), board.getGameModeStatus());
+                // CHECK FOR VICTORY (Needed for ULTRA mode - Time limit)
+                if (board.isGameModeComplete()) {
+                    handleVictory();
+                    return null;
+                }
+
                 return new DownData(clearRow, board.getViewData());
+
             case LEFT:
                 board.moveBrickLeft();
                 return board.getViewData();
@@ -59,18 +114,24 @@ public class GameController implements InputEventListener {
                 ClearRow clearRowDrop = handleBrickLanded();
                 return new DownData(clearRowDrop, board.getViewData());
             case NEW_GAME:
-                board.newGame();
-                viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
-                gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
+                if (isProcessingNewGame) return null;
+                isProcessingNewGame = true;
+                try {
+                    board.newGame();
+                    gameFlowController.newGame(board.getGameMode());
+                    viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
+                    gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
+                } finally {
+                    isProcessingNewGame = false;
+                }
                 return null;
             case BACK_TO_MENU:
-                viewGuiController.gameOver();
+                viewGuiController.gameOver(); // Stop the timer
                 if (mainApp != null) {
                     try {
                         Stage currentStage = (Stage) viewGuiController.getViewRoot().getScene().getWindow();
                         mainApp.showMainMenu(currentStage);
                     } catch (Exception e) {
-                        System.err.println("Failed to switch back to Main Menu.");
                         e.printStackTrace();
                     }
                 }
@@ -79,27 +140,51 @@ public class GameController implements InputEventListener {
         return null;
     }
 
+    /**
+     * Handles the logic when a brick has landed.
+     * This includes merging the brick to the board, checking for cleared lines, and checking for game over conditions.
+     *
+     * @return A ClearRow object containing information about cleared lines.
+     */
     private ClearRow handleBrickLanded() {
-        if (soundManager != null) {
-            soundManager.playThudSound();
-        }
+        if (soundManager != null) soundManager.playThudSound();
 
         board.mergeBrickToBackground();
-
         ClearRow clearRow = board.clearRows();
+
         if (clearRow.getLinesRemoved() > 0) {
             board.getScore().add(clearRow.getScoreBonus());
-
-            if (soundManager != null) {
-                soundManager.playSwooshSound();
-            }
+            if (soundManager != null) soundManager.playSwooshSound();
         }
 
+        // CHECK FOR VICTORY (Needed for SPRINT mode - Line count)
+        if (board.isGameModeComplete()) {
+            handleVictory();
+            return clearRow;
+        }
+
+        // Check for Loss (Blockout)
         if (board.createNewBrick()) {
             viewGuiController.gameOver();
         }
 
         gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
         return clearRow;
+    }
+
+    /**
+     * Handles the victory condition.
+     * This stops the game and displays a victory message.
+     */
+    private void handleVictory() {
+        // Stop the game loop
+        viewGuiController.gameOver();
+
+        // Show a victory message
+        // You might want to create a specific viewGuiController.showVictory() later
+        System.out.println("VICTORY! Mode: " + board.getGameMode());
+
+        // Ideally, play a win sound here
+        // soundManager.playWinSound();
     }
 }
