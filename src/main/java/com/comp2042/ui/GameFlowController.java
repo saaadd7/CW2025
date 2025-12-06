@@ -22,7 +22,7 @@ public class GameFlowController {
     // --- Mode Variables ---
     private GameMode currentMode = GameMode.CLASSIC;
     private int linesToClearGoal = 0;
-    private int secondsRemaining = 0;
+    private int secondsRemaining = 120;
 
     // --- Dependencies ---
     private InputEventListener eventListener;
@@ -87,11 +87,13 @@ public class GameFlowController {
 
     private void startUltraTimer(int seconds) {
         this.secondsRemaining = seconds;
+        gameInfoPanelController.updateTime(secondsRemaining);
         ultraTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             if (!isPause.get() && !isGameOver.get()) {
                 secondsRemaining--;
+                gameInfoPanelController.updateTime(secondsRemaining);
                 if (secondsRemaining <= 0) {
-                    gameOver("TIME'S UP!");
+                    gameOver("VICTORY!");
                 }
             }
         }));

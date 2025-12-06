@@ -320,7 +320,7 @@ public class SimpleBoard implements Board {
                 return linesCleared >= 30;
             case ULTRA:
                 long elapsed = System.currentTimeMillis() - startTime;
-                return elapsed >= 180000; // 3 minutes in milliseconds
+                return elapsed >= 120000; // 2 minutes in milliseconds
             case CLASSIC:
             default:
                 return false; // Classic never completes, only game over
@@ -334,7 +334,7 @@ public class SimpleBoard implements Board {
                 return "Lines: " + linesCleared + "/30";
             case ULTRA:
                 long elapsed = System.currentTimeMillis() - startTime;
-                long remaining = Math.max(0, 180000 - elapsed);
+                long remaining = Math.max(0, 120000 - elapsed);
                 long seconds = (remaining / 1000) % 60;
                 long minutes = remaining / 60000;
                 return String.format("Time: %d:%02d", minutes, seconds);

@@ -3,7 +3,7 @@ package com.comp2042;
 public enum GameMode {
     CLASSIC("Classic", "Play until game over"),
     SPRINT("Sprint", "Clear 30 lines as fast as possible"),
-    ULTRA("Ultra", "Score as much as possible in 3 minutes");
+    ULTRA("Ultra", "Score as much as possible in 2 minutes");
 
     private final String displayName;
     private final String description;
