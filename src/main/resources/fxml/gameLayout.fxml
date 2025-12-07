@@ -89,11 +89,11 @@
 
             <HBox spacing="10" alignment="CENTER">
                 <Button fx:id="pauseButton" text="PAUSE" minWidth="100" prefHeight="45"
-                        onAction="#pauseGame" styleClass="game-button"/>
+                        onAction="#pauseGame" styleClass="game-button" focusTraversable="false" />
                 <Button text="RESTART" minWidth="100" prefHeight="45"
-                        onAction="#newGame" styleClass="game-button"/>
+                        onAction="#newGame" styleClass="game-button" focusTraversable="false" />
                 <Button text="MENU" minWidth="100" prefHeight="45"
-                        onAction="#backToMainMenu" styleClass="game-button"/>
+                        onAction="#backToMainMenu" styleClass="game-button" focusTraversable="false" />
             </HBox>
         </VBox>
 

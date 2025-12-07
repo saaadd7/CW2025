@@ -78,10 +78,25 @@ public class GuiController implements Initializable {
         updateModeDisplay();
 
 
+
+        Button[] allButtons = {startButton, settingsButton, helpButton, pauseButton, modeButton};
+
+
+        for (Button btn : allButtons) {
+            if (btn != null) {
+                // This prevents the arrow keys from "selecting" the button
+                btn.setFocusTraversable(false);
+
+
+                btn.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+                    soundManager.playClickSound();
+                });
+            }
+        }
         if (soundManager == null) {
             soundManager = SoundManager.getInstance();
         }
-        Button[] allButtons = {startButton, settingsButton, helpButton, pauseButton};
+
 
         if (particlePane != null) {
             particleEffect = new ParticleEffect(particlePane);
