@@ -130,12 +130,11 @@
                 visible="false">
 
         <!-- Help Content Card -->
-        <VBox alignment="TOP_CENTER"
-              layoutX="75"
-              layoutY="80"
+        <VBox alignment="CENTER"
               prefWidth="450"
               prefHeight="640"
               spacing="22"
+              AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
               style="-fx-background-color: linear-gradient(to bottom, #2c3e50 0%, #1c2833 100%);
                      -fx-background-radius: 18px;
                      -fx-border-color: #8e44ad;
@@ -147,7 +146,7 @@
 
             <!-- Help Title -->
             <Label text="GAME CONTROLS"
-                   style="-fx-text-fill: #8e44ad;
+                   style="-fx-text-fill: #f39c12;
                           -fx-font-size: 36px;
                           -fx-font-weight: bold;
                           -fx-font-family: 'Impact', 'Arial Black', sans-serif;
@@ -205,7 +204,7 @@
                            style="-fx-text-fill: #ecf0f1; -fx-font-size: 16px;
                                   -fx-font-style: italic;"/>
                 </VBox>
-                <Label text="P  PAUSE/RESUME GAME"
+                <Label text="P  Pause/Resume Game"
                        style="-fx-text-fill: #3498db; -fx-font-size: 22px;
                               -fx-font-weight: bold;
                               -fx-font-family: 'Arial', sans-serif;"/>
