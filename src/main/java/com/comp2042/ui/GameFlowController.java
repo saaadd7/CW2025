@@ -287,7 +287,7 @@ public class GameFlowController {
     public void resetUI() {
         groupNotification.getChildren().clear();
         if (gameOverPanel != null) gameOverPanel.setVisible(false);
-        pauseButton.setText("Pause");
+        pauseButton.setText("PAUSE");
         isPause.set(false);
         isGameOver.set(false);
     }
