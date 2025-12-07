@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     public static final String MAIN_MENU_FXML = "/fxml/mainMenu.fxml";
-    public static final String GAME_LAYOUT_FXML = "/gameLayout.fxml"; // your real path
+    public static final String GAME_LAYOUT_FXML = "/fxml/gameLayout.fxml"; // your real path
 
     private SoundManager soundManager;
 
