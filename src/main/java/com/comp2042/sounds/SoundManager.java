@@ -16,6 +16,7 @@ public class SoundManager implements ISoundManager {
     private MediaPlayer swooshPlayer;
     private MediaPlayer backgroundMusicPlayer;
     private AudioClip clickPlayer;
+    private MediaPlayer victoryPlayer;
 
     private boolean soundsEnabled = true;
     private boolean backgroundMusicEnabled = true;
@@ -52,6 +53,15 @@ public class SoundManager implements ISoundManager {
             System.err.println("ERROR: 'click.mp3' not found. Check if the file is in src/main/resources/sounds/");
         }
 
+        java.net.URL victoryResource = getClass().getResource("/sounds/victory.mp3");
+        if (victoryResource != null) {
+            Media victorySound = new Media(victoryResource.toExternalForm());
+            victoryPlayer = new MediaPlayer(victorySound);
+            victoryPlayer.setVolume(1.0);
+        } else {
+            System.err.println("ERROR: 'victory.mp3' not found. Check if the file is in src/main/resources/sounds/");
+        }
+
         java.net.URL backgroundMusicResource = getClass().getResource("/sounds/gamebgm.m4a");
         if (backgroundMusicResource != null) {
             Media backgroundMusic = new Media(backgroundMusicResource.toExternalForm());
@@ -79,6 +89,16 @@ public class SoundManager implements ISoundManager {
         if (soundsEnabled && swooshPlayer != null) {
             swooshPlayer.seek(swooshPlayer.getStartTime());
             swooshPlayer.play();
+        }
+    }
+
+    /**
+     * Plays the 'victory' sound effect if sounds are enabled.
+     */
+    public void playVictorySound() {
+        if (soundsEnabled && victoryPlayer != null) {
+            victoryPlayer.seek(victoryPlayer.getStartTime());
+            victoryPlayer.play();
         }
     }
 

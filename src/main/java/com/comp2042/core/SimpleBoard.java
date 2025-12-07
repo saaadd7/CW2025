@@ -317,7 +317,7 @@ public class SimpleBoard implements Board {
     public boolean isGameModeComplete() {
         switch (gameMode) {
             case SPRINT:
-                return linesCleared >= 30;
+                return linesCleared >= 20;
             case ULTRA:
                 long elapsed = System.currentTimeMillis() - startTime;
                 return elapsed >= 120000; // 2 minutes in milliseconds
@@ -331,7 +331,7 @@ public class SimpleBoard implements Board {
     public String getGameModeStatus() {
         switch (gameMode) {
             case SPRINT:
-                return "Lines: " + linesCleared + "/30";
+                return "Lines: " + linesCleared + "/20";
             case ULTRA:
                 long elapsed = System.currentTimeMillis() - startTime;
                 long remaining = Math.max(0, 120000 - elapsed);

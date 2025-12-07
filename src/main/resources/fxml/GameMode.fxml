@@ -73,7 +73,7 @@
                     <Font name="Arial Bold" size="22"/>
                 </font>
             </Button>
-            <Label text="Clear 30 lines as fast as possible"
+            <Label text="Clear 20 lines as fast as possible"
                    style="-fx-text-fill: #BDC3C7;
                           -fx-font-size: 13px;"/>
         </VBox>

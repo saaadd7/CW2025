@@ -183,7 +183,6 @@ public class GameController implements InputEventListener {
 
         System.out.println("VICTORY! Mode: " + board.getGameMode());
 
-
-        // soundManager.playWinSound();
+        soundManager.playVictorySound();
     }
 }
