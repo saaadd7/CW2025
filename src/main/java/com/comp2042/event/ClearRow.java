@@ -29,7 +29,6 @@ public final class ClearRow {
         this.linesRemoved = linesRemoved;
         this.newMatrix = newMatrix;
         this.scoreBonus = scoreBonus;
-        // Defensive copy for mutable list
         this.clearedRows = clearedRows != null ? new ArrayList<>(clearedRows) : new ArrayList<>();
     }
 

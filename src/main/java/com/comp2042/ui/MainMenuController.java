@@ -99,8 +99,7 @@ public class MainMenuController {
         }
 
         try {
-            // FIX: Use the 'file' variable we found above!
-            // Do NOT use "src/main/resources/..." strings here.
+
             FXMLLoader loader = new FXMLLoader(file);
 
             Parent root = loader.load();

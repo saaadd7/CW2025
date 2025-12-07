@@ -98,7 +98,7 @@ public class GameBoardRenderer {
 
                     int x = brick.getxPosition() + col;
                     int y = (brick.getyPosition() - HIDDEN_ROWS) + row;
-                    if (y >= 0) { // Only add to display if it's not in the hidden rows
+                    if (y >= 0) {
                         gamePanel.add(r, x, y);
                     }
                 }
@@ -134,7 +134,7 @@ public class GameBoardRenderer {
 
                 Rectangle ghost = new Rectangle(BRICK_SIZE, BRICK_SIZE);
                 ghost.setFill(getGhostColor(ghostData[row][col]));
-                ghost.getStyleClass().add("ghost"); // Add a style class for easy identification and removal
+                ghost.getStyleClass().add("ghost");
                 ghost.setStroke(Color.BLACK);
                 ghost.setStrokeWidth(0.25);
                 ghost.setStrokeType(StrokeType.INSIDE);
@@ -162,7 +162,7 @@ public class GameBoardRenderer {
             case 5: return Color.RED;
             case 6: return Color.BEIGE;
             case 7: return Color.BURLYWOOD;
-            default: return Color.WHITE; // Fallback for unknown values
+            default: return Color.WHITE;
         }
     }
 

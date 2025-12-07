@@ -82,7 +82,7 @@
                       prefWidth="200" prefHeight="400"
                       style="-fx-background-color: transparent;"/>
 
-                <StackPane fx:id="groupNotification" visible="true" mouseTransparent="true">
+                <StackPane fx:id="groupNotification" visible="true" mouseTransparent="true" style="-fx-background-color: transparent;">
                     <GameOverPanel fx:id="gameOverPanel"/>
                 </StackPane>
             </StackPane>

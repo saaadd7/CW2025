@@ -20,7 +20,7 @@ public class ParticleEffect {
 
     private final Pane container;
     private final Random random = new Random();
-    private static final double CELL_SIZE = 20.0; // Assuming each game block is 20x20 pixels
+    private static final double CELL_SIZE = 20.0;
 
     /**
      * Constructs a ParticleEffect manager.
@@ -43,10 +43,10 @@ public class ParticleEffect {
         }
 
         double containerWidth = container.getWidth();
-        int blocksPerRow = (int)(containerWidth / CELL_SIZE); // Calculate how many blocks fit horizontally
+        int blocksPerRow = (int)(containerWidth / CELL_SIZE);
 
         for (Integer rowIndex : clearedRows) {
-            // Adjust row index because the game board might have hidden rows
+
             double rowY = (rowIndex - 2) * CELL_SIZE;
 
             for (int col = 0; col < blocksPerRow; col++) {
@@ -59,11 +59,11 @@ public class ParticleEffect {
                 block.setStroke(Color.BLACK);
                 block.setStrokeWidth(1);
 
-                container.getChildren().add(block); // Add block to the pane
+                container.getChildren().add(block);
 
-                // Determine if the block should slide left or right
+
                 boolean slideLeft = col < blocksPerRow / 2;
-                animateHorizontalSlide(block, slideLeft, col * 20); // Apply animation
+                animateHorizontalSlide(block, slideLeft, col * 20);
             }
         }
     }
@@ -76,7 +76,7 @@ public class ParticleEffect {
      * @param delayMs The delay in milliseconds before the animation starts.
      */
     private void animateHorizontalSlide(Rectangle block, boolean slideLeft, int delayMs) {
-        // Randomize slide distance and duration for a more natural explosion
+
         double slideDistance = 150 + random.nextDouble() * 100;
         if (slideLeft) {
             slideDistance = -slideDistance;
@@ -85,20 +85,20 @@ public class ParticleEffect {
         double animationDuration = 600 + random.nextDouble() * 200;
 
         TranslateTransition slide = new TranslateTransition(Duration.millis(animationDuration), block);
-        slide.setByX(slideDistance); // Horizontal movement
+        slide.setByX(slideDistance);
 
-        // Add a slight random vertical drift
+
         double verticalDrift = (random.nextDouble() - 0.5) * 20; // -10 to +10 pixels
         slide.setByY(verticalDrift);
 
         FadeTransition fade = new FadeTransition(Duration.millis(animationDuration), block);
-        fade.setFromValue(1.0); // Start fully opaque
-        fade.setToValue(0.0);   // End fully transparent
+        fade.setFromValue(1.0);
+        fade.setToValue(0.0);
 
-        ParallelTransition animation = new ParallelTransition(slide, fade); // Run slide and fade simultaneously
-        animation.setDelay(Duration.millis(delayMs)); // Stagger animations for a wave effect
+        ParallelTransition animation = new ParallelTransition(slide, fade);
+        animation.setDelay(Duration.millis(delayMs));
 
-        // Remove the block from the container once its animation is finished
+
         animation.setOnFinished(e -> container.getChildren().remove(block));
 
         animation.play();

@@ -81,7 +81,7 @@ public class InputHandler {
             }
         }
 
-        // Handle global keys regardless of game state
+
         switch (keyEvent.getCode()) {
             case R:
                 eventListener.onGameEvent(new com.comp2042.event.NewGameEvent());

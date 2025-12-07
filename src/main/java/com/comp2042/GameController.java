@@ -36,7 +36,7 @@ public class GameController implements InputEventListener {
      * @param boardHeight        The height of the game board.
      */
     public GameController(GuiController c, GameBoardRenderer gameBoardRenderer, GameFlowController gameFlowController, SoundManager soundManager, Main mainApp, int boardWidth, int boardHeight) {
-        // 1. We create the board here, default to Classic for now
+
         this.board = new SimpleBoard(boardWidth, boardHeight);
 
         this.viewGuiController = c;
@@ -45,8 +45,6 @@ public class GameController implements InputEventListener {
         this.soundManager = soundManager;
         this.mainApp = mainApp;
 
-        // NOTE: We do NOT start the game here anymore.
-        // We wait for initGame() to be called by the GameModeController.
         viewGuiController.setEventListener(this);
     }
 
@@ -57,18 +55,15 @@ public class GameController implements InputEventListener {
      * @param mode The game mode to initialize (e.g., Classic, Sprint, Ultra).
      */
     public void initGame(GameMode mode) {
-        // 1. Set the mode
+
         board.setGameMode(mode);
 
-        // 2. Reset board and timer
         board.newGame();
 
-        // 3. Update UI
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
         viewGuiController.updateModeStatus(mode.toString(), board.getGameModeStatus());
 
-        // 4. Force a refresh so the board isn't empty
         gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
     }
 
@@ -89,7 +84,7 @@ public class GameController implements InputEventListener {
                     clearRow = handleBrickLanded();
                 }
                 viewGuiController.updateModeStatus(board.getGameMode().toString(), board.getGameModeStatus());
-                // CHECK FOR VICTORY (Needed for ULTRA mode - Time limit)
+
                 if (board.isGameModeComplete()) {
                     handleVictory();
                     return null;
@@ -126,7 +121,7 @@ public class GameController implements InputEventListener {
                 }
                 return null;
             case BACK_TO_MENU:
-                viewGuiController.gameOver(); // Stop the timer
+                viewGuiController.gameOver();
                 if (mainApp != null) {
                     try {
                         Stage currentStage = (Stage) viewGuiController.getViewRoot().getScene().getWindow();
@@ -157,13 +152,13 @@ public class GameController implements InputEventListener {
             if (soundManager != null) soundManager.playSwooshSound();
         }
 
-        // CHECK FOR VICTORY (Needed for SPRINT mode - Line count)
+
         if (board.isGameModeComplete()) {
             handleVictory();
             return clearRow;
         }
 
-        // Check for Loss (Blockout)
+
         if (board.createNewBrick()) {
             viewGuiController.gameOver();
         }
@@ -177,14 +172,10 @@ public class GameController implements InputEventListener {
      * This stops the game and displays a victory message.
      */
     private void handleVictory() {
-        // Stop the game loop
-        viewGuiController.gameOver();
+        viewGuiController.victory();
 
-        // Show a victory message
-        // You might want to create a specific viewGuiController.showVictory() later
         System.out.println("VICTORY! Mode: " + board.getGameMode());
 
-        // Ideally, play a win sound here
-        // soundManager.playWinSound();
+        soundManager.playVictorySound();
     }
 }

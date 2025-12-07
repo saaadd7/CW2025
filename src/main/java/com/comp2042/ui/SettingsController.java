@@ -11,7 +11,7 @@ import javafx.stage.Stage;
  */
 public class SettingsController {
 
-    // Matches the fx:id="soundToggleButton" in settingsMenu.fxml
+
     @FXML
     private Button soundToggleButton;
 
@@ -19,7 +19,7 @@ public class SettingsController {
     private Button backgroundMusicToggleButton;
 
     private ISoundManager soundManager;
-    private Stage settingsStage; // Reference to the window this controller manages
+    private Stage settingsStage;
 
     /**
      * Sets the sound manager for this controller.
@@ -28,7 +28,7 @@ public class SettingsController {
      */
     public void setSoundManager(ISoundManager soundManager) {
         this.soundManager = soundManager;
-        updateSoundButtonText(); // Set initial text
+        updateSoundButtonText();
         updateBackgroundMusicButtonText();
     }
 
@@ -51,7 +51,7 @@ public class SettingsController {
             String status = enabled ? "On" : "Off";
             soundToggleButton.setText("Sounds: " + status);
 
-            // Change button color based on state
+
             if (enabled) {
                 soundToggleButton.setStyle("-fx-background-color: linear-gradient(to bottom, #27ae60 0%, #229954 50%, #1e8449 100%);" +
                         " -fx-background-radius: 10px; -fx-text-fill: white; -fx-font-family: 'Arial Black', 'Arial', sans-serif;" +
@@ -77,7 +77,7 @@ public class SettingsController {
             String status = enabled ? "On" : "Off";
             backgroundMusicToggleButton.setText("Music: " + status);
 
-            // Change button color based on state
+
             if (enabled) {
                 backgroundMusicToggleButton.setStyle("-fx-background-color: linear-gradient(to bottom, #27ae60 0%, #229954 50%, #1e8449 100%);" +
                         " -fx-background-radius: 10px; -fx-text-fill: white; -fx-font-family: 'Arial Black', 'Arial', sans-serif;" +
@@ -101,7 +101,7 @@ public class SettingsController {
     private void toggleSounds() {
         if (soundManager != null) {
             soundManager.toggleSounds();
-            updateSoundButtonText(); // Update the button text after toggling
+            updateSoundButtonText();
         }
     }
 
@@ -112,7 +112,7 @@ public class SettingsController {
     private void toggleBackgroundMusic() {
         if (soundManager != null) {
             soundManager.toggleBackgroundMusic();
-            updateBackgroundMusicButtonText(); // Update the button text after toggling
+            updateBackgroundMusicButtonText();
         }
     }
 
