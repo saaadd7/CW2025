@@ -205,7 +205,7 @@
                            style="-fx-text-fill: #ecf0f1; -fx-font-size: 16px;
                                   -fx-font-style: italic;"/>
                 </VBox>
-                <Label text="P  Pause/Resume Game"
+                <Label text="P  PAUSE/RESUME GAME"
                        style="-fx-text-fill: #3498db; -fx-font-size: 22px;
                               -fx-font-weight: bold;
                               -fx-font-family: 'Arial', sans-serif;"/>
