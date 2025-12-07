@@ -4,12 +4,13 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.effect.DropShadow?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.comp2042.ui.GameModeController"
       alignment="CENTER"
-      spacing="20"
-      style="-fx-background-color: #2C3E50;"
+      spacing="30"
+      style="-fx-background-color: linear-gradient(to bottom, #1a252f 0%, #2C3E50 100%);"
       prefWidth="600"
       prefHeight="500">
 
@@ -17,26 +18,99 @@
         <Insets top="40" right="40" bottom="40" left="40"/>
     </padding>
 
-    <Label text="SELECT GAME MODE" style="-fx-text-fill: white; -fx-font-size: 32px; -fx-font-weight: bold;">
-        <font>
-            <Font name="Arial Bold" size="32"/>
-        </font>
-    </Label>
-
-    <VBox spacing="15" alignment="CENTER">
-        <Button fx:id="classicButton" text="CLASSIC" prefWidth="300" prefHeight="60"
-                style="-fx-font-size: 20px; -fx-background-color: #3498db; -fx-text-fill: white;"/>
-        <Label text="Play until game over" style="-fx-text-fill: #BDC3C7; -fx-font-size: 14px;"/>
-
-        <Button fx:id="sprintButton" text="SPRINT" prefWidth="300" prefHeight="60"
-                style="-fx-font-size: 20px; -fx-background-color: #e74c3c; -fx-text-fill: white;"/>
-        <Label text="Clear 30 lines as fast as possible" style="-fx-text-fill: #BDC3C7; -fx-font-size: 14px;"/>
-
-        <Button fx:id="ultraButton" text="ULTRA" prefWidth="300" prefHeight="60"
-                style="-fx-font-size: 20px; -fx-background-color: #f39c12; -fx-text-fill: white;"/>
-        <Label text="Score as much as possible in 3 minutes" style="-fx-text-fill: #BDC3C7; -fx-font-size: 14px;"/>
+    <!-- Title Section -->
+    <VBox alignment="CENTER" spacing="5">
+        <Label text="SELECT GAME MODE"
+               style="-fx-text-fill: white;
+                      -fx-font-size: 36px;
+                      -fx-font-weight: bold;
+                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 2);">
+            <font>
+                <Font name="Arial Bold" size="36"/>
+            </font>
+        </Label>
+        <Label text="Choose your challenge"
+               style="-fx-text-fill: #95a5a6;
+                      -fx-font-size: 14px;
+                      -fx-font-style: italic;"/>
     </VBox>
 
-    <Button fx:id="backButton" text="BACK TO MENU" prefWidth="200" prefHeight="40"
-            style="-fx-font-size: 16px; -fx-background-color: #95a5a6; -fx-text-fill: white;"/>
+    <!-- Game Mode Buttons -->
+    <VBox spacing="20" alignment="CENTER" VBox.vgrow="ALWAYS">
+
+        <!-- Classic Mode -->
+        <VBox spacing="8" alignment="CENTER">
+            <Button fx:id="classicButton" text="CLASSIC" prefWidth="320" prefHeight="65"
+                    styleClass="game-mode-button"
+                    style="-fx-font-size: 22px;
+                           -fx-font-weight: bold;
+                           -fx-background-color: #3498db;
+                           -fx-text-fill: white;
+                           -fx-background-radius: 12;
+                           -fx-cursor: hand;
+                           -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.4), 15, 0, 0, 4);">
+                <font>
+                    <Font name="Arial Bold" size="22"/>
+                </font>
+            </Button>
+            <Label text="Play until game over"
+                   style="-fx-text-fill: #BDC3C7;
+                          -fx-font-size: 13px;"/>
+        </VBox>
+
+        <!-- Sprint Mode -->
+        <VBox spacing="8" alignment="CENTER">
+            <Button fx:id="sprintButton" text="SPRINT" prefWidth="320" prefHeight="65"
+                    styleClass="game-mode-button"
+                    style="-fx-font-size: 22px;
+                           -fx-font-weight: bold;
+                           -fx-background-color: #e74c3c;
+                           -fx-text-fill: white;
+                           -fx-background-radius: 12;
+                           -fx-cursor: hand;
+                           -fx-effect: dropshadow(gaussian, rgba(231, 76, 60, 0.4), 15, 0, 0, 4);">
+                <font>
+                    <Font name="Arial Bold" size="22"/>
+                </font>
+            </Button>
+            <Label text="Clear 30 lines as fast as possible"
+                   style="-fx-text-fill: #BDC3C7;
+                          -fx-font-size: 13px;"/>
+        </VBox>
+
+        <!-- Ultra Mode -->
+        <VBox spacing="8" alignment="CENTER">
+            <Button fx:id="ultraButton" text="ULTRA" prefWidth="320" prefHeight="65"
+                    styleClass="game-mode-button"
+                    style="-fx-font-size: 22px;
+                           -fx-font-weight: bold;
+                           -fx-background-color: #f39c12;
+                           -fx-text-fill: white;
+                           -fx-background-radius: 12;
+                           -fx-cursor: hand;
+                           -fx-effect: dropshadow(gaussian, rgba(243, 156, 18, 0.4), 15, 0, 0, 4);">
+                <font>
+                    <Font name="Arial Bold" size="22"/>
+                </font>
+            </Button>
+            <Label text="Score as much as possible in 2 minutes"
+                   style="-fx-text-fill: #BDC3C7;
+                          -fx-font-size: 13px;"/>
+        </VBox>
+    </VBox>
+
+    <!-- Back Button -->
+    <Button fx:id="backButton" text="← BACK TO MENU" prefWidth="220" prefHeight="45"
+            style="-fx-font-size: 15px;
+                   -fx-background-color: transparent;
+                   -fx-text-fill: #95a5a6;
+                   -fx-border-color: #95a5a6;
+                   -fx-border-width: 2;
+                   -fx-border-radius: 8;
+                   -fx-background-radius: 8;
+                   -fx-cursor: hand;">
+        <font>
+            <Font name="Arial" size="15"/>
+        </font>
+    </Button>
 </VBox>
