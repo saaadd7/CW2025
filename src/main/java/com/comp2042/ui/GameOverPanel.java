@@ -35,8 +35,8 @@ public class GameOverPanel extends BorderPane {
                 new KeyFrame(Duration.seconds(1), e -> gameOverLabel.setOpacity(1))
         );
 
-        // Set the animation to loop indefinitely
+
         timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();  // Start the animation
+        timeline.play();
     }
 }

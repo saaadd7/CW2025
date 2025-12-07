@@ -162,12 +162,12 @@ public class SimpleBoard implements Board {
     @Override
     public ViewData getViewData() {
 
-        // 1. Capture the CURRENT brick shape
+
         int[][] brickMatrix = brickRotator.getCurrentShape();
         int brickX = currentOffset.x;
         int brickY = currentOffset.y;
 
-        // 2. Get Next Bricks (Standard Logic)
+
         List<Brick> nextBricks = ((RandomBrickGenerator) brickGenerator).getNextBricks(3);
 
         int[][] nextShape1 = null;
@@ -178,7 +178,7 @@ public class SimpleBoard implements Board {
         if (nextBricks.size() > 1) nextShape2 = nextBricks.get(1).getShapeMatrix().get(0);
         if (nextBricks.size() > 2) nextShape3 = nextBricks.get(2).getShapeMatrix().get(0);
 
-        // 3. Create View Data
+
         ViewData view = new ViewData(brickMatrix, brickX, brickY, nextShape1, nextShape2, nextShape3);
 
 
@@ -251,7 +251,7 @@ public class SimpleBoard implements Board {
     private int calculateGhostY(int[][] shape, int startX, int startY) {
         int ghostY = startY;
 
-        // Loop: Keep pushing the ghost down until it hits something
+
         while (canBrickMoveDown(shape, startX, ghostY)) {
             ghostY++;
         }
@@ -282,15 +282,15 @@ public class SimpleBoard implements Board {
 
 
 
-                if (newY >= rows) { // Bottom boundary
+                if (newY >= rows) {
                     return false;
                 }
 
-                if (newX < 0 || newX >= cols) { // Left/Right boundary
+                if (newX < 0 || newX >= cols) {
                     return false;
                 }
 
-                // Collision with existing blocks
+
                 if (currentGameMatrix[newY][newX] != 0) {
                     return false;
                 }

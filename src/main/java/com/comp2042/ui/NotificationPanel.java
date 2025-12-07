@@ -84,14 +84,14 @@ public class NotificationPanel extends BorderPane {
     public void showScore(ObservableList<Node> list) {
         FadeTransition ft = new FadeTransition(Duration.millis(1000), this);
         TranslateTransition tt = new TranslateTransition(Duration.millis(700), this);
-        tt.setByY(-40); // Moves the notification up by 40 pixels
+        tt.setByY(-40);
         ft.setFromValue(1);
         ft.setToValue(0);
-        ParallelTransition transition = new ParallelTransition(tt, ft); // Play both animations simultaneously
+        ParallelTransition transition = new ParallelTransition(tt, ft);
         transition.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                list.remove(NotificationPanel.this); // Remove from parent after animation
+                list.remove(NotificationPanel.this);
             }
         });
         transition.play();

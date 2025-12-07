@@ -84,7 +84,7 @@ public class GuiController implements Initializable {
 
         for (Button btn : allButtons) {
             if (btn != null) {
-                // This prevents the arrow keys from "selecting" the button
+
                 btn.setFocusTraversable(false);
 
 
@@ -207,24 +207,23 @@ public class GuiController implements Initializable {
     public void updateModeStatus(String modeName, String details) {
         Platform.runLater(() -> {
 
-            // 1. Update Top Label (e.g., "Mode: Classic")
+
             if (modeNameLabel != null) {
                 modeNameLabel.setText("Mode: " + modeName);
             }
 
-            // 2. Update Bottom Label (The small yellow text)
+
             if (modeDetailsLabel != null) {
-                // If Classic, we CLEAR this line so we don't duplicate the score
+
                 if (modeName.equalsIgnoreCase("Classic")) {
                     modeDetailsLabel.setText("");
                 } else {
-                    // For Sprint (Lines: 1/20), we show it
+
                     modeDetailsLabel.setText(details);
                 }
             }
 
-            // 3. Ensure the Big Score Box is ALWAYS VISIBLE
-            // (I previously hid this, which was the mistake)
+
             if (scoreLabel != null) {
                 scoreLabel.setVisible(true);
             }
@@ -302,7 +301,7 @@ public class GuiController implements Initializable {
      */
     @FXML
     public void switchMode() {
-        // Cycle through the modes: Classic -> Sprint -> Ultra -> Classic
+
         switch (currentMode) {
             case CLASSIC:
                 currentMode = GameMode.SPRINT;
@@ -315,19 +314,18 @@ public class GuiController implements Initializable {
                 break;
         }
 
-        // Update the labels to reflect the change
+
         updateModeDisplay();
 
-        // OPTIONAL: Restart the game immediately when mode changes
-        // so the user plays the new mode right away.
+
         newGame(null);
     }
 
     private void updateModeDisplay() {
-        // Update the big Mode Title
+
         modeNameLabel.setText("Mode: " + currentMode.toString());
 
-        // Update the sub-text to explain the rules
+
         switch (currentMode) {
             case CLASSIC:
                 modeDetailsLabel.setText("Endless Marathon");
