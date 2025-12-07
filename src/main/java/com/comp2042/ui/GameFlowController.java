@@ -194,20 +194,38 @@ public class GameFlowController {
      * @param message The message to display.
      */
     public void gameOver(String message) {
+
         if (gameLoop != null) gameLoop.stop();
         if (ultraTimer != null) ultraTimer.stop();
 
-        NotificationPanel gameOverNotification = new NotificationPanel(message);
-        groupNotification.getChildren().add(gameOverNotification);
-        animateGameOver(gameOverNotification);
+
+
+        NotificationPanel notification = new NotificationPanel(message);
+        groupNotification.getChildren().add(notification);
+        animateGameOver(notification);
+
+
+        if (gameOverPanel != null) {
+
+            gameOverPanel.setVictoryText(message);
+            gameOverPanel.setVisible(true);
+            gameOverPanel.toFront();
+        }
+
         isGameOver.setValue(true);
     }
-
     /**
      * Ends the game with the default "GAME OVER" message.
      */
     public void gameOver() {
         gameOver("GAME OVER");
+    }
+
+    /**
+     * Ends the game with a victory message.
+     */
+    public void victory() {
+        gameOver("VICTORY!");
     }
 
     private void animateGameOver(NotificationPanel panel) {
@@ -305,4 +323,5 @@ public class GameFlowController {
      * @return true if the game is over, false otherwise.
      */
     public boolean isGameOver() { return isGameOver.get(); }
+
 }

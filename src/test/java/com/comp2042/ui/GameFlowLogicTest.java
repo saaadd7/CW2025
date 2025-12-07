@@ -25,7 +25,7 @@ class GameFlowLogicTest {
     }
 
     @Test
-    void testSprintModeEndsAt30Lines() {
+    void testSprintModeEndsAt20Lines() {
         StubRenderer renderer = new StubRenderer();
         StubInfoPanel infoPanel = new StubInfoPanel();
         GameFlowController flow = new GameFlowController(
@@ -48,7 +48,7 @@ class GameFlowLogicTest {
     }
 
     @Test
-    void testClassicModeDoesNotEndAt30Lines() {
+    void testClassicModeDoesNotEndAt20Lines() {
         StubRenderer renderer = new StubRenderer();
         StubInfoPanel infoPanel = new StubInfoPanel();
         GameFlowController flow = new GameFlowController(

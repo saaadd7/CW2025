@@ -4,39 +4,45 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 /**
- * A custom JavaFX {@link BorderPane} designed to display a "GAME OVER" message
- * with a pulsating visual effect.
+ * A custom JavaFX {@link BorderPane} designed to display a Game Over or Victory message.
  */
 public class GameOverPanel extends BorderPane {
 
-    /**
-     * Constructs a new GameOverPanel.
-     * Initializes the "GAME OVER" label, applies custom styling,
-     * centers the label, and sets up a pulsating animation.
-     */
+
+    private final Label gameOverLabel;
+
     public GameOverPanel() {
-        // Create the "GAME OVER" label
-        final Label gameOverLabel = new Label("GAME OVER");
 
-        // Add style class for custom styling (optional)
+        gameOverLabel = new Label("GAME OVER");
+
+
         gameOverLabel.getStyleClass().add("gameOverStyle");
+        this.setStyle("-fx-background-color: transparent;");
 
-        // Set the label in the center of the BorderPane
+
         setCenter(gameOverLabel);
 
-        // Add pulsating effect using Timeline
+
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, e -> gameOverLabel.setOpacity(1)),
                 new KeyFrame(Duration.seconds(0.5), e -> gameOverLabel.setOpacity(0)),
                 new KeyFrame(Duration.seconds(1), e -> gameOverLabel.setOpacity(1))
         );
-
-
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+    }
+
+
+    public void setVictoryText(String text) {
+        gameOverLabel.setText(text);
+
+        if (text.toUpperCase().contains("VICTORY")) {
+            gameOverLabel.setStyle("-fx-text-fill: lightgreen; -fx-font-size: 50px; -fx-background-color: transparent;");
+        } else {
+            gameOverLabel.setStyle("-fx-text-fill: white; -fx-font-size: 50px; -fx-background-color: transparent;");
+        }
     }
 }

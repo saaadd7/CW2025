@@ -29,6 +29,7 @@ public class NotificationPanel extends BorderPane {
      * @param text The text to be displayed in the notification.
      */
     public NotificationPanel(String text) {
+        System.out.println("NotificationPanel created with text: " + text); // For debugging
         // Special styling for GAME OVER
         if (text.contains("GAME OVER")) {
             setMinHeight(80);
@@ -53,6 +54,39 @@ public class NotificationPanel extends BorderPane {
 
             DropShadow outerGlow = new DropShadow();
             outerGlow.setColor(Color.web("#FF8800")); // Orange glow
+            outerGlow.setRadius(25);
+            outerGlow.setSpread(0.6);
+            outerGlow.setInput(dropShadow);
+
+            Glow glow = new Glow(0.9);
+            glow.setInput(outerGlow);
+            score.setEffect(glow);
+
+            setCenter(score);
+        } else if (text.contains("VICTORY!")) {
+            System.out.println("VICTORY! panel created");
+            setMinHeight(80);
+            setMinWidth(300);
+            setMaxHeight(80);
+            setMaxWidth(300);
+
+            // Make background transparent
+            setStyle("-fx-background-color: transparent;");
+
+            final Label score = new Label(text);
+            score.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-font-family: 'Arial Black'; -fx-background-color: transparent;");
+
+            // Gold color for victory
+            score.setTextFill(Color.web("#FFD700")); // Gold color
+
+            // Add strong drop shadow for contrast
+            DropShadow dropShadow = new DropShadow();
+            dropShadow.setColor(Color.BLACK);
+            dropShadow.setRadius(15);
+            dropShadow.setSpread(0.8);
+
+            DropShadow outerGlow = new DropShadow();
+            outerGlow.setColor(Color.web("#FFD700")); // Gold glow
             outerGlow.setRadius(25);
             outerGlow.setSpread(0.6);
             outerGlow.setInput(dropShadow);

@@ -45,7 +45,6 @@ public class GameController implements InputEventListener {
         this.soundManager = soundManager;
         this.mainApp = mainApp;
 
-
         viewGuiController.setEventListener(this);
     }
 
@@ -59,14 +58,11 @@ public class GameController implements InputEventListener {
 
         board.setGameMode(mode);
 
-
         board.newGame();
-
 
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
         viewGuiController.updateModeStatus(mode.toString(), board.getGameModeStatus());
-
 
         gameBoardRenderer.refreshGameBackground(board.getBoardMatrix());
     }
@@ -176,10 +172,7 @@ public class GameController implements InputEventListener {
      * This stops the game and displays a victory message.
      */
     private void handleVictory() {
-
-        viewGuiController.gameOver();
-
-
+        viewGuiController.victory();
 
         System.out.println("VICTORY! Mode: " + board.getGameMode());
 

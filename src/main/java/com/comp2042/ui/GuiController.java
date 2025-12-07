@@ -202,7 +202,7 @@ public class GuiController implements Initializable {
      * Updates the two-line mode status display.
      *
      * @param modeName The name of the mode (e.g., "Sprint", "Classic").
-     * @param details  The specific stats (e.g., "Lines: 1/20", "Score: 1500").
+     * @param details  The specific stats (e.g., "Lines: 1/30", "Score: 1500").
      */
     public void updateModeStatus(String modeName, String details) {
         Platform.runLater(() -> {
@@ -373,5 +373,13 @@ public class GuiController implements Initializable {
      */
     public GameFlowController getGameFlowController() {
         return gameFlowController;
+    }
+
+
+    /**
+     * Signals the victory state to the UI.
+     */
+    public void victory() {
+        gameFlowController.victory();
     }
 }
