@@ -101,7 +101,7 @@
         <VBox VBox.vgrow="ALWAYS"/>
 
         <!-- Back Button -->
-        <Button text="BACK TO MENU"
+        <Button fx:id="closeButton" text="BACK TO MENU"
                 onAction="#closeSettings"
                 maxWidth="Infinity"
                 minWidth="250"

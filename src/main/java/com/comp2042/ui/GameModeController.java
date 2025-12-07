@@ -2,9 +2,11 @@ package com.comp2042.ui;
 
 import com.comp2042.GameMode;
 import com.comp2042.Main;
+import com.comp2042.sounds.SoundManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import javafx.scene.input.MouseEvent;
 
 /**
  * Controller for the game mode selection screen.
@@ -50,6 +52,26 @@ public class GameModeController {
         ultraButton.setOnAction(e -> launchGame(GameMode.ULTRA));
 
         backButton.setOnAction(e -> returnToMenu());
+
+        SoundManager soundManager = SoundManager.getInstance();
+        Button[] modeButtons = {
+                classicButton,
+                sprintButton,
+                ultraButton,
+                backButton
+        };
+
+        // 2. Apply the Sound & Focus fix
+        for (Button btn : modeButtons) {
+            if (btn != null) {
+                btn.setFocusTraversable(false);
+
+                btn.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+                    soundManager.playClickSound();
+                });
+            }
+        }
+
     }
 
     /**

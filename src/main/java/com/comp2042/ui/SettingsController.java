@@ -1,16 +1,21 @@
 package com.comp2042.ui;
 
 import com.comp2042.sounds.ISoundManager;
+import com.comp2042.sounds.SoundManager;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * Controller for the settings menu.
  * This class handles user interaction for changing game settings, such as sound and music.
  */
-public class SettingsController {
-
+public class SettingsController implements Initializable {
 
     @FXML
     private Button soundToggleButton;
@@ -18,8 +23,42 @@ public class SettingsController {
     @FXML
     private Button backgroundMusicToggleButton;
 
+
+    @FXML
+    private Button closeButton;
+
     private ISoundManager soundManager;
     private Stage settingsStage;
+
+    /**
+     * Initializes the controller class.
+     * Sets up button sounds and disables focus traversal.
+     */
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+        SoundManager globalSoundManager = SoundManager.getInstance();
+
+
+        Button[] settingsButtons = {
+                soundToggleButton,
+                backgroundMusicToggleButton,
+                closeButton
+        };
+
+
+        for (Button btn : settingsButtons) {
+            if (btn != null) {
+
+                btn.setFocusTraversable(false);
+
+
+                btn.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+                    globalSoundManager.playClickSound();
+                });
+            }
+        }
+    }
 
     /**
      * Sets the sound manager for this controller.
@@ -51,7 +90,6 @@ public class SettingsController {
             String status = enabled ? "On" : "Off";
             soundToggleButton.setText("Sounds: " + status);
 
-
             if (enabled) {
                 soundToggleButton.setStyle("-fx-background-color: linear-gradient(to bottom, #27ae60 0%, #229954 50%, #1e8449 100%);" +
                         " -fx-background-radius: 10px; -fx-text-fill: white; -fx-font-family: 'Arial Black', 'Arial', sans-serif;" +
@@ -76,7 +114,6 @@ public class SettingsController {
             boolean enabled = soundManager.isBackgroundMusicEnabled();
             String status = enabled ? "On" : "Off";
             backgroundMusicToggleButton.setText("Music: " + status);
-
 
             if (enabled) {
                 backgroundMusicToggleButton.setStyle("-fx-background-color: linear-gradient(to bottom, #27ae60 0%, #229954 50%, #1e8449 100%);" +
@@ -115,7 +152,6 @@ public class SettingsController {
             updateBackgroundMusicButtonText();
         }
     }
-
 
     /**
      * FXML method called when the 'Back to Main Menu' button is clicked.

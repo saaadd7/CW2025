@@ -29,7 +29,7 @@ public class NotificationPanel extends BorderPane {
      * @param text The text to be displayed in the notification.
      */
     public NotificationPanel(String text) {
-        System.out.println("NotificationPanel created with text: " + text); // For debugging
+
         // Special styling for GAME OVER
         if (text.contains("GAME OVER")) {
             setMinHeight(80);

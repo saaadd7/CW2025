@@ -54,6 +54,8 @@ public class GuiController implements Initializable {
     @FXML private GameOverPanel gameOverPanel;
     @FXML private Label scoreLabel;
     @FXML private Button pauseButton;
+    @FXML private Button restartButton;
+    @FXML private Button menuButton;
     @FXML private Label levelLabel;
     @FXML private Button startButton;
     @FXML private Button settingsButton;
@@ -77,9 +79,14 @@ public class GuiController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         updateModeDisplay();
 
+        if (soundManager == null) {
+            soundManager = SoundManager.getInstance();
+        }
 
 
-        Button[] allButtons = {startButton, settingsButton, helpButton, pauseButton, modeButton};
+
+        Button[] allButtons = {startButton, settingsButton, helpButton, pauseButton, modeButton,restartButton,
+                menuButton};
 
 
         for (Button btn : allButtons) {
@@ -93,9 +100,7 @@ public class GuiController implements Initializable {
                 });
             }
         }
-        if (soundManager == null) {
-            soundManager = SoundManager.getInstance();
-        }
+
 
 
         if (particlePane != null) {

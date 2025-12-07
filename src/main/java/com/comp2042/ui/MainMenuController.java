@@ -13,6 +13,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.MouseEvent;
 
 import javafx.event.ActionEvent;
 import javafx.scene.layout.AnchorPane;
@@ -73,6 +74,31 @@ public class MainMenuController {
     public void initialize() {
         settingsButton.setOnAction(e -> openSettings());
         helpButton.setOnAction(e -> handleHelpButton(e));
+
+        SoundManager soundManager = SoundManager.getInstance();
+        Button[] menuButtons = {
+                startButton,
+                settingsButton,
+                helpButton
+        };
+
+        for (Button btn : menuButtons) {
+            if (btn != null) {
+
+                btn.setFocusTraversable(false);
+
+
+                btn.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+                    soundManager.playClickSound();
+                });
+
+
+                btn.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
+
+                });
+            }
+        }
+
 
         if (rootPane != null && backgroundImage != null) {
             backgroundImage.fitWidthProperty().bind(rootPane.widthProperty());
