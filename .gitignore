@@ -37,3 +37,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Custom additions
+src/main/resources/fxml/gameLayout.fxml
+src/main/resources/fxml/mainMenu.fxml
+javadoc/

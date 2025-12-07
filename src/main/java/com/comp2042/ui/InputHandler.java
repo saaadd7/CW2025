@@ -83,7 +83,7 @@ public class InputHandler {
 
         // Handle global keys regardless of game state
         switch (keyEvent.getCode()) {
-            case N:
+            case R:
                 eventListener.onGameEvent(new com.comp2042.event.NewGameEvent());
                 break;
             case P:
