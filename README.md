@@ -47,6 +47,7 @@ The following features have been successfully implemented and are functioning as
 1. **Core Tetris Gameplay**
    - Brick movement (left, right, down)
    - Brick rotation (with Wall Kick logic)
+   - Smooth Soft Drop: Implemented Smooth Soft Drop
    - Hard drop functionality
    - **Ghost Piece:** A translucent outline indicating the current block's projected landing position.
    - Line clearing and scoring
@@ -58,6 +59,7 @@ The following features have been successfully implemented and are functioning as
 3. **Visual Effects**
    - **Particle Animation:** A dynamic particle effect triggers whenever a row is cleared, providing satisfying visual feedback.
    - Refactored Game board rendering for smoother updates.
+   - **Victory Screen:** A dynamic "VICTORY" overlay appears when completing Sprint or Ultra modes, utilizing parallel transitions for zoom and fade effects.
 
 4. **Multiple Game Modes**
    - **Classic Mode:** Play until the board fills up.
@@ -80,13 +82,6 @@ The following features have been successfully implemented and are functioning as
 ## Implemented but Not Working Properly
 The following features have been implemented but may have issues:
 
-1. **Victory Sound Effect**
-   - The victory sound effect is currently commented out in the code (`GameController.java`).
-   - Issues with the media player resource stream caused intermittent crashes on specific JDK versions, so the game proceeds to the victory state without the audio cue.
-
-2. **Victory Screen UI**
-   - A dedicated "You Win" graphical scene is not fully implemented.
-   - Currently, the system prints a victory message to the console and stops the game loop.
 
 ## Features Not Implemented
 The following features were planned but have not been implemented:
@@ -158,3 +153,7 @@ During the development of this assignment, the following unexpected challenges w
    - **Problem:** Updating the Timer Label directly from a standard `Timer` thread caused `NotOnFXApplicationThread` exceptions.
    - **Resolution:** I wrapped the UI updates inside `Platform.runLater()`.
    - **Learning:** Reinforced the rule that all JavaFX UI updates must happen on the Application Thread.
+4. Soft Drop smoothness
+   - **Problem:** relying on the operating system's KEY_PRESSED event caused the soft drop to be jerky (dependent on the OS key-repeat rate).
+   - **Resolution:** Implemented a state-based system (isSoftDropping boolean) and a dedicated 50ms Timeline timer in GameFlowController.
+   - **Learning:** Game loops should rely on internal timers (deltas) rather than raw input triggers for movement physics.

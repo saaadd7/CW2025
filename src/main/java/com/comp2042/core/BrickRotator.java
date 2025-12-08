@@ -11,6 +11,14 @@ import java.util.List;
  */
 public class BrickRotator {
 
+    /**
+     * Constructs a new BrickRotator.
+     * Initializes the rotator with no brick set.
+     */
+    public BrickRotator() {
+    }
+
+
     private Brick brick;
     private int currentShape = 0;
 

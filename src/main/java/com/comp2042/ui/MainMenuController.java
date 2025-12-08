@@ -26,6 +26,12 @@ import javafx.scene.Parent;
  */
 public class MainMenuController {
 
+    /**
+     * Constructs a new MainMenuController.
+     */
+    public MainMenuController() {
+    }
+
     @FXML private Button startButton;
     @FXML private Button settingsButton;
     @FXML private Button helpButton;

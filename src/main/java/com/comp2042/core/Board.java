@@ -87,8 +87,24 @@ public interface Board {
 
 
     // Game mode methods
+    /**
+     * Sets the current game mode for the board.
+     * @param mode The GameMode to set.
+     */
     void setGameMode(GameMode mode);
+    /**
+     * Retrieves the current game mode of the board.
+     * @return The current GameMode.
+     */
     GameMode getGameMode();
+    /**
+     * Checks if the current game mode has been completed.
+     * @return true if the game mode is complete, false otherwise.
+     */
     boolean isGameModeComplete();
+    /**
+     * Retrieves a status string related to the current game mode.
+     * @return A string representing the status of the game mode.
+     */
     String getGameModeStatus();
 }

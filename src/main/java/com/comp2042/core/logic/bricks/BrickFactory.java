@@ -7,6 +7,14 @@ package com.comp2042.core.logic.bricks;
 public class BrickFactory {
 
     /**
+     * Constructs a new BrickFactory instance.
+     * This class is a utility class and should not be instantiated.
+     */
+    private BrickFactory() {
+        // Private constructor to prevent instantiation
+    }
+
+    /**
      * Creates a new {@link Brick} instance of the specified type.
      *
      * @param type The type of brick to create.

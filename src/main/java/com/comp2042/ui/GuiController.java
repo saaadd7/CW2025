@@ -36,6 +36,12 @@ import java.util.ResourceBundle;
  */
 public class GuiController implements Initializable {
 
+    /**
+     * Constructs a new GuiController.
+     */
+    public GuiController() {
+    }
+
 
     private GameMode currentMode = GameMode.CLASSIC;
 

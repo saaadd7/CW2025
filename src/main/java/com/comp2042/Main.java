@@ -17,7 +17,19 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
+    /**
+     * Constructs a new Main application instance.
+     */
+    public Main() {
+    }
+
+    /**
+     * FXML path for the main menu layout.
+     */
     public static final String MAIN_MENU_FXML = "/fxml/mainMenu.fxml";
+    /**
+     * FXML path for the game layout.
+     */
     public static final String GAME_LAYOUT_FXML = "/fxml/gameLayout.fxml"; // your real path
 
     private SoundManager soundManager;
@@ -67,6 +79,7 @@ public class Main extends Application {
              * Loads and displays the main game board.
              *
              * @param stage the primary stage where the game will be displayed.
+             * @param mode the game mode to be loaded.
              * @throws Exception if the FXML file cannot be loaded.
              */
             public void loadGame(Stage stage, GameMode mode) throws Exception {

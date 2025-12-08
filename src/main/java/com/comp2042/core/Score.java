@@ -10,9 +10,11 @@ import javafx.beans.property.SimpleIntegerProperty;
 public final class Score {
 
     /**
-     * The {@link IntegerProperty} that holds the current score value.
-     * This allows UI components to observe and react to score changes.
+     * Constructs a new Score instance, initializing the score to 0.
      */
+    public Score() {
+    }
+
     private final IntegerProperty score = new SimpleIntegerProperty(0);
 
     /**

@@ -15,6 +15,12 @@ import javafx.scene.input.MouseEvent;
  */
 public class GameModeController {
 
+    /**
+     * Constructs a new GameModeController.
+     */
+    public GameModeController() {
+    }
+
     private Main mainApp; // Reference to Main
     private Stage stage;
 

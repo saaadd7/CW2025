@@ -144,6 +144,11 @@ public class GameInfoPanelController {
         }
     }
 
+    /**
+     * Updates the time display on the UI.
+     *
+     * @param secondsRemaining The number of seconds remaining to display.
+     */
     public void updateTime(int secondsRemaining) {
         if (levelLabel != null) {
             // Calculate minutes and seconds

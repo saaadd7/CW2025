@@ -17,6 +17,12 @@ import java.util.ResourceBundle;
  */
 public class SettingsController implements Initializable {
 
+    /**
+     * Constructs a new SettingsController.
+     */
+    public SettingsController() {
+    }
+
     @FXML
     private Button soundToggleButton;
 

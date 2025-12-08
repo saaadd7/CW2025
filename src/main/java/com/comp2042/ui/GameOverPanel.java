@@ -11,9 +11,12 @@ import javafx.util.Duration;
  */
 public class GameOverPanel extends BorderPane {
 
-
     private final Label gameOverLabel;
 
+    /**
+     * Constructs a new GameOverPanel.
+     * Initializes the UI elements for displaying game over or victory messages.
+     */
     public GameOverPanel() {
 
         gameOverLabel = new Label("GAME OVER");
@@ -36,6 +39,12 @@ public class GameOverPanel extends BorderPane {
     }
 
 
+    /**
+     * Sets the text to be displayed on the game over panel.
+     * If the text contains "VICTORY" (case-insensitive), the text color will be set to light green.
+     *
+     * @param text The string message to display.
+     */
     public void setVictoryText(String text) {
         gameOverLabel.setText(text);
 

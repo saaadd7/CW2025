@@ -168,6 +168,12 @@ public class SoundManager implements ISoundManager {
         return backgroundMusicEnabled;
     }
 
+    /**
+     * Returns the singleton instance of the SoundManager.
+     * If no instance exists, a new one is created.
+     *
+     * @return The singleton instance of SoundManager.
+     */
     public static SoundManager getInstance() {
         if (instance == null) {
             instance = new SoundManager();
